@@ -5,6 +5,8 @@
 
 using namespace std;
 
+class Piece;
+
 class Square {
 	vector<Piece> wAttacks;
 	vector<Piece> bAttacks;
