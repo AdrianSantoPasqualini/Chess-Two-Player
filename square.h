@@ -2,7 +2,7 @@
 #define SQUARE_H
 
 ////// Relevant forward declarations and includes
-
+#include <vector>
 using namespace std;
 
 class Piece;
@@ -10,12 +10,14 @@ class Piece;
 class Square {
 	vector<Piece> wAttacks;
 	vector<Piece> bAttacks;
-	shared_ptr<Piece> currPiece;
+//	shared_ptr<Piece> currPiece;
+	Piece * currPiece;
 	int r;
 	int c;
 	
 	public:
-		Square(int r, int c, shared_prt<Piece> currPiece);  
-		void notify() override;
-}
+		Piece * getPiece() const;
+		Square(int r, int c, Piece * currPiece);  
+		//void notify() override;
+};
 #endif

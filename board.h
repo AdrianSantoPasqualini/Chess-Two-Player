@@ -3,26 +3,24 @@
 
 #include <vector>
 #include <iostream>
-
 ////////////////////////////////
 // try forward declarations first. Only if they dont work, include the .h file
 ///////////////////////////////
 using namespace std;
 
-class Player;
 class Square;
 
 class Board {
 	vector<vector<Square>> squares;
 	//Xwindow window;
-	Player player1;
-	Player player2;
+	//Player player1;
+	//Player player2;
 	bool whitesTurn;
 	int whiteScore;
 	int blackScore;
 
 	public:
-		~Grid();
+		//~Board();
 		void init(string playerOne, string playerTwo);
 		void setup();
 		int whoWon();
