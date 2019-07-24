@@ -28,11 +28,6 @@ class Board {
 		void setup();
 		int whoWon();
 		friend ostream & operator<<(ostream &out, const Board &b); 
-<<<<<<< HEAD
 };
 
-// Adrians Test edit
-=======
-}
-// William Test
-/bin/bash: :q: command not found
+#endif
