@@ -1,4 +1,6 @@
 #include "board.h"
+#include "square.h"
+#include "piece.h"
 using namespace std;
 
 ostream & operator<<(ostream &out, const Board &b) {
@@ -17,7 +19,7 @@ void Board::init(string playerOne, string playerTwo) {
 	squares.clear();
 	for (int r = 0; i < 8; i++) {
 		for (int c = 0; c < 8; c++) {
-			squares[r].emplace_back(Square(r,c));
+			squares[r].emplace_back(Square(r,c,nullptr));
 		}
 	}
 }
