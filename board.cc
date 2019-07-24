@@ -6,12 +6,8 @@ using namespace std;
 ostream & operator<<(ostream &out, const Board &b) {
 	for (int i = 0; i < 8; ++i) {
 		for (int j = 0; j < 8; ++j) {
-<<<<<<< HEAD
 			out << 8 - j << " ";
-			Piece * piece = (b.squares[i][j]).getPiece();
-=======
 			shared_ptr<Piece> piece = (b.squares[i][j]).getPiece();
->>>>>>> a4aa4d5cf1cfbfd4facac90feef4044122e2b2a9
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {
 					out << " ";
@@ -58,8 +54,6 @@ void Board::init(string playerOne, string playerTwo) {
         squares[0][7].setPiece(rook2b);
 
 }
-
-
 
 int main() {
 	Board b;
