@@ -13,47 +13,44 @@ class Piece {
 	int movesMade;
 
 	public:
-		string getId() {
-			return id;
-		}
+		string getId();
 		Piece(int row, int col, bool isWhite, string id, int movesMade);
 		virtual void move(int r, int c) = 0;
 
 };
 
-class Pawn: public Piece {
+class Pawn final: public Piece {
 	bool specialAdvance;
-	
 	public:
 		Pawn(int row, int col, bool isWhite, string id, int movesMade = 0, bool specialAdvance = false);
 		void move(int r, int c) override;
 };
 
-class Knight: public Piece {
+class Knight final: public Piece {
         public:
                 Knight(int row, int col, bool isWhite, string id, int movesMade = 0);
 		void move(int r, int c) override;
 };
 
-class Bishop: public Piece {
+class Bishop final: public Piece {
         public:
                 Bishop(int row, int col, bool isWhite, string id, int movesMade = 0);
 		void move(int r, int c) override;
 };
 
-class Rook: public Piece {
+class Rook final: public Piece {
         public:
                 Rook(int row, int col, bool isWhite, string id, int movesMade = 0);
 		void move(int r, int c) override;
 };
 
-class Queen: public Piece {
+class Queen final: public Piece {
         public:
                 Queen(int row, int col, bool isWhite, string id, int movesMade = 0);
 		void move(int r, int c) override;
 };
 
-class King: public Piece {
+class King final: public Piece {
         public:
                 King(int row, int col, bool isWhite, string id, int movesMade = 0);
 		void move(int r, int c) override;
