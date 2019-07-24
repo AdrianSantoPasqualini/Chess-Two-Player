@@ -8,6 +8,9 @@
 // try forward declarations first. Only if they dont work, include the .h file
 ///////////////////////////////
 
+class Player;
+class Square;
+
 using namespace std;
 
 class Board {
@@ -25,5 +28,7 @@ class Board {
 		void setup();
 		int whoWon();
 		friend ostream & operator<<(ostream &out, const Board &b); 
-}
+};
+
+// Adrians Test edit
 #endif
