@@ -12,4 +12,29 @@ class Player {
 		bool isInCheck();
 };
 
+class Human: public Player {
+	public:
+		void makeMove() override;
+}
+
+class Level1: public Player {
+        public:
+                void makeMove() override;
+}
+
+class Level2: public Player {
+        public:
+                void makeMove() override;
+}
+
+class Level3: public Player {
+        public:
+                void makeMove() override;
+}
+
+class LevelN: public Player {
+        public:
+                void makeMove() override;
+}
+
 #endif
