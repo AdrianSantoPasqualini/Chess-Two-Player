@@ -12,7 +12,7 @@ class Piece {
 
 	public: 
 		Piece(int row, int col, string id, bool isWhite, int movesMade = 0);
-		virtual void move(int r, int c) =0;
+		virtual void move(int r, int c) = 0;
 }
 
 
