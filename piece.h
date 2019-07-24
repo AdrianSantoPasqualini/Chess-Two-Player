@@ -17,7 +17,7 @@ class Piece {
 			return id;
 		}
 		
-		Piece(int row, int col, string id, bool isWhite, int movesMade = 0);
+		Piece(int row, int col, int movesMade = 0, bool isWhite, string id);
 		//virtual void move(int r, int c) = 0;
 
 };
