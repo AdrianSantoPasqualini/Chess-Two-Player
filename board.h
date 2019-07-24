@@ -28,7 +28,12 @@ class Board {
 		void setup();
 		int whoWon();
 		friend ostream & operator<<(ostream &out, const Board &b); 
+<<<<<<< HEAD
 };
 
 // Adrians Test edit
+=======
+}
+// William Test
+>>>>>>> de814fd986026622d5744f10d70f29090aa6fb45
 #endif
