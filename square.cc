@@ -3,8 +3,12 @@
 using namespace std;
 
 
-Square::Square(int r, int c, Piece * currPiece): r{r}, c{c}, currPiece{currPiece} {}
+Square::Square(int r, int c, shared_ptr<Piece> currPiece): currPiece{currPiece}, r{r}, c{c} {}
 
-Piece * Square::getPiece() const {
+shared_ptr<Piece> Square::getPiece() const {
 	return currPiece;
+}
+
+void Square::setPiece(shared_ptr<Piece> piece) {
+	currPiece = piece;
 }
