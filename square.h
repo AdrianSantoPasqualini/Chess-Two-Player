@@ -3,13 +3,14 @@
 
 ////// Relevant forward declarations and includes
 #include <vector>
+#include "piece.h"
 using namespace std;
 
-class Piece;
+
 
 class Square {
-	vector<Piece> wAttacks;
-	vector<Piece> bAttacks;
+	vector<shared_ptr<Piece>> wAttacks;
+	vector<shared_ptr<Piece>> bAttacks;
 	shared_ptr<Piece> currPiece;
 //	Piece * currPiece;
 	int r;
