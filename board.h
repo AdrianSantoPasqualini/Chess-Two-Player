@@ -7,11 +7,10 @@
 ////////////////////////////////
 // try forward declarations first. Only if they dont work, include the .h file
 ///////////////////////////////
+using namespace std;
 
 class Player;
 class Square;
-
-using namespace std;
 
 class Board {
 	vector<vector<Square>> squares;
@@ -24,7 +23,7 @@ class Board {
 
 	public:
 		~Grid();
-		void init();
+		void init(string playerOne, string playerTwo);
 		void setup();
 		int whoWon();
 		friend ostream & operator<<(ostream &out, const Board &b); 

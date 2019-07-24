@@ -8,11 +8,12 @@ using namespace std;
 class Square {
 	vector<Piece> wAttacks;
 	vector<Piece> bAttacks;
-	Piece currPiece;
+	shared_ptr<Piece> currPiece;
 	int r;
 	int c;
 	
 	public:
+		Square(int r, int c, shared_prt<Piece> currPiece);  
 		void notify() override;
 }
 #endif

@@ -11,3 +11,13 @@ ostream & operator<<(ostream &out, const Board &b) {
 	}
 	return out;
 }
+
+void Board::init(string playerOne, string playerTwo) {
+	whitesTurn = true;
+	squares.clear();
+	for (int r = 0; i < 8; i++) {
+		for (int c = 0; c < 8; c++) {
+			squares[r].emplace_back(Square(r,c));
+		}
+	}
+}
