@@ -10,14 +10,15 @@ class Piece;
 class Square {
 	vector<Piece> wAttacks;
 	vector<Piece> bAttacks;
-//	shared_ptr<Piece> currPiece;
-	Piece * currPiece;
+	shared_ptr<Piece> currPiece;
+//	Piece * currPiece;
 	int r;
 	int c;
 	
 	public:
-		Piece * getPiece() const;
-		Square(int r, int c, Piece * currPiece);  
+		shared_ptr<Piece> getPiece() const;
+		void setPiece(shared_ptr<Piece> piece);
+		Square(int r, int c, shared_ptr<Piece> currPiece);  
 		//void notify() override;
 };
 #endif
