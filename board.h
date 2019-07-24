@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 ////////////////////////////////
 // try forward declarations first. Only if they dont work, include the .h file
 ///////////////////////////////
