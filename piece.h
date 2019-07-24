@@ -3,6 +3,8 @@
 
 // Relevant forward declarations and includes
 #include <string>
+#include <utility> //for pair
+#include <stdlib.h> //for abs 
 using namespace std;
 
 class Piece {
@@ -11,8 +13,9 @@ class Piece {
 	bool isWhite;
 	string id;
 	int movesMade;
-
 	public:
+		pair<int,int> getCoor();
+		void changeCoor(int r, int c);
 		string getId();
 		Piece(int row, int col, bool isWhite, string id, int movesMade);
 		virtual void move(int r, int c) = 0;
