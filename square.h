@@ -2,6 +2,7 @@
 #define SQUARE_H
 
 ////// Relevant forward declarations and includes
+
 using namespace std;
 
 class Square {
@@ -11,6 +12,7 @@ class Square {
 	int r;
 	int c;
 	
-	void notify() override;
+	public:
+		void notify() override;
 }
 #endif

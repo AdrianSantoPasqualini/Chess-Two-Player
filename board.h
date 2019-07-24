@@ -5,8 +5,10 @@
 #include <iostream>
 
 ////////////////////////////////
-// try forward declarations first here. Only if they dont work, include the .h file
+// try forward declarations first. Only if they dont work, include the .h file
 ///////////////////////////////
+
+using namespace std;
 
 class Board {
 	vector<vector<Square>> squares;
@@ -18,8 +20,10 @@ class Board {
 	int blackScore;
 
 	public:
+		~Grid();
 		void init();
 		void setup();
 		int whoWon();
+		friend ostream & operator<<(ostream &out, const Board &b); 
 }
 #endif
