@@ -28,7 +28,7 @@ int Piece::getMovesMade() {
 Pawn::Pawn(int row, int col, bool isWhite, string id, int movesMade, bool specialAdvance): 
 	Piece{row, col, isWhite, id, movesMade}, specialAdvance {specialAdvance} {}
 
-void Pawn::move(int r, int c, bool cover) {
+void Pawn::move(int r, int c, bool cover, bool between) {
 	pair<int,int> currCoor = getCoor();
         int movesMade = getMovesMade();
 	if (r < 0 || r > 7 || c < 0 || c > 7 || cover) {
@@ -42,7 +42,8 @@ void Pawn::move(int r, int c, bool cover) {
                 changeCoor(r, c);
 	} else if ((movesMade == 0) && (currCoor.first - r == dir * 2 && currCoor.second - c == 0)) {
 		changeCoor(r, c);
-	} else if ((currCoor.first - r == dir * 1 && abs(currCoor.second - c == 1)) && cover) {
+		specialAdvance = true;
+	} else if ((currCoor.first - r == dir * 1 && abs(currCoor.second - c) == 1) && cover) {
 		changeCoor(r, c);
 	} else {
 		throw;
@@ -52,7 +53,7 @@ void Pawn::move(int r, int c, bool cover) {
 Knight::Knight(int row, int col, bool isWhite, string id, int movesMade):
         Piece{row, col, isWhite, id, movesMade} {}
 
-void Knight::move(int r, int c, bool cover) {
+void Knight::move(int r, int c, bool cover, bool between) {
 	pair<int,int> currCoor = getCoor();
 	if (r < 0 || r > 7 || c < 0 || c > 7 || cover) {
 		throw;
@@ -68,9 +69,9 @@ void Knight::move(int r, int c, bool cover) {
 Bishop::Bishop(int row, int col, bool isWhite, string id, int movesMade):
         Piece{row, col, isWhite, id, movesMade} {}
 
-void Bishop::move(int r, int c, bool cover) {
+void Bishop::move(int r, int c, bool cover, bool between) {
 	pair<int,int> currCoor = getCoor();
-        if (r < 0 || r > 7 || c < 0 || c > 7 || cover) {
+        if (r < 0 || r > 7 || c < 0 || c > 7 || cover || between) {
                 throw;
         }
 	if ((abs(currCoor.first - r) == abs(currCoor.second - c)) &&
@@ -84,9 +85,9 @@ void Bishop::move(int r, int c, bool cover) {
 Rook::Rook(int row, int col, bool isWhite, string id, int movesMade):
         Piece{row, col, isWhite, id, movesMade} {}
 
-void Rook::move(int r, int c, bool cover) {
+void Rook::move(int r, int c, bool cover, bool between) {
 	pair<int,int> currCoor = getCoor();
-        if (r < 0 || r > 7 || c < 0 || c > 7 || cover) {
+        if (r < 0 || r > 7 || c < 0 || c > 7 || cover || between) {
                 throw;
         }
 	if ((abs(currCoor.first - r) == 0 && abs(currCoor.second - c) > 0) ||
@@ -100,9 +101,9 @@ void Rook::move(int r, int c, bool cover) {
 Queen::Queen(int row, int col, bool isWhite, string id, int movesMade):
         Piece{row, col, isWhite, id, movesMade} {}
 
-void Queen::move(int r, int c, bool cover) {
+void Queen::move(int r, int c, bool cover, bool between) {
 	pair<int,int> currCoor = getCoor();
-        if (r < 0 || r > 7 || c < 0 || c > 7 || cover) {
+        if (r < 0 || r > 7 || c < 0 || c > 7 || cover || between) {
                 throw;
         }
 	if (((abs(currCoor.first - r) == abs(currCoor.second - c)) &&
@@ -118,7 +119,7 @@ void Queen::move(int r, int c, bool cover) {
 King::King(int row, int col, bool isWhite, string id, int movesMade):
         Piece{row, col, isWhite, id, movesMade} {}
 
-void King::move(int r, int c, bool cover) {
+void King::move(int r, int c, bool cover, bool between) {
 	pair<int,int> currCoor = getCoor();
         if (r < 0 || r > 7 || c < 0 || c > 7 || cover) {
                 throw;
