@@ -3,6 +3,8 @@
 
 using namespace std;
 
+class Subject;
+
 class Observer {
 	
 	public:

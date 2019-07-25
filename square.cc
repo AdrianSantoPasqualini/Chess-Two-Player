@@ -1,5 +1,6 @@
 #include "square.h"
 #include "piece.h"
+
 using namespace std;
 
 
@@ -11,4 +12,14 @@ shared_ptr<Piece> Square::getPiece() const {
 
 void Square::setPiece(shared_ptr<Piece> piece) {
 	currPiece = piece;
+}
+
+pair<int,int> Square::getCoords() const {
+	return make_pair(r, c);
+}
+
+void Square::notify(Subject & whoFrom) {
+	State recState = whoFrom.getState();
+	
+
 }

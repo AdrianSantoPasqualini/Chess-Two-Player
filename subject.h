@@ -2,9 +2,9 @@
 #define SUBJ_H
 
 #include <vector>
+#include "state.h"
 
 class Observer;
-class State;
 
 class Subject {
 	vector<shared_ptr<Observer>> observers;
