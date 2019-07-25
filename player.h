@@ -2,39 +2,48 @@
 #define PLAYER_H
 #include <map>
 #include <string>
+using namespace std;
+
+class Piece;
 
 class Player {
+	map<string, shared_ptr<Piece>> pieces;
+	bool isWhite;
+	int score;
 	public:
-		map<string, Piece> pieces;
-		bool isWhite;
-		Player(map<string,Piece> pieces, bool isWhite); 
+		Player(bool isWhite); 
 		virtual void makeMove() = 0;
-		bool isInCheck();
+		bool isInCheck() const;
 };
 
 class Human: public Player {
 	public:
+		Human(bool isWhite);
 		void makeMove() override;
-}
+};
 
 class Level1: public Player {
         public:
+		Level1(bool isWhite);
                 void makeMove() override;
-}
+};
 
 class Level2: public Player {
         public:
+		Level2(bool isWhite);
                 void makeMove() override;
-}
+};
 
 class Level3: public Player {
         public:
+		Level3(bool isWhite);
                 void makeMove() override;
-}
+};
 
-class LevelN: public Player {
+class Level4: public Player {
         public:
+		Level4(bool isWhite);
                 void makeMove() override;
-}
+};
 
 #endif
