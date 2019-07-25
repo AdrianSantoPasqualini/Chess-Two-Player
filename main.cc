@@ -4,6 +4,7 @@
 #include "player.h"
 using namespace std;
 
+
 int main() {
   cin.exceptions(ios::eofbit|ios::failbit);
   string cmd;
@@ -50,7 +51,7 @@ int main() {
         //resign
       }
       else if (cmd == "move") {
-        //move
+
       }
       else if (cmd == "setup") {
         //setup
