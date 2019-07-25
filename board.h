@@ -4,25 +4,28 @@
 #include <vector>
 #include <iostream>
 #include <string>
+#include "square.h"
 ////////////////////////////////
 // try forward declarations first. Only if they dont work, include the .h file
 ///////////////////////////////
 using namespace std;
 
-class Square;
+
+class Player;
 
 class Board {
 	vector<vector<Square>> squares;
 	//Xwindow window;
-	//Player player1;
-	//Player player2;
+	shared_ptr<Player> player1;
+	shared_ptr<Player> player2;
 	bool whitesTurn;
 	int whiteScore;
 	int blackScore;
 
 	public:
 		//~Board();
-		void init(string playerOne, string playerTwo);
+		void setPlayer(string colour,shared_ptr<Player> player);
+		void init();
 		void setup();
 		int whoWon();
 		friend ostream & operator<<(ostream &out, const Board &b); 

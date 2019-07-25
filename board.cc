@@ -25,7 +25,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 	
 }
 
-void Board::init(string playerOne, string playerTwo) {
+void Board::init() {
 
 	whitesTurn = true;
 	squares.clear();
@@ -82,8 +82,10 @@ void Board::init(string playerOne, string playerTwo) {
 
 }
 
-int main() {
-	Board b;
-	b.init("a","b");
-	cout << b;
+void Board::setPlayer(string colour, shared_ptr<Player> player) {
+	if (colour == "white") {
+		player1 = player;
+	} else if (colour == "black") {
+		player2 = player;
+	}
 }
