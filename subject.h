@@ -1,6 +1,9 @@
 #ifndef SUBJ_H
 #define SUBJ_H
 
+#include <vector>
+
+class Observer;
 class State;
 
 class Subject {
@@ -8,10 +11,20 @@ class Subject {
 	State state;
 	
 	protected:
-		void setState(State newState);
+		void setState(State nState) {
+			state = nState;
+		}
 	public:
-		void notifyObservers();
-		void attach(shared_ptr<Observer> o);
-		State getState();
+		void notifyObservers() {
+			for (auto &ob : observers) ob->notify(*this);
+		}
+
+		void attach(shared_ptr<Observer> o) {
+			observers.emplace_back(o);
+		}
+
+		State getState() {
+			return state;
+		}
 };
 #endif
