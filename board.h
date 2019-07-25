@@ -16,8 +16,8 @@ class Player;
 class Board {
 	vector<vector<Square>> squares;
 	//Xwindow window;
-	shared_ptr<Player> player1;
-	shared_ptr<Player> player2;
+	unique_ptr<Player> player1;
+	unique_ptr<Player> player2;
 	bool whitesTurn;
 	int whiteScore;
 	int blackScore;

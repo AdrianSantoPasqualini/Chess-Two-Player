@@ -23,8 +23,12 @@ int main() {
 			cout << board;
 		}
       		else if (cmd == "resign" && matchOngoing) {
+			if (board.whitesTurn?()){
+				board.incWhiteScore();	
+			} else {
+				board.incBlackScore();
+			} 
 			matchOngoing = false;
-			 
       		}
       		else if (cmd == "move" && matchOngoing) {
       		  //move
