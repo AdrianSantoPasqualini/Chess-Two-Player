@@ -23,7 +23,7 @@ int main() {
 			cout << board;
 		}
       		else if (cmd == "resign" && matchOngoing) {
-			if (board.whitesTurn?()){
+			if (board.whiteTurn()){
 				board.incWhiteScore();	
 			} else {
 				board.incBlackScore();
@@ -46,13 +46,9 @@ int main() {
 						
 				}
 			}
-			
       		  //user cannot leave setup mode until conditions are met
       		}
     		}
-		catch(...) {
-			//if user does something invalid
-		}
 	}
   	catch (ios::failure &) {
   	}

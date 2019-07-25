@@ -30,7 +30,7 @@ class Board {
 		int whoWon();
 		void incWhiteScore();
 		void incBlackScore();
-		bool whitesTurn?();
+		bool whiteTurn();
 		friend ostream & operator<<(ostream &out, const Board &b); 
 };
 

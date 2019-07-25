@@ -1,6 +1,7 @@
 #include "board.h"
 #include "square.h"
 #include "piece.h"
+#include "player.h"
 using namespace std;
 
 ostream & operator<<(ostream &out, const Board &b) {
@@ -26,7 +27,6 @@ ostream & operator<<(ostream &out, const Board &b) {
 }
 
 void Board::init() {
-
 	whitesTurn = true;
 	squares.clear();
 	for (int c = 0; c < 8; c++) {
@@ -37,7 +37,6 @@ void Board::init() {
 			squares[c].emplace_back(s);
 		}
 	}
-
 	shared_ptr<Piece> rook1b = make_shared<Rook>(0, 0, false, "r1", 0);
 	squares[0][0].setPiece(rook1b);
 	shared_ptr<Piece> knight1b = make_shared<Knight>(0, 1, false, "n1", 0);
@@ -58,7 +57,6 @@ void Board::init() {
 		shared_ptr<Piece> pawnb = make_shared<Rook>(1, i, false, "p" + to_string(i), 0);
         	squares[1][i].setPiece(pawnb);
 	}
-
 	shared_ptr<Piece> rook1w = make_shared<Rook>(7, 0, true, "R1", 0);
         squares[7][0].setPiece(rook1w);
         shared_ptr<Piece> knight1w = make_shared<Knight>(7, 1, true, "N1", 0);
@@ -79,34 +77,32 @@ void Board::init() {
                 shared_ptr<Piece> pawnw = make_shared<Rook>(6, i, true, "P" + to_string(i), 0);
                 squares[6][i].setPiece(pawnw);
         }
-
 }
 
 void Board::setPlayer(string colour, string type) {
 	if (colour == "white") {
 		if (type == "human") {
-			player1 = unique_ptr<Human>(true);
+			player1 = make_unique<Human>(true);
 		} else if (type == "computer1") {
-			player1 = unique_ptr<Level1>(true);
+			player1 = make_unique<Level1>(true);
 		} else if (type == "computer2") {
-			player1 = unique_ptr<Level2>(true);
+			player1 = make_unique<Level2>(true);
 		} else if (type == "computer3") {
-			player1 = unique_ptr<Level3>(true);
+			player1 = make_unique<Level3>(true);
 		} else if (type == "computer4") {
-			player1 = unique_ptr<Level4>(true);
-		}
-		
+			player1 = make_unique<Level4>(true);
+		}	
 	} else if (colour == "black") {
 		if (type == "human") {
-			player2 = unique_ptr<Human>(false);
+			player2 = make_unique<Human>(false);
 		} else if (type == "computer1") {
-			player2 = unique_ptr<Level1>(false);
+			player2 = make_unique<Level1>(false);
 		} else if (type == "computer2") {
-			player2 = unique_ptr<Level2>(false);
+			player2 = make_unique<Level2>(false);
 		} else if (type == "computer3") {
-			player2 = unique_ptr<Level3>(false);
+			player2 = make_unique<Level3>(false);
 		} else if (type == "computer4") {
-			player2 = unique_ptr<Level4>(false);
+			player2 = make_unique<Level4>(false);
 		}
 	}
 }
@@ -119,6 +115,6 @@ void Board::incBlackScore() {
 	blackScore++;
 }
 
-void board::whitesTurn?() {
+bool Board::whiteTurn() {
 	return whitesTurn;
 }
