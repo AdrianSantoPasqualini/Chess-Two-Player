@@ -16,43 +16,33 @@ int main() {
         		string p1, p2;
         		cin >> p1;
         		cin >> p2;
-			shared_ptr<Player> wPlayer;
-			shared_ptr<Player> bPlayer;
-			if (p1 == "human") {
-				wPlayer = make_shared<Human>(true);
-			} else if (p1 == "computer1") {
-				wPlayer = make_shared<Level1>(true);
-			} else if (p1 == "computer2") {
-        		        wPlayer = make_shared<Level2>(true);
-        		} else if (p1 == "computer3") {
-        		        wPlayer = make_shared<Level3>(true);
-        		} else if (p1 == "computer4") {
-        		        wPlayer = make_shared<Level4>(true);
-        		}
-			if (p2 == "human") {
-        		        bPlayer = make_shared<Human>(false);
-        		} else if (p2 == "computer1") {
-        		        bPlayer = make_shared<Level1>(false);
-        		} else if (p2 == "computer2") {
-        		        bPlayer = make_shared<Level2>(false);
-        		} else if (p2 == "computer3") {
-        			bPlayer = make_shared<Level3>(false);
-        		} else if (p2 == "computer4") {
-        			bPlayer = make_shared<Level4>(false);
-        		}
-			board.setPlayer("white", wPlayer);
-			board.setPlayer("black", bPlayer);
         		board.init();
+			// check for invalid inputs?
+			board.setPlayer("white", p1);
+			board.setPlayer("black", p2);
 			cout << board;
 		}
-      		else if (cmd == "resign") {
-      		  //resign
+      		else if (cmd == "resign" && matchOngoing) {
+			matchOngoing = false;
+			 
       		}
-      		else if (cmd == "move") {
+      		else if (cmd == "move" && matchOngoing) {
       		  //move
       		}
-      		else if (cmd == "setup") {
-      		  //setup
+      		else if (cmd == "setup" && !matchOngoing) {
+			bool done = false;
+			while (!done){
+				cin >> cmd;
+				if (cmd == "+") {
+				} else if (cmd == "-") {
+
+				} else if (cmd == "=") {
+
+				} else if (cmd == "done") {
+						
+				}
+			}
+			
       		  //user cannot leave setup mode until conditions are met
       		}
     		}
@@ -63,3 +53,4 @@ int main() {
   	catch (ios::failure &) {
   	}
 }
+

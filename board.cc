@@ -82,10 +82,43 @@ void Board::init() {
 
 }
 
-void Board::setPlayer(string colour, shared_ptr<Player> player) {
+void Board::setPlayer(string colour, string type) {
 	if (colour == "white") {
-		player1 = player;
+		if (type == "human") {
+			player1 = unique_ptr<Human>(true);
+		} else if (type == "computer1") {
+			player1 = unique_ptr<Level1>(true);
+		} else if (type == "computer2") {
+			player1 = unique_ptr<Level2>(true);
+		} else if (type == "computer3") {
+			player1 = unique_ptr<Level3>(true);
+		} else if (type == "computer4") {
+			player1 = unique_ptr<Level4>(true);
+		}
+		
 	} else if (colour == "black") {
-		player2 = player;
+		if (type == "human") {
+			player2 = unique_ptr<Human>(false);
+		} else if (type == "computer1") {
+			player2 = unique_ptr<Level1>(false);
+		} else if (type == "computer2") {
+			player2 = unique_ptr<Level2>(false);
+		} else if (type == "computer3") {
+			player2 = unique_ptr<Level3>(false);
+		} else if (type == "computer4") {
+			player2 = unique_ptr<Level4>(false);
+		}
 	}
+}
+
+void Board::incWhiteScore() {
+	whiteScore++;
+}
+
+void Board::incBlackScore() {
+	blackScore++;
+}
+
+void board::whitesTurn?() {
+	return whitesTurn;
 }

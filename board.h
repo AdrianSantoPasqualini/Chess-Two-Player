@@ -24,10 +24,13 @@ class Board {
 
 	public:
 		//~Board();
-		void setPlayer(string colour,shared_ptr<Player> player);
+		void setPlayer(string colour, string type);
 		void init();
 		void setup();
 		int whoWon();
+		void incWhiteScore();
+		void incBlackScore();
+		bool whitesTurn?();
 		friend ostream & operator<<(ostream &out, const Board &b); 
 };
 
