@@ -29,7 +29,6 @@ int main() {
         		} else if (p1 == "computer4") {
         		        wPlayer = make_shared<Level4>(true);
         		}
-
 			if (p2 == "human") {
         		        bPlayer = make_shared<Human>(false);
         		} else if (p2 == "computer1") {
@@ -42,7 +41,7 @@ int main() {
         			bPlayer = make_shared<Level4>(false);
         		}
 			board.setPlayer("white", wPlayer);
-			board.setPlayer("black", wPlayer);
+			board.setPlayer("black", bPlayer);
         		board.init();
 			cout << board;
 		}
@@ -57,8 +56,10 @@ int main() {
       		  //user cannot leave setup mode until conditions are met
       		}
     		}
-  		catch (invalid_argument) {
-  		      cout << "Why is this try catch block here again?" << endl;
-  		}
+		catch(...) {
+			//if user does something invalid
+		}
 	}
+  	catch (ios::failure &) {
+  	}
 }
