@@ -145,13 +145,15 @@ void Board::setPlayer(string colour, string type) {
 void Board::movePiece(int curR, int curC, int newR, int newC) {
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8) {
 		shared_ptr<Piece> curPiece = squares[curR][curC].getPiece();
+		shared_ptr<Piece> newPiece;
 		if (curPiece != nullptr) {
 			bool pieceOnSq = false;
 			bool blocked = false;
 			bool curWhite = curPiece->getIsWhite();
 			if ((whitesTurn && curWhite) || (!whitesTurn && !curWhite)) {
-				if (squares[newR][newC].getPiece() != nullptr) {
-					if (squares[newR][newC].getPiece()->getIsWhite() != curWhite) {	
+				newPiece = squares[newR][newC].getPiece();
+				if (newPiece != nullptr) {
+					if (newPiece->getIsWhite() != curWhite) {	
 						pieceOnSq = true;
 					} else {
 						blocked = true;
@@ -187,13 +189,19 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 				}
 				try {
 					curPiece->move(newR, newC, pieceOnSq, blocked);
-					squares[newR][newC].setPiece(curPiece);
-					squares[curR][curC].setPiece(nullptr);
-					cout << *this;
-					if (whitesTurn) {
-						whitesTurn = false;
+					if (curPiece->getCastle() == 1) {
+						newPiece = squares[curR][curC + 3].getPiece();
+						if (newPiece->getMovesMade() == 0) {
+							curPiece->updatePiece(newR, newC);
+							newPiece->updatePiece(newR, newC - 1);
+							squares[newR][newC - 1].setPiece(newPiece);
+							squares[curR][curC + 3].setPiece(nullptr);
+							updateTurn(curR, curC, newR, newC, curPiece);
+						}
+					} else if (curPiece->getCastle() == 2) {
+						
 					} else {
-						whitesTurn = true;
+						updateTurn(curR, curC, newR, newC, curPiece);
 					}
 				} catch (string msg) {
 					cout << msg << endl;
@@ -219,4 +227,15 @@ void Board::incBlackScore() {
 
 bool Board::isWhitesTurn() {
 	return whitesTurn;
+}
+
+void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {
+	squares[newR][newC].setPiece(piece);
+	squares[curR][curC].setPiece(nullptr);
+	cout << *this;
+	if (whitesTurn) {
+		whitesTurn = false;
+	} else {
+		whitesTurn = true;
+	}
 }

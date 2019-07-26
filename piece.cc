@@ -1,8 +1,8 @@
 #include "piece.h"
 using namespace std;
 
-Piece::Piece(int row, int col, bool isWhite, string id, int movesMade): 
-	row{row}, col{col}, isWhite{isWhite}, id{id}, movesMade{movesMade} {}
+Piece::Piece(int row, int col, bool isWhite, string id, int movesMade, int castle): 
+	row{row}, col{col}, isWhite{isWhite}, id{id}, movesMade{movesMade}, castle{castle} {}
 
 pair<int,int> Piece::getCoor() {
 	return make_pair(row, col); 
@@ -26,8 +26,16 @@ int Piece::getMovesMade() {
 	return movesMade;
 }
 
-Pawn::Pawn(int row, int col, bool isWhite, string id, int movesMade, bool specialAdvance): 
-	Piece{row, col, isWhite, id, movesMade}, specialAdvance {specialAdvance} {}
+int Piece::getCastle() {
+	return castle;
+}
+
+void Piece::changeCastle(int c) {
+	castle = c;
+}
+
+Pawn::Pawn(int row, int col, bool isWhite, string id, int movesMade, int castle, bool specialAdvance): 
+	Piece{row, col, isWhite, id, movesMade, castle}, specialAdvance{specialAdvance} {}
 
 void Pawn::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
@@ -54,8 +62,8 @@ void Pawn::move(int r, int c, bool pieceOnSq, bool blocked) {
 	}
 }
 
-Knight::Knight(int row, int col, bool isWhite, string id, int movesMade):
-        Piece{row, col, isWhite, id, movesMade} {}
+Knight::Knight(int row, int col, bool isWhite, string id, int movesMade, int castle):
+        Piece{row, col, isWhite, id, movesMade, castle} {}
 
 void Knight::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
@@ -69,8 +77,8 @@ void Knight::move(int r, int c, bool pieceOnSq, bool blocked) {
 	}
 }
 
-Bishop::Bishop(int row, int col, bool isWhite, string id, int movesMade):
-        Piece{row, col, isWhite, id, movesMade} {}
+Bishop::Bishop(int row, int col, bool isWhite, string id, int movesMade, int castle):
+        Piece{row, col, isWhite, id, movesMade, castle} {}
 
 void Bishop::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
@@ -88,8 +96,8 @@ void Bishop::move(int r, int c, bool pieceOnSq, bool blocked) {
 	}
 }
 
-Rook::Rook(int row, int col, bool isWhite, string id, int movesMade):
-        Piece{row, col, isWhite, id, movesMade} {}
+Rook::Rook(int row, int col, bool isWhite, string id, int movesMade, int castle):
+        Piece{row, col, isWhite, id, movesMade, castle} {}
 
 void Rook::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
@@ -107,8 +115,8 @@ void Rook::move(int r, int c, bool pieceOnSq, bool blocked) {
 	}
 }
 
-Queen::Queen(int row, int col, bool isWhite, string id, int movesMade):
-        Piece{row, col, isWhite, id, movesMade} {}
+Queen::Queen(int row, int col, bool isWhite, string id, int movesMade, int castle):
+        Piece{row, col, isWhite, id, movesMade, castle} {}
 
 void Queen::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
@@ -128,8 +136,8 @@ void Queen::move(int r, int c, bool pieceOnSq, bool blocked) {
 	}
 }
 
-King::King(int row, int col, bool isWhite, string id, int movesMade):
-        Piece{row, col, isWhite, id, movesMade} {}
+King::King(int row, int col, bool isWhite, string id, int movesMade, int castle):
+        Piece{row, col, isWhite, id, movesMade, castle} {}
 
 void King::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
@@ -140,6 +148,20 @@ void King::move(int r, int c, bool pieceOnSq, bool blocked) {
 	}
 	if ((currCoor.first - r) * (currCoor.first - r) + (currCoor.second - c) * (currCoor.second - c) <= 2) {
 		updatePiece(r, c);
+	} else if ((r == 0 || r == 7) && c == 6) {
+		if (getMovesMade() == 0) {
+			changeCastle(1);
+		} else {
+			msg = "King cannot castle.";
+			throw msg;
+		}
+	} else if ((r == 0 || r == 7) && c == 2) {
+		if (getMovesMade() == 0) {
+			changeCastle(2);
+		} else {
+			msg = "King cannot castle.";
+			throw msg;
+		}
 	} else {
 		msg = "Invalid king movement.";
 		throw msg;

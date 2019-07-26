@@ -21,7 +21,6 @@ class Board {
 	bool whitesTurn;
 	int whiteScore;
 	int blackScore;
-
 	public:
 		//~Board();
 		void setPlayer(string colour, string type);
@@ -32,6 +31,7 @@ class Board {
 		void incWhiteScore();
 		void incBlackScore();
 		bool isWhitesTurn();
+		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece);
 		friend ostream & operator<<(ostream &out, const Board &b); 
 };
 
