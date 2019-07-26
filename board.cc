@@ -93,7 +93,6 @@ Board::Board() {
 }
 
 void Board::init() {
-	cout << "in init" << endl;
 	whitesTurn = defWhitesTurn;
 	squares = defSquares;
 
@@ -275,7 +274,7 @@ void Board::setup() {
 	printDefault();
 	bool done = false;
 	string cmd;
-	while (!done) {
+		while (!done) {
 		try{
 			cin >> cmd;
 			
@@ -347,18 +346,42 @@ void Board::setup() {
 					char piece = id.at(0);
 
 					switch(piece) {
-						case 'K': whiteCounts[0]--;
-						case 'Q': whiteCounts[1]--;
-						case 'B': whiteCounts[2]--;
-						case 'R': whiteCounts[3]--;
-						case 'N': whiteCounts[4]--;
-						case 'P': whiteCounts[5]--;
-						case 'k': blackCounts[0]--;
-						case 'q': blackCounts[1]--;
-						case 'b': blackCounts[2]--;
-						case 'r': blackCounts[3]--;
-						case 'n': blackCounts[4]--;
-						case 'p': blackCounts[5]--;
+						case 'K': 
+							whiteCounts[0]--;
+							break;	
+						case 'Q': 
+							whiteCounts[1]--;
+							break;
+						case 'B': 
+							whiteCounts[2]--;
+							break;
+						case 'R': 
+							whiteCounts[3]--;
+							break;
+						case 'N': 
+							whiteCounts[4]--;
+							break;
+						case 'P': 
+							whiteCounts[5]--;
+							break;
+						case 'k': 
+							blackCounts[0]--;
+							break;
+						case 'q': 
+							blackCounts[1]--;
+							break;
+						case 'b': 
+							blackCounts[2]--;
+							break;
+						case 'r': 
+							blackCounts[3]--;
+							break;
+						case 'n': 
+							blackCounts[4]--;
+							break;
+						case 'p': 
+							blackCounts[5]--;
+							break;
 						default: break;
 					}
 
