@@ -1,6 +1,7 @@
 #ifndef SUBJ_H
 #define SUBJ_H
 
+#include <memory>
 #include <vector>
 #include "state.h"
 

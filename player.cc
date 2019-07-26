@@ -10,6 +10,15 @@ bool Player::isInCheck() const {
 	return false;
 }
 
+void Player::addPiece(shared_ptr<Piece> p) {
+	// is the string in pieces the id of piece?
+	pieces.emplace(p->getId(), p);
+}
+
+void Player::removePiece(string id) {
+	pieces.erase(id);
+}
+
 
 Human::Human(bool isWhite): Player{isWhite} {}
 

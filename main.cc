@@ -34,18 +34,7 @@ int main() {
       		  //move
       		}
       		else if (cmd == "setup" && !matchOngoing) {
-			bool done = false;
-			while (!done){
-				cin >> cmd;
-				if (cmd == "+") {
-				} else if (cmd == "-") {
-
-				} else if (cmd == "=") {
-
-				} else if (cmd == "done") {
-						
-				}
-			}
+			board.setup();
       		  //user cannot leave setup mode until conditions are met
       		}
     		}
