@@ -18,7 +18,6 @@ int main() {
 			} else if (matchOngoing && !board.isWhitesTurn()) {
 				cout << "Black to move." << endl;
 			}
-			cout << "made it!!" << endl;
 			cin >> cmd;
 			if (cmd == "game" && !matchOngoing) {
 				string p1, p2;
