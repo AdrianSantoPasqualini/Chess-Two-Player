@@ -134,7 +134,7 @@ King::King(int row, int col, bool isWhite, string id, int movesMade):
 void King::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
 	string msg;
-        if (blocked) {
+	if (blocked) {
 		msg = "King is blocked or will be under check.";
 		throw msg;
 	}
