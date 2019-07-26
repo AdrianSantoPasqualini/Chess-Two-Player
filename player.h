@@ -16,31 +16,31 @@ class Player {
 		bool isInCheck() const;
 };
 
-class Human: public Player {
+class Human final: public Player {
 	public:
 		Human(bool isWhite);
 		void makeMove() override;
 };
 
-class Level1: public Player {
+class Level1 final: public Player {
         public:
 		Level1(bool isWhite);
                 void makeMove() override;
 };
 
-class Level2: public Player {
+class Level2 final: public Player {
         public:
 		Level2(bool isWhite);
                 void makeMove() override;
 };
 
-class Level3: public Player {
+class Level3 final: public Player {
         public:
 		Level3(bool isWhite);
                 void makeMove() override;
 };
 
-class Level4: public Player {
+class Level4 final: public Player {
         public:
 		Level4(bool isWhite);
                 void makeMove() override;

@@ -2,12 +2,25 @@
 #include "square.h"
 #include "piece.h"
 #include "player.h"
+#include "info.h"
+#include "state.h"
 using namespace std;
 
 ostream & operator<<(ostream &out, const Board &b) {
 	for (int i = 0; i < 8; ++i) {
 		out << 8 - i << " ";
 		for (int j = 0; j < 8; ++j) {
+			
+			/*
+			Info info = b.squares[i][j].getInfo();
+			
+			if (info.wAttacked || info.bAttacked) {
+				cout << "A";
+			} else {
+				cout << " ";
+			}
+			*/
+			
 			shared_ptr<Piece> piece = (b.squares[i][j]).getPiece();
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {
@@ -36,7 +49,21 @@ void Board::init() {
 			Square s = Square(r, c, nullptr);
 			squares[c].emplace_back(s);
 		}
+	}	
+	for (size_t i = 0; i < 8; i++) {
+		for (size_t j = 0; j < 8; j++) {
+			for (int k = -1; k <= 1; k++) {
+				for (int m = -1; m <= 1; m++) {
+					if ((!((i+k < 0)||(j+m < 0))) && (!((i+k > 7)||(j+m > 7)))) {
+						if (!((k == 0) && ( m == 0))) {
+							squares[i][j].attach(&squares[i+k][j+m]);
+						}
+					}
+				}
+			}
+		}
 	}
+	
 	shared_ptr<Piece> rook1b = make_shared<Rook>(0, 0, false, "r1", 0);
 	squares[0][0].setPiece(rook1b);
 	shared_ptr<Piece> knight1b = make_shared<Knight>(0, 1, false, "n1", 0);
@@ -54,7 +81,7 @@ void Board::init() {
 	shared_ptr<Piece> rook2b = make_shared<Rook>(0, 7, false, "r2", 0);
         squares[0][7].setPiece(rook2b);
 	for (int i = 0; i < 8; i ++) {
-		shared_ptr<Piece> pawnb = make_shared<Rook>(1, i, false, "p" + to_string(i), 0);
+		shared_ptr<Piece> pawnb = make_shared<Pawn>(1, i, false, "p" + to_string(i), 0);
         	squares[1][i].setPiece(pawnb);
 	}
 	shared_ptr<Piece> rook1w = make_shared<Rook>(7, 0, true, "R1", 0);
@@ -74,9 +101,18 @@ void Board::init() {
         shared_ptr<Piece> rook2w = make_shared<Rook>(7, 7, true, "R2", 0);
         squares[7][7].setPiece(rook2w);
         for (int i = 0; i < 8; i ++) {
-                shared_ptr<Piece> pawnw = make_shared<Rook>(6, i, true, "P" + to_string(i), 0);
+                shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i), 0);
                 squares[6][i].setPiece(pawnw);
         }
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (squares[i][j].getPiece() != nullptr) {
+				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getPiece()};
+				squares[i][j].setState(nState);
+				squares[i][j].notifyObservers();
+			}
+		}
+	}
 }
 
 void Board::setPlayer(string colour, string type) {
