@@ -3,7 +3,7 @@
 
 class Piece;
 
-enum class StateType {Relay, Reply};
+enum class StateType {PieceAdded, PieceRemoved, Relay, Reply};
 enum class Direction { NW, N, NE, W, E, SW, S, SE };
 
 struct State {
