@@ -29,7 +29,6 @@ class Board {
 	int whiteScore;
 	int blackScore;
 	// private methods
-	int colToInt(char c);
 	bool isValid(); // used in setup to check if specifications are met
 	void printDefault();
 	public:

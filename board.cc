@@ -247,28 +247,6 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	}
 }
 
-int Board::colToInt(char c) {
-	if (c == 'a') {
-		return 0;
-	} else if (c == 'b') {
-		return 1;
-	} else if (c == 'c') {
-		return 2;
-	} else if (c == 'd') {
-		return 3;
-	} else if (c == 'e') {
-		return 4;
-	} else if (c == 'f') {
-		return 5;
-	} else if (c == 'g') {
-		return 6;
-	} else if (c == 'h') {
-		return 7;
-	} else {
-		return -1;
-	}
-}
-
 void Board::printDefault() {
 	for (int i = 0; i < 8; ++i) {
 		cout << 8 - i << " ";
@@ -293,80 +271,78 @@ void Board::setup() {
 	printDefault();
 	bool done = false;
 		while (!done) {
-		try{
+		try {
 			string cmd;
 			cin >> cmd;
-			
 			if (cmd == "+") {
 				char piece;
 				char col;
 				int row;
 				shared_ptr<Piece> p;
 				cin >> piece >> col >> row;
-				if (colToInt(col) == -1) {
+				if (col < 'a' || col > 'h') {
 					throw InvalidInput();	
 				} else if (row < 1 || row > 8) {
 					throw InvalidInput();
 				}
-				if (piece == 'K' && whiteCounts[0] == 0){
-					p = make_shared<King>(8-row, colToInt(col), true, "K", 0);
+				if (piece == 'K' && whiteCounts[0] == 0) {
+					p = make_shared<King>(8 - row, col - 'a', true, "K", 0);
 					whiteCounts[0]++;
-				} else if (piece == 'Q' && whiteCounts[1] == 0){
-					p = make_shared<Queen>(8-row, colToInt(col), true, "Q", 0);
+				} else if (piece == 'Q' && whiteCounts[1] == 0) {
+					p = make_shared<Queen>(8 - row, col - 'a', true, "Q", 0);
 					whiteCounts[1]++;
-				} else if (piece == 'B' && whiteCounts[2] < 2){
-					p = make_shared<Bishop>(8-row, colToInt(col), true, "B" + to_string(whiteCounts[2]), 0);
+				} else if (piece == 'B' && whiteCounts[2] < 2) {
+					p = make_shared<Bishop>(8 - row, col - 'a', true, "B" + to_string(whiteCounts[2]), 0);
 					whiteCounts[2]++;
-				} else if (piece == 'R' && whiteCounts[3] < 2){
-					p = make_shared<Rook>(8-row, colToInt(col), true, "R" + to_string(whiteCounts[3]), 0);
+				} else if (piece == 'R' && whiteCounts[3] < 2) {
+					p = make_shared<Rook>(8 - row, col - 'a', true, "R" + to_string(whiteCounts[3]), 0);
 					whiteCounts[3]++;
-				} else if (piece == 'N' && whiteCounts[4] < 2){
-					p = make_shared<Knight>(8-row, colToInt(col), true, "N" + to_string(whiteCounts[4]), 0);
+				} else if (piece == 'N' && whiteCounts[4] < 2) {
+					p = make_shared<Knight>(8 - row, col - 'a', true, "N" + to_string(whiteCounts[4]), 0);
 					whiteCounts[4]++;
-				} else if (piece == 'P' && whiteCounts[5] < 8){
+				} else if (piece == 'P' && whiteCounts[5] < 8) {
 					if (row == 1 || row == 8) {
 						throw InvalidPawn();
 					}
-					p = make_shared<Pawn>(8-row, colToInt(col), true, "P" + to_string(whiteCounts[5]), 0);
+					p = make_shared<Pawn>(8 - row, col - 'a', true, "P" + to_string(whiteCounts[5]), 0);
 					whiteCounts[5]++;
-				} else if (piece == 'k' && blackCounts[0] == 0){
-					p = make_shared<King>(8-row, colToInt(col), false, "k", 0);
+				} else if (piece == 'k' && blackCounts[0] == 0) {
+					p = make_shared<King>(8 - row, col - 'a', false, "k", 0);
 					blackCounts[0]++;
-				} else if (piece == 'q' && blackCounts[1] == 0){
-					p = make_shared<Queen>(8-row, colToInt(col), false, "q", 0);
+				} else if (piece == 'q' && blackCounts[1] == 0) {
+					p = make_shared<Queen>(8 - row, col - 'a', false, "q", 0);
 					blackCounts[1]++;
-				} else if (piece == 'b' && blackCounts[2] < 2){
-					p = make_shared<Bishop>(8-row, colToInt(col), false, "b" + to_string(blackCounts[2]), 0);
+				} else if (piece == 'b' && blackCounts[2] < 2) {
+					p = make_shared<Bishop>(8 - row, col - 'a', false, "b" + to_string(blackCounts[2]), 0);
 					blackCounts[2]++;
-				} else if (piece == 'r' && blackCounts[3] < 2){
-					p = make_shared<Rook>(8-row, colToInt(col), false, "r" + to_string(blackCounts[3]), 0);
+				} else if (piece == 'r' && blackCounts[3] < 2) {
+					p = make_shared<Rook>(8 - row, col - 'a', false, "r" + to_string(blackCounts[3]), 0);
 					blackCounts[3]++;
-				} else if (piece == 'n' && blackCounts[4] < 2){
-					p = make_shared<Knight>(8-row, colToInt(col), false, "n" + to_string(blackCounts[4]), 0);
+				} else if (piece == 'n' && blackCounts[4] < 2) {
+					p = make_shared<Knight>(8 - row, col - 'a', false, "n" + to_string(blackCounts[4]), 0);
 					blackCounts[4]++;
-				} else if (piece == 'p' && blackCounts[5] < 8){
+				} else if (piece == 'p' && blackCounts[5] < 8) {
 					if (row == 1 || row == 8) {
 						throw InvalidPawn();
 					}
-					p = make_shared<Pawn>(8-row, colToInt(col), false, "p" + to_string(blackCounts[5]), 0);
+					p = make_shared<Pawn>(8 - row, col - 'a', false, "p" + to_string(blackCounts[5]), 0);
 					blackCounts[5]++;
 				} else { // either input error or pieces of that type are already on the board
 					throw InvalidInput();
 				}
-				defSquares[8-row][colToInt(col)].setPiece(p);
+				defSquares[8 - row][col - 'a'].setPiece(p);
 				printDefault();
-
 			} else if (cmd == "-") {
 				// have to delete unused pieces?
 				char col;
 				int row;	
 				cin >> col >> row;
-				if (colToInt(col) == -1) {
+				if (col - 'a' == -1) {
 					throw InvalidInput();	
 				} else if (row < 1 || row > 8) {
 					throw InvalidInput();
 				}
-				shared_ptr<Piece> p = defSquares[8-row][colToInt(col)].getPiece();
+				shared_ptr<Piece> p = defSquares[8 - row][col - 'a'].getPiece();
 				if (p) {
 					string id = p->getId();
 					char piece = id.at(0);
@@ -410,9 +386,8 @@ void Board::setup() {
 							break;
 						default: break;
 					}
-					defSquares[8-row][colToInt(col)].setPiece(nullptr);
+					defSquares[8 - row][col - 'a'].setPiece(nullptr);
 					printDefault();
-
 				}
 			} else if (cmd == "=") {
 				string player;
@@ -434,9 +409,9 @@ void Board::setup() {
 			} else {
 				cout << "Please enter a valid command." << endl;
 			}	
-		} catch(InvalidInput &e){
+		} catch (InvalidInput &e) {
 			cout << "Invalid." << endl;
-		} catch(InvalidPawn &e){
+		} catch (InvalidPawn &e) {
 			cout << "You cannot place a pawn on the first or last row." << endl;	
 		} catch (...) { 
 			cin.clear();
