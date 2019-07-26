@@ -6,26 +6,29 @@
 #include "state.h"
 
 class Observer;
+struct Info;
 
 class Subject {
-	vector<shared_ptr<Observer>> observers;
+	vector<Observer *> observers;
 	State state;
-	
-	protected:
+		
+	public:
 		void setState(State nState) {
 			state = nState;
 		}
-	public:
+
 		void notifyObservers() {
 			for (auto &ob : observers) ob->notify(*this);
 		}
 
-		void attach(shared_ptr<Observer> o) {
+		void attach(Observer * o) {
 			observers.emplace_back(o);
 		}
 
 		State getState() {
 			return state;
 		}
+
+		virtual Info getInfo() const = 0;
 };
 #endif

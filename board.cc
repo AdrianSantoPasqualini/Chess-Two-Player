@@ -2,12 +2,25 @@
 #include "square.h"
 #include "piece.h"
 #include "player.h"
+#include "info.h"
+#include "state.h"
 using namespace std;
 
 ostream & operator<<(ostream &out, const Board &b) {
 	for (int i = 0; i < 8; ++i) {
 		out << 8 - i << " ";
 		for (int j = 0; j < 8; ++j) {
+			
+			/*
+			Info info = b.squares[i][j].getInfo();
+			
+			if (info.wAttacked || info.bAttacked) {
+				cout << "A";
+			} else {
+				cout << " ";
+			}
+			*/
+			
 			shared_ptr<Piece> piece = (b.squares[i][j]).getPiece();
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {
@@ -22,8 +35,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 		out << endl;
 	}
 	out << endl <<  "  abcdefgh" << endl;
-	return out;
-	
+	return out;	
 }
 
 Board::Board() {
@@ -37,7 +49,21 @@ Board::Board() {
 			Square s = Square(r, c, nullptr);
 			defSquares[r].emplace_back(s);
 		}
+	}	
+	for (size_t i = 0; i < 8; i++) {
+		for (size_t j = 0; j < 8; j++) {
+			for (int k = -1; k <= 1; k++) {
+				for (int m = -1; m <= 1; m++) {
+					if ((!((i+k < 0)||(j+m < 0))) && (!((i+k > 7)||(j+m > 7)))) {
+						if (!((k == 0) && ( m == 0))) {
+							squares[i][j].attach(&squares[i+k][j+m]);
+						}
+					}
+				}
+			}
+		}
 	}
+	
 	shared_ptr<Piece> rook1b = make_shared<Rook>(0, 0, false, "r1", 0);
 	defSquares[0][0].setPiece(rook1b);
 	shared_ptr<Piece> knight1b = make_shared<Knight>(0, 1, false, "n1", 0);
@@ -55,8 +81,13 @@ Board::Board() {
 	shared_ptr<Piece> rook2b = make_shared<Rook>(0, 7, false, "r2", 0);
         defSquares[0][7].setPiece(rook2b);
 	for (int i = 0; i < 8; i ++) {
+<<<<<<< HEAD
 		shared_ptr<Piece> pawnb = make_shared<Rook>(1, i, false, "p" + to_string(i+1), 0);
         	defSquares[1][i].setPiece(pawnb);
+=======
+		shared_ptr<Piece> pawnb = make_shared<Pawn>(1, i, false, "p" + to_string(i), 0);
+        	squares[1][i].setPiece(pawnb);
+>>>>>>> c846ab856778ddc5166a38c1771982ae37b15545
 	}
 	shared_ptr<Piece> rook1w = make_shared<Rook>(7, 0, true, "R1", 0);
         defSquares[7][0].setPiece(rook1w);
@@ -73,6 +104,7 @@ Board::Board() {
         shared_ptr<Piece> knight2w = make_shared<Knight>(7, 6, true, "N2", 0);
         defSquares[7][6].setPiece(knight2w);
         shared_ptr<Piece> rook2w = make_shared<Rook>(7, 7, true, "R2", 0);
+<<<<<<< HEAD
         defSquares[7][7].setPiece(rook2w);
         for (int i = 0; i < 8; i++) {
                 shared_ptr<Piece> pawnw = make_shared<Rook>(6, i, true, "P" + to_string(i+1), 0);
@@ -86,6 +118,22 @@ void Board::init() {
 	whitesTurn = defWhitesTurn;
 	//squares.clear();
 	squares = defSquares;
+=======
+        squares[7][7].setPiece(rook2w);
+        for (int i = 0; i < 8; i ++) {
+                shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i), 0);
+                squares[6][i].setPiece(pawnw);
+        }
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (squares[i][j].getPiece() != nullptr) {
+				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getPiece()};
+				squares[i][j].setState(nState);
+				squares[i][j].notifyObservers();
+			}
+		}
+	}
+>>>>>>> c846ab856778ddc5166a38c1771982ae37b15545
 }
 
 void Board::setPlayer(string colour, string type) {
@@ -116,6 +164,72 @@ void Board::setPlayer(string colour, string type) {
 	}
 }
 
+<<<<<<< HEAD
+=======
+// PIECES CAN'T CAPTURE PIECES OF SAME COLOUR
+void Board::movePiece(int curR, int curC, int newR, int newC) {
+	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 &&
+	    newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && 
+	    squares[curR][curC].getPiece() != nullptr) {
+		bool pieceOnSq = false;
+		bool blocked = false;
+		shared_ptr<Piece> piece = squares[curR][curC].getPiece();
+		if ((whitesTurn && piece->getIsWhite()) || (!whitesTurn && !piece->getIsWhite())) {
+			if (squares[newR][newC].getPiece() != nullptr) {
+				pieceOnSq = true;
+			}
+			int inc1 = 0;
+			int inc2 = 0;
+			if (curR == newR) {
+				inc1 = (newC - curC) / (abs(newC - curC));
+				for (int j = curC + inc1; j != newC; j += inc1) {
+					if (squares[curR][j].getPiece() != nullptr) {
+						blocked = true;
+						break;
+					}
+				}
+			} else if (curC == newC) {
+				inc1 = (newR - curR) / (abs(newR - curR));
+				for (int i = curR + inc1; i != newR; i += inc1) {
+					 if (squares[i][curC].getPiece() != nullptr) {
+						blocked = true;
+						break;
+					}
+				}
+			} else if ((abs(curR - newR) == abs(curC - newC)) && (abs(curR - newR) > 0)) {
+				inc1 = (newR - curR) / (abs(newR - curR));
+				inc2 = (newC - curC) / (abs(newC - curC));
+				for (int i = curR + inc1, j = curC + inc2; i != newR && j != newC; i += inc1, j += inc2) {
+					if (squares[i][j].getPiece() != nullptr) {
+						blocked = true;
+						break;
+					}
+				}
+			}
+			try {
+				piece->move(newR, newC, pieceOnSq, blocked);
+				squares[newR][newC].setPiece(piece);
+				squares[curR][curC].setPiece(nullptr);
+				cout << *this;
+				if (whitesTurn) {
+					whitesTurn = false;
+				} else {
+					whitesTurn = true;
+				}
+			} catch (string msg) {
+				cout << msg << endl;
+			}
+		} else {
+			cout << "Wrong colour piece moved." << endl;
+		}
+	} else if (squares[curR][curC].getPiece() == nullptr) {
+		cout << "There is no piece on the square you are trying to move from." << endl;
+	} else {
+		cout << "Invalid coordinates." << endl;
+	}
+}
+
+>>>>>>> c846ab856778ddc5166a38c1771982ae37b15545
 void Board::incWhiteScore() {
 	whiteScore++;
 }
@@ -124,7 +238,7 @@ void Board::incBlackScore() {
 	blackScore++;
 }
 
-bool Board::whiteTurn() {
+bool Board::isWhitesTurn() {
 	return whitesTurn;
 }
 

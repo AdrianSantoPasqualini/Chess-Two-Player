@@ -20,7 +20,10 @@ class Square: public Subject, public Observer  {
 		shared_ptr<Piece> getPiece() const;
 		pair<int,int> getCoords() const;
 		void setPiece(shared_ptr<Piece> piece);
+		void removeAttacker(bool white, string id);
+		void addAttacker(bool white, shared_ptr<Piece> piece);
 		Square(int r, int c, shared_ptr<Piece> currPiece);  
 		void notify(Subject & whoFrom) override;
+		Info getInfo() const override;
 };
 #endif
