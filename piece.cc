@@ -32,8 +32,10 @@ Pawn::Pawn(int row, int col, bool isWhite, string id, int movesMade, bool specia
 void Pawn::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
         int movesMade = getMovesMade();
-	if (blocked) {
-                throw "Pawn is blocked.";
+	string msg = "";
+	if ((pieceOnSq && currCoor.second == c) || blocked) {
+		msg = "Pawn is blocked.";
+                throw msg;
         }
 	int dir = 1;
 	if (!getIsWhite()) {
@@ -47,7 +49,8 @@ void Pawn::move(int r, int c, bool pieceOnSq, bool blocked) {
 	} else if ((currCoor.first - r == dir * 1 && abs(currCoor.second - c) == 1) && pieceOnSq) {
 		updatePiece(r, c);
 	} else {
-		throw "Invalid pawn movement.";
+		msg = "Invalid pawn movement.";
+		throw msg;
 	}
 }
 
@@ -56,11 +59,13 @@ Knight::Knight(int row, int col, bool isWhite, string id, int movesMade):
 
 void Knight::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
+	string msg = "";
 	if ((abs(currCoor.first - r) == 2 && abs(currCoor.second - c) == 1) ||
 	    (abs(currCoor.first - r) == 1 && abs(currCoor.second - c) == 2)) {
 		updatePiece(r, c);
 	} else {
-		throw "Invalid knight movement.";
+		msg = "Invalid knight movement.";
+		throw msg;
 	}
 }
 
@@ -69,14 +74,17 @@ Bishop::Bishop(int row, int col, bool isWhite, string id, int movesMade):
 
 void Bishop::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
+	string msg = "";
         if (blocked) {
-                throw "Bishop is blocked.";
-        }
+		msg = "Bishop is blocked.";
+		throw msg;	
+	}
 	if ((abs(currCoor.first - r) == abs(currCoor.second - c)) &&
 	    (abs(currCoor.first - r) > 0)) {
 		updatePiece(r, c);
 	} else {
-		throw "Invalid bishop movement.";
+		msg = "Invalid bishop movement.";
+		throw msg;
 	}
 }
 
@@ -85,15 +93,18 @@ Rook::Rook(int row, int col, bool isWhite, string id, int movesMade):
 
 void Rook::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
+	string msg = "";
         if (blocked) {
-                throw "Rook is blocked.";
-        }
+		msg = "Rook is blocked.";
+        	throw msg;
+	}
 	if ((abs(currCoor.first - r) == 0 && abs(currCoor.second - c) > 0) ||
             (abs(currCoor.first - r) > 0 && abs(currCoor.second - c) == 0)) {
                 updatePiece(r, c);
         } else {
-                throw "Invalid rook movement.";
-        }
+		msg = "Invalid rook movement.";
+        	throw msg;
+	}
 }
 
 Queen::Queen(int row, int col, bool isWhite, string id, int movesMade):
@@ -101,16 +112,19 @@ Queen::Queen(int row, int col, bool isWhite, string id, int movesMade):
 
 void Queen::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
+	string msg = "";
         if (blocked) {
-                throw "Queen is blocked.";
-        }
+		msg = "Queen is blocked.";
+        	throw msg;
+	}
 	if (((abs(currCoor.first - r) == abs(currCoor.second - c)) &&
              (abs(currCoor.first - r) > 0)) ||
 	    ((abs(currCoor.first - r) == 0 && abs(currCoor.second - c) > 0) ||
              (abs(currCoor.first - r) > 0 && abs(currCoor.second - c) == 0))) {
 		updatePiece(r, c);
 	} else {
-		throw "Invalid queen movement.";
+		msg = "Invalid queen movement.";
+		throw msg;
 	}
 }
 
@@ -119,12 +133,15 @@ King::King(int row, int col, bool isWhite, string id, int movesMade):
 
 void King::move(int r, int c, bool pieceOnSq, bool blocked) {
 	pair<int,int> currCoor = getCoor();
+	string msg;
         if (blocked) {
-		throw "King is blocked or will be under check.";
+		msg = "King is blocked or will be under check.";
+		throw msg;
 	}
 	if ((currCoor.first - r) * (currCoor.first - r) + (currCoor.second - c) * (currCoor.second - c) <= 2) {
 		updatePiece(r, c);
 	} else {
-		throw "Invalid king movement.";
+		msg = "Invalid king movement.";
+		throw msg;
 	}
 }

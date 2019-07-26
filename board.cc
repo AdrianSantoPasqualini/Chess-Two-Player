@@ -22,8 +22,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 		out << endl;
 	}
 	out << endl <<  "  abcdefgh" << endl;
-	return out;
-	
+	return out;	
 }
 
 void Board::init() {
@@ -54,7 +53,7 @@ void Board::init() {
 	shared_ptr<Piece> rook2b = make_shared<Rook>(0, 7, false, "r2", 0);
         squares[0][7].setPiece(rook2b);
 	for (int i = 0; i < 8; i ++) {
-		shared_ptr<Piece> pawnb = make_shared<Rook>(1, i, false, "p" + to_string(i), 0);
+		shared_ptr<Piece> pawnb = make_shared<Pawn>(1, i, false, "p" + to_string(i), 0);
         	squares[1][i].setPiece(pawnb);
 	}
 	shared_ptr<Piece> rook1w = make_shared<Rook>(7, 0, true, "R1", 0);
@@ -74,7 +73,7 @@ void Board::init() {
         shared_ptr<Piece> rook2w = make_shared<Rook>(7, 7, true, "R2", 0);
         squares[7][7].setPiece(rook2w);
         for (int i = 0; i < 8; i ++) {
-                shared_ptr<Piece> pawnw = make_shared<Rook>(6, i, true, "P" + to_string(i), 0);
+                shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i), 0);
                 squares[6][i].setPiece(pawnw);
         }
 }
@@ -114,49 +113,55 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 		bool pieceOnSq = false;
 		bool blocked = false;
 		shared_ptr<Piece> piece = squares[curR][curC].getPiece();
-		if (squares[newR][newC].getPiece() != nullptr) {
-			pieceOnSq = true;
-		}
-		int inc1 = 0;
-		int inc2 = 0;
-		if (curR == newR) {
-			inc1 = (newC - curC) / (abs(newC - curC));
-			for (int j = curC + inc1; j != newC; j += inc1) {
-				if (squares[curR][j].getPiece() != nullptr) {
-					blocked = true;
-					break;
+		if ((whitesTurn && piece->getIsWhite()) || (!whitesTurn && !piece->getIsWhite())) {
+			if (squares[newR][newC].getPiece() != nullptr) {
+				pieceOnSq = true;
+			}
+			int inc1 = 0;
+			int inc2 = 0;
+			if (curR == newR) {
+				inc1 = (newC - curC) / (abs(newC - curC));
+				for (int j = curC + inc1; j != newC; j += inc1) {
+					if (squares[curR][j].getPiece() != nullptr) {
+						blocked = true;
+						break;
+					}
+				}
+			} else if (curC == newC) {
+				inc1 = (newR - curR) / (abs(newR - curR));
+				for (int i = curR + inc1; i != newR; i += inc1) {
+					 if (squares[i][curC].getPiece() != nullptr) {
+						blocked = true;
+						break;
+					}
+				}
+			} else if ((abs(curR - newR) == abs(curC - newC)) && (abs(curR - newR) > 0)) {
+				inc1 = (newR - curR) / (abs(newR - curR));
+				inc2 = (newC - curC) / (abs(newC - curC));
+				for (int i = curR + inc1, j = curC + inc2; i != newR && j != newC; i += inc1, j += inc2) {
+					if (squares[i][j].getPiece() != nullptr) {
+						blocked = true;
+						break;
+					}
 				}
 			}
-		} else if (curC == newC) {
-			inc1 = (newR - curR) / (abs(newR - curR));
-                        for (int i = curR + inc1; i != newR; i += inc1) {
-                                 if (squares[i][curC].getPiece() != nullptr) {
-                                        blocked = true;
-                                        break;
-                                }
-                        }
-		} else if ((abs(curR - newR) == abs(curC - newC)) && (abs(curR - newR) > 0)) {
-			inc1 = (newR - curR) / (abs(newR - curR));
-			inc2 = (newC - curC) / (abs(newC - curC));
-			for (int i = curR + inc1, j = curC + inc2; i != newR && j != newC; i += inc1, j += inc2) {
-				if (squares[i][j].getPiece() != nullptr) {
-					blocked = true;
-					break;
+			try {
+				piece->move(newR, newC, pieceOnSq, blocked);
+				squares[newR][newC].setPiece(piece);
+				squares[curR][curC].setPiece(nullptr);
+				cout << *this;
+				if (whitesTurn) {
+					whitesTurn = false;
+				} else {
+					whitesTurn = true;
 				}
+			} catch (string msg) {
+				cout << msg << endl;
 			}
+		} else {
+			cout << "Wrong colour piece moved." << endl;
 		}
-		try {
-			piece->move(newR, newC, pieceOnSq, blocked);
-			squares[newR][newC].setPiece(piece);
-			if (whitesTurn) {
-				whitesTurn = false;
-			} else {
-				whitesTurn = true;
-			}
-		} catch (string msg) {
-			cout << msg << endl;
-		}
-	} else if (squares[curR][curC].getPiece() != nullptr) {
+	} else if (squares[curR][curC].getPiece() == nullptr) {
 		cout << "There is no piece on the square you are trying to move from." << endl;
 	} else {
 		cout << "Invalid coordinates." << endl;
@@ -171,6 +176,6 @@ void Board::incBlackScore() {
 	blackScore++;
 }
 
-bool Board::whiteTurn() {
+bool Board::isWhitesTurn() {
 	return whitesTurn;
 }
