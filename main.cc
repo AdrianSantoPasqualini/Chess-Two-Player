@@ -50,6 +50,9 @@ int main() {
 			}
     		}
 	} catch (ios::failure &) {
+		cout << "Final Score:" << endl;
+		cout << "White: " << board.getWhiteScore() << endl;
+		cout << "Black: " << board.getBlackScore() << endl;
 	}
 }
 

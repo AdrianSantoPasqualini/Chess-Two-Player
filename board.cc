@@ -42,6 +42,8 @@ ostream & operator<<(ostream &out, const Board &b) {
 }
 
 Board::Board() {
+	whiteScore = 0;
+	blackScore = 0;
 	defWhitesTurn = true;
 	whiteCounts = {1, 1, 2, 2, 2, 8};
 	blackCounts = {1, 1, 2, 2, 2, 8};
@@ -96,6 +98,14 @@ Board::Board() {
 }
 
 Board::Board(vector<vector<Square>> squares): squares{squares}{}
+
+int Board::getWhiteScore() {
+	return whiteScore;
+}
+
+int Board::getBlackScore() {
+	return blackScore;
+}
 
 void Board::init() {
 	whitesTurn = defWhitesTurn;

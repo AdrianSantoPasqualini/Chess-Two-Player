@@ -37,6 +37,8 @@ class Board {
 		int whoWon();
 		void incWhiteScore();
 		void incBlackScore();
+		int getWhiteScore();
+		int getBlackScore();
 		bool isWhitesTurn();
 		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece);
 		friend ostream & operator<<(ostream &out, const Board &b); 
