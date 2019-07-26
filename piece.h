@@ -5,6 +5,7 @@
 #include <string>
 #include <utility> //for pair
 #include <stdlib.h> //for abs 
+#include <memory>
 using namespace std;
 
 class Piece {

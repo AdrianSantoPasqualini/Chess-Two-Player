@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <utility> //To get pair
+#include <memory>
 #include "piece.h"
 #include "observer.h"
 #include "subject.h"

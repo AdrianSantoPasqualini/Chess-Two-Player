@@ -2,6 +2,7 @@
 #define PLAYER_H
 #include <map>
 #include <string>
+#include <memory>
 using namespace std;
 
 class Piece;
@@ -14,6 +15,8 @@ class Player {
 		Player(bool isWhite); 
 		virtual void makeMove() = 0;
 		bool isInCheck() const;
+		void addPiece(shared_ptr<Piece>);
+		void removePiece(string id);
 };
 
 class Human final: public Player {

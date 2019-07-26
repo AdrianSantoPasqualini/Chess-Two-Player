@@ -1,6 +1,8 @@
 #ifndef STATE_H
 #define STATE_H
 
+#include <memory>
+
 class Piece;
 
 enum class StateType {PieceAdded, PieceRemoved, Relay, Reply};
