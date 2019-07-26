@@ -37,7 +37,7 @@ void Piece::changeCastle(int c) {
 Pawn::Pawn(int row, int col, bool isWhite, string id, int movesMade, int castle, bool specialAdvance): 
 	Piece{row, col, isWhite, id, movesMade, castle}, specialAdvance{specialAdvance} {}
 
-void Pawn::move(int r, int c, bool pieceOnSq, bool blocked) {
+void Pawn::move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
 	pair<int,int> currCoor = getCoor();
         int movesMade = getMovesMade();
 	string msg = "";
@@ -65,7 +65,7 @@ void Pawn::move(int r, int c, bool pieceOnSq, bool blocked) {
 Knight::Knight(int row, int col, bool isWhite, string id, int movesMade, int castle):
         Piece{row, col, isWhite, id, movesMade, castle} {}
 
-void Knight::move(int r, int c, bool pieceOnSq, bool blocked) {
+void Knight::move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
 	pair<int,int> currCoor = getCoor();
 	string msg = "";
 	if ((abs(currCoor.first - r) == 2 && abs(currCoor.second - c) == 1) ||
@@ -80,7 +80,7 @@ void Knight::move(int r, int c, bool pieceOnSq, bool blocked) {
 Bishop::Bishop(int row, int col, bool isWhite, string id, int movesMade, int castle):
         Piece{row, col, isWhite, id, movesMade, castle} {}
 
-void Bishop::move(int r, int c, bool pieceOnSq, bool blocked) {
+void Bishop::move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
 	pair<int,int> currCoor = getCoor();
 	string msg = "";
         if (blocked) {
@@ -99,7 +99,7 @@ void Bishop::move(int r, int c, bool pieceOnSq, bool blocked) {
 Rook::Rook(int row, int col, bool isWhite, string id, int movesMade, int castle):
         Piece{row, col, isWhite, id, movesMade, castle} {}
 
-void Rook::move(int r, int c, bool pieceOnSq, bool blocked) {
+void Rook::move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
 	pair<int,int> currCoor = getCoor();
 	string msg = "";
         if (blocked) {
@@ -118,7 +118,7 @@ void Rook::move(int r, int c, bool pieceOnSq, bool blocked) {
 Queen::Queen(int row, int col, bool isWhite, string id, int movesMade, int castle):
         Piece{row, col, isWhite, id, movesMade, castle} {}
 
-void Queen::move(int r, int c, bool pieceOnSq, bool blocked) {
+void Queen::move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
 	pair<int,int> currCoor = getCoor();
 	string msg = "";
         if (blocked) {
@@ -139,9 +139,13 @@ void Queen::move(int r, int c, bool pieceOnSq, bool blocked) {
 King::King(int row, int col, bool isWhite, string id, int movesMade, int castle):
         Piece{row, col, isWhite, id, movesMade, castle} {}
 
-void King::move(int r, int c, bool pieceOnSq, bool blocked) {
+void King::move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
 	pair<int,int> currCoor = getCoor();
 	string msg;
+	if (moveIntoAttack) {
+		msg = "King cannot move onto a square that is under attack.";
+		throw msg;
+	}
 	if (blocked) {
 		msg = "King is blocked or will be under check.";
 		throw msg;
@@ -152,14 +156,14 @@ void King::move(int r, int c, bool pieceOnSq, bool blocked) {
 		if (getMovesMade() == 0) {
 			changeCastle(1);
 		} else {
-			msg = "King cannot castle.";
+			msg = "King cannot castle, king has already moved.";
 			throw msg;
 		}
 	} else if ((r == 0 || r == 7) && c == 2) {
 		if (getMovesMade() == 0) {
 			changeCastle(2);
 		} else {
-			msg = "King cannot castle.";
+			msg = "King cannot castle, king has already moved.";
 			throw msg;
 		}
 	} else {
