@@ -50,7 +50,6 @@ int main() {
 			}
     		}
 	} catch (ios::failure &) {
-  		
 	}
 }
 
