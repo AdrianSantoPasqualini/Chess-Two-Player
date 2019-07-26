@@ -43,12 +43,10 @@ class Board {
 		int whoWon();
 		void incWhiteScore();
 		void incBlackScore();
-<<<<<<< HEAD
 		bool whiteTurn();
 		
-=======
 		bool isWhitesTurn();
->>>>>>> c846ab856778ddc5166a38c1771982ae37b15545
+		void movePiece(int, int, int, int);
 		friend ostream & operator<<(ostream &out, const Board &b); 
 };
 

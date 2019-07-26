@@ -7,47 +7,18 @@ using namespace std;
 
 int main() {
 	cin.exceptions(ios::eofbit|ios::failbit);
- 	string cmd;
  	Board board;
 	bool matchOngoing = false;
 	vector<string> players = {"human", "computer1", "computer2", "computer3", "computer4"};
+ 	string cmd;
  	try {
-<<<<<<< HEAD
-    	while (true) {
-      		cin >> cmd;
-      		bool matchOngoing = false;
-      		if (cmd == "game" && !matchOngoing) {
-        		string p1, p2;
-        		cin >> p1;
-        		cin >> p2;
-        		board.init();
-			// check for invalid inputs?
-			board.setPlayer("white", p1);
-			board.setPlayer("black", p2);
-			cout << board;
-		}
-      		else if (cmd == "resign" && matchOngoing) {
-			if (board.whiteTurn()){
-				board.incWhiteScore();	
-			} else {
-				board.incBlackScore();
-			} 
-			matchOngoing = false;
-      		}
-      		else if (cmd == "move" && matchOngoing) {
-      		  //move
-      		}
-      		else if (cmd == "setup" && !matchOngoing) {
-			board.setup();
-      		  //user cannot leave setup mode until conditions are met
-      		}
-=======
 		while (true) {
 			if (matchOngoing && board.isWhitesTurn()) {
 				cout << "White to move." << endl;
 			} else if (matchOngoing && !board.isWhitesTurn()) {
 				cout << "Black to move." << endl;
 			}
+			cout << "made it!!" << endl;
 			cin >> cmd;
 			if (cmd == "game" && !matchOngoing) {
 				string p1, p2;
@@ -76,22 +47,8 @@ int main() {
 				cin >> c1 >> c2;
 				board.movePiece('8' - c1[1], c1[0] - 'a', '8' - c2[1], c2[0] - 'a');
 			} else if (cmd == "setup" && !matchOngoing) {
-				bool done = false;
-				while (!done){
-					cin >> cmd;
-					if (cmd == "+") {
-						
-					} else if (cmd == "-") {
-						
-					} else if (cmd == "=") {
-						
-					} else if (cmd == "done") {
-							
-					}
-				}
-			  //user cannot leave setup mode until conditions are met
+				board.setup();
 			}
->>>>>>> c846ab856778ddc5166a38c1771982ae37b15545
     		}
 	} catch (ios::failure &) {
   		
