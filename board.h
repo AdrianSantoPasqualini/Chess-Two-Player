@@ -27,6 +27,7 @@ class Board {
 		void setPlayer(string colour, string type);
 		void init();
 		void setup();
+		void movePiece(int curR, int curC, int newR, int newC);
 		int whoWon();
 		void incWhiteScore();
 		void incBlackScore();
