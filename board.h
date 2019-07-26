@@ -11,9 +11,6 @@
 ///////////////////////////////
 using namespace std;
 
-class InvalidInput{};
-class InvalidPawn{};
-
 class Player;
 
 class Board {
@@ -28,9 +25,9 @@ class Board {
 	bool whitesTurn;
 	int whiteScore;
 	int blackScore;
+
 	// private methods
-	bool isValid(); // used in setup to check if specifications are met
-	void printDefault();
+	Board(vector<vector<Square>>);
 	public:
 		Board();
 		void setPlayer(string colour, string type);

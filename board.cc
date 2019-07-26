@@ -1,9 +1,12 @@
+#include <algorithm>
+
 #include "board.h"
 #include "square.h"
 #include "piece.h"
 #include "player.h"
 #include "info.h"
 #include "state.h"
+
 using namespace std;
 
 ostream & operator<<(ostream &out, const Board &b) {
@@ -91,6 +94,8 @@ Board::Board() {
                 defSquares[6][i].setPiece(pawnw);
         }
 }
+
+Board::Board(vector<vector<Square>> squares): squares{squares}{}
 
 void Board::init() {
 	whitesTurn = defWhitesTurn;
@@ -247,28 +252,10 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	}
 }
 
-void Board::printDefault() {
-	for (int i = 0; i < 8; ++i) {
-		cout << 8 - i << " ";
-		for (int j = 0; j < 8; ++j) {
-			shared_ptr<Piece> piece = (defSquares[i][j]).getPiece();
-			if (piece == nullptr) {
-				if ((i + j) % 2 == 0) {
-					cout << " ";
-				} else {
-					cout << "-";
-				}
-			} else {
-				cout << piece->getId()[0];
-			}
-		}
-		cout << endl;
-	}
-	cout << endl <<  "  abcdefgh" << endl;
-}
-
 void Board::setup() {
-	printDefault();
+	Board def = Board(defSquares);
+	vector<char> validPieces = {'K', 'Q', 'B', 'R', 'N', 'P', 'k', 'q', 'b', 'r', 'n', 'p'};
+	cout << def;
 	bool done = false;
 		while (!done) {
 		try {
@@ -281,9 +268,18 @@ void Board::setup() {
 				shared_ptr<Piece> p;
 				cin >> piece >> col >> row;
 				if (col < 'a' || col > 'h') {
-					throw InvalidInput();	
+					string e = "Column not in range.";
+					throw e;	
 				} else if (row < 1 || row > 8) {
-					throw InvalidInput();
+					string e = "Row not in range.";
+					throw e;
+				}
+				// check that piece is a valid piece
+				vector<char>::iterator it;
+				it = find(validPieces.begin(), validPieces.end(), piece);
+				if (it == validPieces.end()) {
+					string e = "Given piece is not valid.";
+					throw e;
 				}
 				if (piece == 'K' && whiteCounts[0] == 0) {
 					p = make_shared<King>(8 - row, col - 'a', true, "K", 0);
@@ -302,7 +298,8 @@ void Board::setup() {
 					whiteCounts[4]++;
 				} else if (piece == 'P' && whiteCounts[5] < 8) {
 					if (row == 1 || row == 8) {
-						throw InvalidPawn();
+						string e = "Pawn cannot be on the first or last row of the board.";
+						throw e;
 					}
 					p = make_shared<Pawn>(8 - row, col - 'a', true, "P" + to_string(whiteCounts[5]), 0);
 					whiteCounts[5]++;
@@ -323,24 +320,28 @@ void Board::setup() {
 					blackCounts[4]++;
 				} else if (piece == 'p' && blackCounts[5] < 8) {
 					if (row == 1 || row == 8) {
-						throw InvalidPawn();
+						string e = "Pawn cannot be on the first or last row of the board.";
+						throw e;
 					}
 					p = make_shared<Pawn>(8 - row, col - 'a', false, "p" + to_string(blackCounts[5]), 0);
 					blackCounts[5]++;
-				} else { // either input error or pieces of that type are already on the board
-					throw InvalidInput();
+				} else { 
+					string e = "Given piece is already on the board.";
+					throw e;
 				}
 				defSquares[8 - row][col - 'a'].setPiece(p);
-				printDefault();
+				def = Board(defSquares);
+				cout << def;
 			} else if (cmd == "-") {
-				// have to delete unused pieces?
 				char col;
 				int row;	
 				cin >> col >> row;
-				if (col - 'a' == -1) {
-					throw InvalidInput();	
+				if (col < 'a' || col > 'h') {
+					string e = "Column not in range.";
+					throw e;	
 				} else if (row < 1 || row > 8) {
-					throw InvalidInput();
+					string e = "Row not in range.";
+					throw e;	
 				}
 				shared_ptr<Piece> p = defSquares[8 - row][col - 'a'].getPiece();
 				if (p) {
@@ -387,7 +388,8 @@ void Board::setup() {
 						default: break;
 					}
 					defSquares[8 - row][col - 'a'].setPiece(nullptr);
-					printDefault();
+					def = Board(defSquares);
+					cout << def;
 				}
 			} else if (cmd == "=") {
 				string player;
@@ -409,10 +411,8 @@ void Board::setup() {
 			} else {
 				cout << "Please enter a valid command." << endl;
 			}	
-		} catch (InvalidInput &e) {
-			cout << "Invalid." << endl;
-		} catch (InvalidPawn &e) {
-			cout << "You cannot place a pawn on the first or last row." << endl;	
+		} catch (string e) {
+			cout << e << endl;
 		} catch (...) { 
 			cin.clear();
 			cin.ignore();
