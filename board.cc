@@ -21,7 +21,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 			}
 			*/
 			
-			shared_ptr<Piece> piece = (b.squares[i][j]).getPiece();
+			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {
 					out << " ";
@@ -98,8 +98,8 @@ void Board::init() {
 
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
-			if (squares[i][j].getPiece() != nullptr) {
-				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getPiece()};
+			if (squares[i][j].getInfo().piece != nullptr) {
+				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getInfo().piece};
 				squares[i][j].setState(nState);
 				squares[i][j].notifyObservers();
 			}
@@ -151,27 +151,37 @@ void Board::setPlayer(string colour, string type) {
 
 void Board::movePiece(int curR, int curC, int newR, int newC) {
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8) {
-		shared_ptr<Piece> curPiece = squares[curR][curC].getPiece();
-		shared_ptr<Piece> newPiece;
+		shared_ptr<Piece> curPiece = squares[curR][curC].getInfo().piece;
+		Info newInfo;
 		if (curPiece != nullptr) {
 			bool pieceOnSq = false;
 			bool blocked = false;
+			bool moveIntoAttack = false;
 			bool curWhite = curPiece->getIsWhite();
 			if ((whitesTurn && curWhite) || (!whitesTurn && !curWhite)) {
-				newPiece = squares[newR][newC].getPiece();
-				if (newPiece != nullptr) {
-					if (newPiece->getIsWhite() != curWhite) {	
+				// Check new square
+				newInfo = squares[newR][newC].getInfo();
+				if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
+					moveIntoAttack = true;
+				}
+				if (newInfo.piece != nullptr) {
+					if (newInfo.piece->getIsWhite() != curWhite) {	
 						pieceOnSq = true;
 					} else {
 						blocked = true;
-					}
+					}				
 				}
+				// Check path to new square
 				int inc1 = 0;
 				int inc2 = 0;
 				if (curR == newR) {
 					inc1 = (newC - curC) / (abs(newC - curC));
 					for (int j = curC + inc1; j != newC; j += inc1) {
-						if (squares[curR][j].getPiece() != nullptr) {
+						newInfo = squares[curR][j].getInfo();
+						if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
+							moveIntoAttack = true;
+						}
+						if (newInfo.piece != nullptr) {
 							blocked = true;
 							break;
 						}
@@ -179,7 +189,11 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 				} else if (curC == newC) {
 					inc1 = (newR - curR) / (abs(newR - curR));
 					for (int i = curR + inc1; i != newR; i += inc1) {
-						 if (squares[i][curC].getPiece() != nullptr) {
+						newInfo = squares[i][curC].getInfo();
+						if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
+							moveIntoAttack = true;
+						}
+						if (newInfo.piece != nullptr) {
 							blocked = true;
 							break;
 						}
@@ -188,28 +202,46 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 					inc1 = (newR - curR) / (abs(newR - curR));
 					inc2 = (newC - curC) / (abs(newC - curC));
 					for (int i = curR + inc1, j = curC + inc2; i != newR && j != newC; i += inc1, j += inc2) {
-						if (squares[i][j].getPiece() != nullptr) {
+						newInfo = squares[i][j].getInfo();
+						if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
+							moveIntoAttack = true;
+						}   
+						if (newInfo.piece != nullptr) {
 							blocked = true;
 							break;
 						}
 					}
 				}
+				// Move piece
 				try {
-					curPiece->move(newR, newC, pieceOnSq, blocked);
+					curPiece->move(newR, newC, pieceOnSq, blocked, moveIntoAttack);
+					shared_ptr<Piece> castledRook;
 					if (curPiece->getCastle() == 1) {
-						newPiece = squares[curR][curC + 3].getPiece();
-						if (newPiece->getMovesMade() == 0) {
+						castledRook = squares[curR][curC + 3].getInfo().piece;
+						if (castledRook->getMovesMade() == 0) {
 							curPiece->updatePiece(newR, newC);
-							newPiece->updatePiece(newR, newC - 1);
-							squares[newR][newC - 1].setPiece(newPiece);
+							castledRook->updatePiece(newR, newC - 1);
+							squares[newR][newC - 1].setPiece(castledRook);
 							squares[curR][curC + 3].setPiece(nullptr);
 							updateTurn(curR, curC, newR, newC, curPiece);
+						} else {
+							cout << "King cannot castle, rook has already moved." << endl;
 						}
 					} else if (curPiece->getCastle() == 2) {
-						
+						castledRook = squares[curR][curC - 4].getInfo().piece;
+						if (castledRook->getMovesMade() == 0) {
+							curPiece->updatePiece(newR, newC);
+							castledRook->updatePiece(newR, newC + 1);
+							squares[newR][newC + 1].setPiece(castledRook);
+							squares[curR][curC - 4].setPiece(nullptr);
+							updateTurn(curR, curC, newR, newC, curPiece);
+						} else {
+							cout << "King cannot castle, rook has already moved." << endl;
+						} 
 					} else {
 						updateTurn(curR, curC, newR, newC, curPiece);
 					}
+					curPiece->changeCastle(0);
 				} catch (string msg) {
 					cout << msg << endl;
 				}
@@ -251,7 +283,7 @@ void Board::printDefault() {
 	for (int i = 0; i < 8; ++i) {
 		cout << 8 - i << " ";
 		for (int j = 0; j < 8; ++j) {
-			shared_ptr<Piece> piece = (defSquares[i][j]).getPiece();
+			shared_ptr<Piece> piece = (defSquares[i][j]).getInfo().piece;
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {
 					cout << " ";
@@ -342,7 +374,7 @@ void Board::setup() {
 				} else if (row < 1 || row > 8) {
 					throw InvalidInput();
 				}
-				shared_ptr<Piece> p = defSquares[8 - row][col - 'a'].getPiece();
+				shared_ptr<Piece> p = defSquares[8 - row][col - 'a'].getInfo().piece;
 				if (p) {
 					string id = p->getId();
 					char piece = id.at(0);
@@ -413,7 +445,7 @@ void Board::setup() {
 			cout << "Invalid." << endl;
 		} catch (InvalidPawn &e) {
 			cout << "You cannot place a pawn on the first or last row." << endl;	
-		} catch (...) { 
+		} catch (...) {
 			cin.clear();
 			cin.ignore();
 		}
