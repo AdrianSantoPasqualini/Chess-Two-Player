@@ -292,9 +292,9 @@ void Board::printDefault() {
 void Board::setup() {
 	printDefault();
 	bool done = false;
-	string cmd;
 		while (!done) {
 		try{
+			string cmd;
 			cin >> cmd;
 			
 			if (cmd == "+") {
@@ -303,7 +303,11 @@ void Board::setup() {
 				int row;
 				shared_ptr<Piece> p;
 				cin >> piece >> col >> row;
-
+				if (colToInt(col) == -1) {
+					throw InvalidInput();	
+				} else if (row < 1 || row > 8) {
+					throw InvalidInput();
+				}
 				if (piece == 'K' && whiteCounts[0] == 0){
 					p = make_shared<King>(8-row, colToInt(col), true, "K", 0);
 					whiteCounts[0]++;
@@ -357,6 +361,11 @@ void Board::setup() {
 				char col;
 				int row;	
 				cin >> col >> row;
+				if (colToInt(col) == -1) {
+					throw InvalidInput();	
+				} else if (row < 1 || row > 8) {
+					throw InvalidInput();
+				}
 				shared_ptr<Piece> p = defSquares[8-row][colToInt(col)].getPiece();
 				if (p) {
 					string id = p->getId();
@@ -413,7 +422,7 @@ void Board::setup() {
 				} else if (player == "black") {
 					defWhitesTurn = false;
 				} else {
-					throw InvalidInput();
+					cout << "Options are white or black." << endl;
 				}
 			} else if (cmd == "done") {
 				if (whiteCounts[0] == 0 || blackCounts[0] == 0) {
@@ -422,11 +431,16 @@ void Board::setup() {
 				} else {
 					done = true;
 				}
+			} else {
+				cout << "Please enter a valid command." << endl;
 			}	
 		} catch(InvalidInput &e){
 			cout << "Invalid." << endl;
 		} catch(InvalidPawn &e){
 			cout << "You cannot place a pawn on the first or last row." << endl;	
-		} catch (...) {}
+		} catch (...) { 
+			cin.clear();
+			cin.ignore();
+		}
 	} 
 }
