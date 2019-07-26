@@ -106,6 +106,7 @@ void Board::setPlayer(string colour, string type) {
 	}
 }
 
+// PIECES CAN'T CAPTURE PIECES OF SAME COLOUR
 void Board::movePiece(int curR, int curC, int newR, int newC) {
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 &&
 	    newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && 

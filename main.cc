@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include "board.h"
 #include "player.h"
 using namespace std;
@@ -9,6 +10,7 @@ int main() {
  	string cmd;
  	Board board;
 	bool matchOngoing = false;
+	vector<string> players = {"human", "computer1", "computer2", "computer3", "computer4"};
  	try {
 		while (true) {
 			if (matchOngoing && board.isWhitesTurn()) {
@@ -19,13 +21,19 @@ int main() {
 			cin >> cmd;
 			if (cmd == "game" && !matchOngoing) {
 				string p1, p2;
-				cin >> p1 >> p2; // check for human/computer
-				board.init();
-				// check for invalid inputs?
-				board.setPlayer("white", p1);
-				board.setPlayer("black", p2);
-				matchOngoing = true;
-				cout << board;
+				cin >> p1 >> p2;
+				vector<string>::iterator it1, it2;
+				it1 = find(players.begin(), players.end(), p1);
+				it2 = find(players.begin(), players.end(), p2);
+				if (it1 != players.end() && it2 != players.end()) {
+					board.init();
+					board.setPlayer("white", p1);
+					board.setPlayer("black", p2);
+					matchOngoing = true;
+					cout << board;
+				} else {
+					cout << "Please enter valid players." << endl;
+				}
 			} else if (cmd == "resign" && matchOngoing) {
 				if (board.isWhitesTurn()){
 					board.incBlackScore();	
