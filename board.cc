@@ -5,37 +5,7 @@
 
 using namespace std;
 
-ostream & operator<<(ostream &out, const Board &b) {
-	for (int i = 0; i < 8; ++i) {
-		out << 8 - i << " ";
-		for (int j = 0; j < 8; ++j) {
-			
-			/*
-			Info info = b.squares[i][j].getInfo();
-			
-			if (info.wAttacked || info.bAttacked) {
-				cout << "A";
-			} else {
-				cout << " ";
-			}
-			*/
-			
-			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
-			if (piece == nullptr) {
-				if ((i + j) % 2 == 0) {
-					out << " ";
-				} else {
-					out << "-";
-				}
-			} else {
-				out << piece->getId()[0];
-			}
-		}
-		out << endl;
-	}
-	out << endl <<  "  abcdefgh" << endl;
-	return out;	
-}
+Board::Board(vector<vector<Square>> squares): squares{squares} {}
 
 Board::Board() {
 	whiteScore = 0;
@@ -93,7 +63,17 @@ Board::Board() {
         }
 }
 
-Board::Board(vector<vector<Square>> squares): squares{squares} {}
+void Board::incWhiteScore() {
+	whiteScore++;
+}
+
+void Board::incBlackScore() {
+	blackScore++;
+}
+
+bool Board::isWhitesTurn() {
+	return whitesTurn;
+}
 
 int Board::getWhiteScore() {
 	return whiteScore;
@@ -300,18 +280,6 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 	}
 }
 
-void Board::incWhiteScore() {
-	whiteScore++;
-}
-
-void Board::incBlackScore() {
-	blackScore++;
-}
-
-bool Board::isWhitesTurn() {
-	return whitesTurn;
-}
-
 void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {
 	squares[newR][newC].setPiece(piece);
 	squares[curR][curC].setPiece(nullptr);
@@ -488,4 +456,36 @@ void Board::setup() {
 			cin.ignore();
 		}
 	} 
+}
+
+ostream & operator<<(ostream &out, const Board &b) {
+	for (int i = 0; i < 8; ++i) {
+		out << 8 - i << " ";
+		for (int j = 0; j < 8; ++j) {
+			
+			/*
+			Info info = b.squares[i][j].getInfo();
+			
+			if (info.wAttacked || info.bAttacked) {
+				cout << "A";
+			} else {
+				cout << " ";
+			}
+			*/
+			
+			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
+			if (piece == nullptr) {
+				if ((i + j) % 2 == 0) {
+					out << " ";
+				} else {
+					out << "-";
+				}
+			} else {
+				out << piece->getId()[0];
+			}
+		}
+		out << endl;
+	}
+	out << endl <<  "  abcdefgh" << endl;
+	return out;	
 }
