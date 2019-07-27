@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <algorithm> // for find
 #include "square.h"
 ////////////////////////////////
 // try forward declarations first. Only if they dont work, include the .h file

@@ -1,8 +1,4 @@
-#include <algorithm>
-
 #include "board.h"
-#include "square.h"
-#include "piece.h"
 #include "player.h"
 #include "info.h"
 #include "state.h"
@@ -72,7 +68,7 @@ Board::Board() {
 	shared_ptr<Piece> rook2b = make_shared<Rook>(0, 7, false, "r2", 0);
         defSquares[0][7].setPiece(rook2b);
 	for (int i = 0; i < 8; i ++) {
-		shared_ptr<Piece> pawnb = make_shared<Rook>(1, i, false, "p" + to_string(i+1), 0);
+		shared_ptr<Piece> pawnb = make_shared<Pawn>(1, i, false, "p" + to_string(i + 1), 0);
         	defSquares[1][i].setPiece(pawnb);
 	}
 	shared_ptr<Piece> rook1w = make_shared<Rook>(7, 0, true, "R1", 0);
@@ -92,7 +88,7 @@ Board::Board() {
         shared_ptr<Piece> rook2w = make_shared<Rook>(7, 7, true, "R2", 0);
         defSquares[7][7].setPiece(rook2w);
         for (int i = 0; i < 8; i++) {
-                shared_ptr<Piece> pawnw = make_shared<Rook>(6, i, true, "P" + to_string(i+1), 0);
+                shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i + 1), 0);
                 defSquares[6][i].setPiece(pawnw);
         }
 }
@@ -165,7 +161,7 @@ void Board::setPlayer(string colour, string type) {
 }
 
 void Board::movePiece(int curR, int curC, int newR, int newC) {
-	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8) {
+	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
 		shared_ptr<Piece> curPiece = squares[curR][curC].getInfo().piece;
 		Info newInfo;
 		if (curPiece != nullptr) {
@@ -254,6 +250,39 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							cout << "King cannot castle, rook has already moved." << endl;
 						} 
 					} else {
+						if ((curPiece->getId()[0] == 'P' && newR == 0) || (curPiece->getId()[0] == 'p' && newR == 7)) {
+							char promotion;
+							cin >> promotion;
+							if (whitesTurn) {
+								while (promotion != 'Q' && promotion != 'N' && promotion != 'R' && promotion != 'B') {
+									cout << "Invalid promotion." << endl;
+									cin >> promotion;
+								}
+								if (promotion == 'Q') {
+									curPiece = make_shared<Queen>(newR, newC, true, "Q2", curPiece->getMovesMade());
+								} else if (promotion == 'N') {
+									curPiece = make_shared<Knight>(newR, newC, true, "N3", curPiece->getMovesMade());
+								} else if (promotion == 'R') {
+									curPiece = make_shared<Rook>(newR, newC, true, "R3", curPiece->getMovesMade());
+								} else if (promotion == 'B') {
+									curPiece = make_shared<Bishop>(newR, newC, true, "B3", curPiece->getMovesMade());
+								}
+							} else {
+								while (promotion != 'q' && promotion != 'n' && promotion != 'r' && promotion != 'b') {
+									cout << "Invalid promotion." << endl;
+									cin >> promotion;
+								}
+								if (promotion == 'q') {
+									curPiece = make_shared<Queen>(newR, newC, false, "q2", curPiece->getMovesMade());
+								} else if (promotion == 'n') {
+									curPiece = make_shared<Knight>(newR, newC, false, "n3", curPiece->getMovesMade());
+								} else if (promotion == 'r') {
+									curPiece = make_shared<Rook>(newR, newC, false, "r3", curPiece->getMovesMade());
+								} else if (promotion == 'b') {
+									curPiece = make_shared<Bishop>(newR, newC, false, "b3", curPiece->getMovesMade());
+								}		
+							}
+						}
 						updateTurn(curR, curC, newR, newC, curPiece);
 					}
 					curPiece->changeCastle(0);
@@ -389,7 +418,6 @@ void Board::setup() {
 				if (p) {
 					string id = p->getId();
 					char piece = id.at(0);
-
 					switch(piece) {
 						case 'K': 
 							whiteCounts[0]--;
