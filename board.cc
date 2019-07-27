@@ -14,16 +14,17 @@ ostream & operator<<(ostream &out, const Board &b) {
 		out << 8 - i << " ";
 		for (int j = 0; j < 8; ++j) {
 			
-			/*
+			/*			
 			Info info = b.squares[i][j].getInfo();
-			
-			if (info.wAttacked || info.bAttacked) {
-				cout << "A";
+			int totalAttacks = info.wTotAttacks + info.bTotAttacks;
+			if (totalAttacks > 0) {
+				cout << totalAttacks << " ";
 			} else {
-				cout << " ";
+				cout << "  ";
 			}
 			*/
 			
+		
 			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {
@@ -37,7 +38,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 		}
 		out << endl;
 	}
-	out << endl <<  "  abcdefgh" << endl;
+	out << endl <<  "  a b c d e f g h" << endl;
 	return out;	
 }
 
@@ -54,11 +55,22 @@ Board::Board() {
 			Square s = Square(r, c, nullptr);
 			defSquares[r].emplace_back(s);
 		}
-	}	
+	}
+	/*
+	shared_ptr<Piece> rook1b = make_shared<Knight>(7, 5, true, "n1", 0);	
+	defSquares[7][5].setPiece(rook1b);
+
+	//shared_ptr<Piece> rook2b = make_shared<Rook>(7, 6, false, "r2", 0);
+	//defSquares[7][6].setPiece(rook2b);
+
+	//shared_ptr<Piece> rook3b = make_shared<Rook>(3, 3, false, "r3", 0);
+	//defSquares[3][3].setPiece(rook3b);
+*/
+	
 	shared_ptr<Piece> rook1b = make_shared<Rook>(0, 0, false, "r1", 0);
 	defSquares[0][0].setPiece(rook1b);
 	shared_ptr<Piece> knight1b = make_shared<Knight>(0, 1, false, "n1", 0);
-        defSquares[0][1].setPiece(knight1b);
+	defSquares[0][1].setPiece(knight1b);
 	shared_ptr<Piece> bishop1b = make_shared<Bishop>(0, 2, false, "b1", 0);
         defSquares[0][2].setPiece(bishop1b);
 	shared_ptr<Piece> queenb = make_shared<Queen>(0, 3, false, "q", 0);
@@ -72,7 +84,7 @@ Board::Board() {
 	shared_ptr<Piece> rook2b = make_shared<Rook>(0, 7, false, "r2", 0);
         defSquares[0][7].setPiece(rook2b);
 	for (int i = 0; i < 8; i ++) {
-		shared_ptr<Piece> pawnb = make_shared<Rook>(1, i, false, "p" + to_string(i+1), 0);
+		shared_ptr<Piece> pawnb = make_shared<Pawn>(1, i, false, "p" + to_string(i+1), 0);
         	defSquares[1][i].setPiece(pawnb);
 	}
 	shared_ptr<Piece> rook1w = make_shared<Rook>(7, 0, true, "R1", 0);
@@ -92,9 +104,10 @@ Board::Board() {
         shared_ptr<Piece> rook2w = make_shared<Rook>(7, 7, true, "R2", 0);
         defSquares[7][7].setPiece(rook2w);
         for (int i = 0; i < 8; i++) {
-                shared_ptr<Piece> pawnw = make_shared<Rook>(6, i, true, "P" + to_string(i+1), 0);
+                shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i+1), 0);
                 defSquares[6][i].setPiece(pawnw);
-        }
+	}
+	
 }
 
 Board::Board(vector<vector<Square>> squares): squares{squares}{}
@@ -110,16 +123,6 @@ int Board::getBlackScore() {
 void Board::init() {
 	whitesTurn = defWhitesTurn;
 	squares = defSquares;
-
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			if (squares[i][j].getInfo().piece != nullptr) {
-				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getInfo().piece};
-				squares[i][j].setState(nState);
-				squares[i][j].notifyObservers();
-			}
-		}
-	}
 	for (size_t i = 0; i < 8; i++) {
 		for (size_t j = 0; j < 8; j++) {
 			for (int k = -1; k <= 1; k++) {
@@ -133,7 +136,15 @@ void Board::init() {
 			}
 		}
 	}
-
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (squares[i][j].getInfo().piece != nullptr) {
+				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getInfo().piece, false};
+				squares[i][j].setState(nState);
+				squares[i][j].notifyObservers();
+			}
+		}
+	}
 }
 
 void Board::setPlayer(string colour, string type) {
@@ -283,9 +294,17 @@ bool Board::isWhitesTurn() {
 	return whitesTurn;
 }
 
-void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {
+void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {	
+	squares[curR][curC].setPiece(nullptr);	
+	State rState{StateType::PieceRemoved, Direction::N, false, piece, false};
+	squares[curR][curC].setState(rState);
+	squares[curR][curC].notifyObservers();
+
 	squares[newR][newC].setPiece(piece);
-	squares[curR][curC].setPiece(nullptr);
+	State nState{StateType::PieceAdded, Direction::N, true, piece, false};
+	squares[newR][newC].setState(nState);
+	squares[newR][newC].notifyObservers();
+
 	cout << *this;
 	if (whitesTurn) {
 		whitesTurn = false;
