@@ -93,7 +93,7 @@ Board::Board() {
         }
 }
 
-Board::Board(vector<vector<Square>> squares): squares{squares}{}
+Board::Board(vector<vector<Square>> squares): squares{squares} {}
 
 int Board::getWhiteScore() {
 	return whiteScore;
