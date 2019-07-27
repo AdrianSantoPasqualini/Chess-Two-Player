@@ -10,6 +10,8 @@ struct Info {
 	shared_ptr<Piece> piece;
 	bool wAttacked;
 	bool bAttacked;
+	int wTotAttacks;
+	int bTotAttacks;
 };
 
 
