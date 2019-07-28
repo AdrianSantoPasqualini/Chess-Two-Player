@@ -20,11 +20,11 @@ Board::Board() {
 			Square s = Square(r, c, nullptr);
 			defSquares[r].emplace_back(s);
 		}
-	}	
+	}
 	shared_ptr<Piece> rook1b = make_shared<Rook>(0, 0, false, "r1", 0);
 	defSquares[0][0].setPiece(rook1b);
 	shared_ptr<Piece> knight1b = make_shared<Knight>(0, 1, false, "n1", 0);
-        defSquares[0][1].setPiece(knight1b);
+	defSquares[0][1].setPiece(knight1b);
 	shared_ptr<Piece> bishop1b = make_shared<Bishop>(0, 2, false, "b1", 0);
         defSquares[0][2].setPiece(bishop1b);
 	shared_ptr<Piece> queenb = make_shared<Queen>(0, 3, false, "q", 0);
@@ -60,7 +60,7 @@ Board::Board() {
         for (int i = 0; i < 8; i++) {
                 shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i + 1), 0);
                 defSquares[6][i].setPiece(pawnw);
-        }
+	}
 }
 
 void Board::incWhiteScore() {
@@ -86,15 +86,6 @@ int Board::getBlackScore() {
 void Board::init() {
 	whitesTurn = defWhitesTurn;
 	squares = defSquares;
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			if (squares[i][j].getInfo().piece != nullptr) {
-				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getInfo().piece};
-				squares[i][j].setState(nState);
-				squares[i][j].notifyObservers();
-			}
-		}
-	}
 	for (size_t i = 0; i < 8; i++) {
 		for (size_t j = 0; j < 8; j++) {
 			for (int k = -1; k <= 1; k++) {
@@ -105,6 +96,15 @@ void Board::init() {
 						}
 					}
 				}
+			}
+		}
+	}
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (squares[i][j].getInfo().piece != nullptr) {
+				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getInfo().piece, false};
+				squares[i][j].setState(nState);
+				squares[i][j].notifyObservers();
 			}
 		}
 	}
@@ -289,18 +289,33 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 	}
 }
 
-// remove piece from player list
-void Board::updateTurn(int curR, int curC, int newR, int newC, bool remove, shared_ptr<Piece> piece) {
-	if (remove) {
-		string id = squares[newR][newC].getInfo().piece->getId();
-		if (whitesTurn) {
-			player1->removePiece(id);
-		} else {
-			player2->removePiece(id);
-		}
+void Board::incWhiteScore() {
+	whiteScore++;
+}
+
+void Board::incBlackScore() {
+	blackScore++;
+}
+
+bool Board::isWhitesTurn() {
+	return whitesTurn;
+}
+
+void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {	
+	squares[curR][curC].setPiece(nullptr);	
+	State rState{StateType::PieceRemoved, Direction::N, false, piece, false};
+	squares[curR][curC].setState(rState);
+	squares[curR][curC].notifyObservers();
+	if (squares[newR][newC].getInfo().piece != nullptr) {
+		State mState{StateType::PieceRemoved, Direction::N, false,  squares[newR][newC].getInfo().piece, false};
+		squares[newR][newC].setState(mState);
+		squares[newR][newC].notifyObservers();
 	}
 	squares[newR][newC].setPiece(piece);
-	squares[curR][curC].setPiece(nullptr);
+	State nState{StateType::PieceAdded, Direction::N, true, piece, false};
+	squares[newR][newC].setState(nState);
+	squares[newR][newC].notifyObservers();
+
 	cout << *this;
 	if (whitesTurn) {
 		whitesTurn = false;
