@@ -205,6 +205,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 				try {
 					curPiece->move(newR, newC, pieceOnSq, blocked, moveIntoAttack);
 					shared_ptr<Piece> castledRook;
+					// Kingside castling
 					if (curPiece->getCastle() == 1) {
 						castledRook = squares[curR][curC + 3].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
@@ -212,10 +213,11 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							castledRook->updatePiece(newR, newC - 1);
 							squares[newR][newC - 1].setPiece(castledRook);
 							squares[curR][curC + 3].setPiece(nullptr);
-							updateTurn(curR, curC, newR, newC, curPiece);
+							updateTurn(curR, curC, newR, newC, false, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
 						}
+					// Queenside castling
 					} else if (curPiece->getCastle() == 2) {
 						castledRook = squares[curR][curC - 4].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
@@ -223,11 +225,12 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							castledRook->updatePiece(newR, newC + 1);
 							squares[newR][newC + 1].setPiece(castledRook);
 							squares[curR][curC - 4].setPiece(nullptr);
-							updateTurn(curR, curC, newR, newC, curPiece);
+							updateTurn(curR, curC, newR, newC, false, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
 						} 
 					} else {
+						// Pawn promotion
 						if ((curPiece->getId()[0] == 'P' && newR == 0) || (curPiece->getId()[0] == 'p' && newR == 7)) {
 							char promotion;
 							cin >> promotion;
@@ -261,7 +264,15 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								}		
 							}
 						}
-						updateTurn(curR, curC, newR, newC, curPiece);
+						bool remove = false;
+						if (pieceOnSq) {
+							if (whitesTurn && !squares[newR][newC].getInfo().piece->getIsWhite()) {
+								remove = true;
+							} else if (!whitesTurn && squares[newR][newC].getInfo().piece->getIsWhite()) {
+								remove = true;
+							}
+						}
+						updateTurn(curR, curC, newR, newC, remove, curPiece);
 					}
 					curPiece->changeCastle(0);
 				} catch (string msg) {
@@ -279,7 +290,15 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 }
 
 // remove piece from player list
-void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {
+void Board::updateTurn(int curR, int curC, int newR, int newC, bool remove, shared_ptr<Piece> piece) {
+	if (remove) {
+		string id = squares[newR][newC].getInfo().piece->getId();
+		if (whitesTurn) {
+			player1->removePiece(id);
+		} else {
+			player2->removePiece(id);
+		}
+	}
 	squares[newR][newC].setPiece(piece);
 	squares[curR][curC].setPiece(nullptr);
 	cout << *this;

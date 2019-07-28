@@ -55,6 +55,8 @@ void Pawn::move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack)
 		updatePiece(r, c);
 		specialAdvance = true;
 	} else if ((currCoor.first - r == dir * 1 && abs(currCoor.second - c) == 1) && pieceOnSq) {
+		// En passant
+		
 		updatePiece(r, c);
 	} else {
 		msg = "Invalid pawn movement.";

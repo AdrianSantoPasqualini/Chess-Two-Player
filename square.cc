@@ -4,19 +4,10 @@
 #include <iostream>
 using namespace std;
 
-
 Square::Square(int r, int c, shared_ptr<Piece> currPiece): currPiece{currPiece}, r{r}, c{c} {}
-
-shared_ptr<Piece> Square::getPiece() const {
-	return currPiece;
-}
 
 void Square::setPiece(shared_ptr<Piece> piece) {
 	currPiece = piece;
-}
-
-pair<int,int> Square::getCoords() const {
-	return make_pair(r, c);
 }
 
 Info Square::getInfo() const {
@@ -26,7 +17,6 @@ Info Square::getInfo() const {
 	Info nInfo{coords, currPiece, wAttacks.size() != 0, bAttacks.size() != 0, wTotAttacks,bTotAttacks};
 	return nInfo;
 }
-
 
 void Square::removeAttacker(bool white, string id) {
 	if (white) {
@@ -45,7 +35,6 @@ void Square::removeAttacker(bool white, string id) {
 		}
 	}
 }
-
 
 void Square::addAttacker(bool white, shared_ptr<Piece> piece) {
 	if (white) {
@@ -80,7 +69,6 @@ void Square::toggleAttacker(bool attacked, shared_ptr<Piece> piece) {
 		removeAttacker(piece->getIsWhite(), piece->getId());
 	}
 }
-
 
 void Square::notify(Subject & whoFrom) {
 //	cout << "Notified" << endl;
@@ -131,7 +119,7 @@ void Square::notify(Subject & whoFrom) {
 	}
 	if (recState.type == StateType::PieceAdded) {
 		//cout << "Piece Added" << endl;
-		if (getPiece() == nullptr) {
+		if (getInfo().piece == nullptr) {
 			if (recState.piece->getId()[0] == 'r' || recState.piece->getId()[0] == 'R') {
 				if (vertical || horizontal) {
 					State nState{StateType::Relay, direction, true, recState.piece};
@@ -188,26 +176,26 @@ void Square::notify(Subject & whoFrom) {
 				addAttacker(recState.piece->getIsWhite(), recState.piece);
 			}
 
-			if (getPiece()->getId()[0] == 'r' || getPiece()->getId()[0] == 'R') {
+			if (getInfo().piece->getId()[0] == 'r' || getInfo().piece->getId()[0] == 'R') {
 				if (vertical || horizontal) {
-					State nState{StateType::Reply, revDir, true, getPiece()};
+					State nState{StateType::Reply, revDir, true, getInfo().piece};
 					setState(nState);
 					notifyObservers();
 				}
-			} else if (getPiece()->getId()[0] == 'b' || getPiece()->getId()[0] == 'B') {
+			} else if (getInfo().piece->getId()[0] == 'b' || getInfo().piece->getId()[0] == 'B') {
 				if (downDiagonal || upDiagonal) {
-					State nState{StateType::Reply, revDir, true, getPiece()};
+					State nState{StateType::Reply, revDir, true, getInfo().piece};
 					setState(nState);
 					notifyObservers();
 				}
-			} else if (getPiece()->getId()[0] == 'p' || getPiece()->getId()[0] == 'P'){
+			} else if (getInfo().piece->getId()[0] == 'p' || getInfo().piece->getId()[0] == 'P'){
 				//Pawns do not send replies.
-			} else if (getPiece()->getId()[0] == 'k' || getPiece()->getId()[0] == 'K') {
+			} else if (getInfo().piece->getId()[0] == 'k' || getInfo().piece->getId()[0] == 'K') {
 				//Kings do not send replies.
-			} else if (getPiece()->getId()[0] == 'n' || getPiece()->getId()[0] == 'N') {
+			} else if (getInfo().piece->getId()[0] == 'n' || getInfo().piece->getId()[0] == 'N') {
 				//Knights do not send replies.
 			} else {
-				State nState{StateType::Reply, revDir, true, getPiece()};
+				State nState{StateType::Reply, revDir, true, getInfo().piece};
 				setState(nState);
 				notifyObservers();
 			}
@@ -238,33 +226,33 @@ void Square::notify(Subject & whoFrom) {
 					notifyObservers();
 				}
 			} else {
-				if (getPiece() == nullptr) {
+				if (getInfo().piece == nullptr) {
 					State nState{StateType::Relay, direction, recState.attacked, recState.piece};
 					setState(nState);
 					toggleAttacker(recState.attacked, recState.piece);
 					notifyObservers();
-				} else if (getPiece() != nullptr) {
+				} else if (getInfo().piece != nullptr) {
 					toggleAttacker(recState.attacked, recState.piece);
-					if (getPiece()->getId()[0] == 'r' || getPiece()->getId()[0] == 'R') {
+					if (getInfo().piece->getId()[0] == 'r' || getInfo().piece->getId()[0] == 'R') {
 						if (vertical || horizontal) {
-							State nState{StateType::Reply, revDir, true, getPiece()};
+							State nState{StateType::Reply, revDir, true, getInfo().piece};
 							setState(nState);
 							notifyObservers();
 						}
-					} else if  (getPiece()->getId()[0] == 'b' || getPiece()->getId()[0] == 'B') {
+					} else if  (getInfo().piece->getId()[0] == 'b' || getInfo().piece->getId()[0] == 'B') {
 						if (downDiagonal || upDiagonal) {
-							State nState{StateType::Reply, revDir, true, getPiece()};
+							State nState{StateType::Reply, revDir, true, getInfo().piece};
 							setState(nState);
 							notifyObservers();
 						}
-					} else if (getPiece()->getId()[0] == 'p' || getPiece()->getId()[0] == 'P') {
+					} else if (getInfo().piece->getId()[0] == 'p' || getInfo().piece->getId()[0] == 'P') {
 						//Pawns do not send replies.
-					} else if (getPiece()->getId()[0] == 'k' || getPiece()->getId()[0] == 'K') {
+					} else if (getInfo().piece->getId()[0] == 'k' || getInfo().piece->getId()[0] == 'K') {
 						//Kings do not send replies.
-					} else if (getPiece()->getId()[0] == 'n' || getPiece()->getId()[0] == 'N') {
+					} else if (getInfo().piece->getId()[0] == 'n' || getInfo().piece->getId()[0] == 'N') {
 						//Knights do not send replies.
 					} else {
-						State nState{StateType::Reply, revDir, true, getPiece()};
+						State nState{StateType::Reply, revDir, true, getInfo().piece};
 						setState(nState);
 						notifyObservers();
 					}
@@ -280,12 +268,12 @@ void Square::notify(Subject & whoFrom) {
 			if (recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') {
 				toggleAttacker(true, recState.piece);
 			} else {
-				if (getPiece() == nullptr) {
+				if (getInfo().piece == nullptr) {
 					State nState{StateType::Reply, direction, recState.attacked, recState.piece};
 					setState(nState);
 					toggleAttacker(recState.attacked, recState.piece);
 					notifyObservers();
-				} else if (getPiece() != nullptr && recState.attacked) {
+				} else if (getInfo().piece != nullptr && recState.attacked) {
 					addAttacker(recState.piece->getIsWhite(), recState.piece);
 					State nState{StateType::Reply, direction, false, recState.piece};
 					setState(nState);
@@ -298,7 +286,3 @@ void Square::notify(Subject & whoFrom) {
 	}
 	setState(currState);
 }
-
-
-
-
