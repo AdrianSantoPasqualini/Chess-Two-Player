@@ -86,7 +86,6 @@ int Board::getBlackScore() {
 void Board::init() {
 	whitesTurn = defWhitesTurn;
 	squares = defSquares;
-
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (squares[i][j].getInfo().piece != nullptr) {
@@ -109,7 +108,6 @@ void Board::init() {
 			}
 		}
 	}
-
 }
 
 void Board::setPlayer(string colour, string type) {
@@ -280,6 +278,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 	}
 }
 
+// remove piece from player list
 void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {
 	squares[newR][newC].setPiece(piece);
 	squares[curR][curC].setPiece(nullptr);

@@ -152,20 +152,25 @@ void King::move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack)
 	}
 	if ((currCoor.first - r) * (currCoor.first - r) + (currCoor.second - c) * (currCoor.second - c) <= 2) {
 		updatePiece(r, c);
-	} else if ((r == 0 || r == 7) && c == 6) {
-		if (getMovesMade() == 0) {
-			changeCastle(1);
-		} else {
-			msg = "King cannot castle, king has already moved.";
-			throw msg;
+	} else if (!pieceOnSq) {
+		if ((r == 0 || r == 7) && c == 6) {
+			if (getMovesMade() == 0) {
+				changeCastle(1);
+			} else {
+				msg = "King cannot castle, king has already moved.";
+				throw msg;
+			}
+		} else if ((r == 0 || r == 7) && c == 2) {
+			if (getMovesMade() == 0) {
+				changeCastle(2);
+			} else {
+				msg = "King cannot castle, king has already moved.";
+				throw msg;
+			}
 		}
-	} else if ((r == 0 || r == 7) && c == 2) {
-		if (getMovesMade() == 0) {
-			changeCastle(2);
-		} else {
-			msg = "King cannot castle, king has already moved.";
-			throw msg;
-		}
+	} else if (pieceOnSq) {
+		msg = "King cannot castle, enemy piece on square.";
+		throw msg;
 	} else {
 		msg = "Invalid king movement.";
 		throw msg;
