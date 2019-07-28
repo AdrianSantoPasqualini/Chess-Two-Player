@@ -1,47 +1,11 @@
-#include <algorithm>
-
 #include "board.h"
-#include "square.h"
-#include "piece.h"
 #include "player.h"
 #include "info.h"
 #include "state.h"
 
 using namespace std;
 
-ostream & operator<<(ostream &out, const Board &b) {
-	for (int i = 0; i < 8; ++i) {
-		out << 8 - i << " ";
-		for (int j = 0; j < 8; ++j) {
-			
-			/*			
-			Info info = b.squares[i][j].getInfo();
-			int totalAttacks = info.wTotAttacks + info.bTotAttacks;
-			if (totalAttacks > 0) {
-				cout << totalAttacks << " ";
-			} else {
-				cout << "  ";
-			}
-			*/	
-			
-		
-			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
-			if (piece == nullptr) {
-				if ((i + j) % 2 == 0) {
-					out << " ";
-				} else {
-					out << "-";
-				}
-			} else {
-				out << piece->getId()[0];
-			}
-		
-		}
-		out << endl;
-	}
-	out << endl <<  "  a b c d e f g h" << endl;
-	return out;	
-}
+Board::Board(vector<vector<Square>> squares): squares{squares} {}
 
 Board::Board() {
 	whiteScore = 0;
@@ -74,7 +38,7 @@ Board::Board() {
 	shared_ptr<Piece> rook2b = make_shared<Rook>(0, 7, false, "r2", 0);
         defSquares[0][7].setPiece(rook2b);
 	for (int i = 0; i < 8; i ++) {
-		shared_ptr<Piece> pawnb = make_shared<Pawn>(1, i, false, "p" + to_string(i+1), 0);
+		shared_ptr<Piece> pawnb = make_shared<Pawn>(1, i, false, "p" + to_string(i + 1), 0);
         	defSquares[1][i].setPiece(pawnb);
 	}
 	shared_ptr<Piece> rook1w = make_shared<Rook>(7, 0, true, "R1", 0);
@@ -94,12 +58,22 @@ Board::Board() {
         shared_ptr<Piece> rook2w = make_shared<Rook>(7, 7, true, "R2", 0);
         defSquares[7][7].setPiece(rook2w);
         for (int i = 0; i < 8; i++) {
-                shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i+1), 0);
+                shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i + 1), 0);
                 defSquares[6][i].setPiece(pawnw);
 	}
 }
 
-Board::Board(vector<vector<Square>> squares): squares{squares}{}
+void Board::incWhiteScore() {
+	whiteScore++;
+}
+
+void Board::incBlackScore() {
+	blackScore++;
+}
+
+bool Board::isWhitesTurn() {
+	return whitesTurn;
+}
 
 int Board::getWhiteScore() {
 	return whiteScore;
@@ -165,7 +139,7 @@ void Board::setPlayer(string colour, string type) {
 }
 
 void Board::movePiece(int curR, int curC, int newR, int newC) {
-	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8) {
+	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
 		shared_ptr<Piece> curPiece = squares[curR][curC].getInfo().piece;
 		Info newInfo;
 		if (curPiece != nullptr) {
@@ -231,6 +205,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 				try {
 					curPiece->move(newR, newC, pieceOnSq, blocked, moveIntoAttack);
 					shared_ptr<Piece> castledRook;
+					// Kingside castling
 					if (curPiece->getCastle() == 1) {
 						castledRook = squares[curR][curC + 3].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
@@ -238,10 +213,11 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							castledRook->updatePiece(newR, newC - 1);
 							squares[newR][newC - 1].setPiece(castledRook);
 							squares[curR][curC + 3].setPiece(nullptr);
-							updateTurn(curR, curC, newR, newC, curPiece);
+							updateTurn(curR, curC, newR, newC, false, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
 						}
+					// Queenside castling
 					} else if (curPiece->getCastle() == 2) {
 						castledRook = squares[curR][curC - 4].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
@@ -249,12 +225,54 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							castledRook->updatePiece(newR, newC + 1);
 							squares[newR][newC + 1].setPiece(castledRook);
 							squares[curR][curC - 4].setPiece(nullptr);
-							updateTurn(curR, curC, newR, newC, curPiece);
+							updateTurn(curR, curC, newR, newC, false, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
 						} 
 					} else {
-						updateTurn(curR, curC, newR, newC, curPiece);
+						// Pawn promotion
+						if ((curPiece->getId()[0] == 'P' && newR == 0) || (curPiece->getId()[0] == 'p' && newR == 7)) {
+							char promotion;
+							cin >> promotion;
+							if (whitesTurn) {
+								while (promotion != 'Q' && promotion != 'N' && promotion != 'R' && promotion != 'B') {
+									cout << "Invalid promotion." << endl;
+									cin >> promotion;
+								}
+								if (promotion == 'Q') {
+									curPiece = make_shared<Queen>(newR, newC, true, "Q2", curPiece->getMovesMade());
+								} else if (promotion == 'N') {
+									curPiece = make_shared<Knight>(newR, newC, true, "N3", curPiece->getMovesMade());
+								} else if (promotion == 'R') {
+									curPiece = make_shared<Rook>(newR, newC, true, "R3", curPiece->getMovesMade());
+								} else if (promotion == 'B') {
+									curPiece = make_shared<Bishop>(newR, newC, true, "B3", curPiece->getMovesMade());
+								}
+							} else {
+								while (promotion != 'q' && promotion != 'n' && promotion != 'r' && promotion != 'b') {
+									cout << "Invalid promotion." << endl;
+									cin >> promotion;
+								}
+								if (promotion == 'q') {
+									curPiece = make_shared<Queen>(newR, newC, false, "q2", curPiece->getMovesMade());
+								} else if (promotion == 'n') {
+									curPiece = make_shared<Knight>(newR, newC, false, "n3", curPiece->getMovesMade());
+								} else if (promotion == 'r') {
+									curPiece = make_shared<Rook>(newR, newC, false, "r3", curPiece->getMovesMade());
+								} else if (promotion == 'b') {
+									curPiece = make_shared<Bishop>(newR, newC, false, "b3", curPiece->getMovesMade());
+								}		
+							}
+						}
+						bool remove = false;
+						if (pieceOnSq) {
+							if (whitesTurn && !squares[newR][newC].getInfo().piece->getIsWhite()) {
+								remove = true;
+							} else if (!whitesTurn && squares[newR][newC].getInfo().piece->getIsWhite()) {
+								remove = true;
+							}
+						}
+						updateTurn(curR, curC, newR, newC, remove, curPiece);
 					}
 					curPiece->changeCastle(0);
 				} catch (string msg) {
@@ -401,7 +419,6 @@ void Board::setup() {
 				if (p) {
 					string id = p->getId();
 					char piece = id.at(0);
-
 					switch(piece) {
 						case 'K': 
 							whiteCounts[0]--;
@@ -472,4 +489,36 @@ void Board::setup() {
 			cin.ignore();
 		}
 	} 
+}
+
+ostream & operator<<(ostream &out, const Board &b) {
+	for (int i = 0; i < 8; ++i) {
+		out << 8 - i << " ";
+		for (int j = 0; j < 8; ++j) {
+			
+			/*
+			Info info = b.squares[i][j].getInfo();
+			
+			if (info.wAttacked || info.bAttacked) {
+				cout << "A";
+			} else {
+				cout << " ";
+			}
+			*/
+			
+			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
+			if (piece == nullptr) {
+				if ((i + j) % 2 == 0) {
+					out << " ";
+				} else {
+					out << "-";
+				}
+			} else {
+				out << piece->getId()[0];
+			}
+		}
+		out << endl;
+	}
+	out << endl <<  "  abcdefgh" << endl;
+	return out;	
 }

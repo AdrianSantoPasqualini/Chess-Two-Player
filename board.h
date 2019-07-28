@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <memory>
+#include <algorithm> // for find
 #include "square.h"
 ////////////////////////////////
 // try forward declarations first. Only if they dont work, include the .h file
@@ -40,7 +41,7 @@ class Board {
 		int getWhiteScore();
 		int getBlackScore();
 		bool isWhitesTurn();
-		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece);
+		void updateTurn(int curR, int curC, int newR, int newC, bool remove, shared_ptr<Piece> piece);
 		friend ostream & operator<<(ostream &out, const Board &b); 
 };
 
