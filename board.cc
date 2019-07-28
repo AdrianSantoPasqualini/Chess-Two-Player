@@ -213,7 +213,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							castledRook->updatePiece(newR, newC - 1);
 							squares[newR][newC - 1].setPiece(castledRook);
 							squares[curR][curC + 3].setPiece(nullptr);
-							updateTurn(curR, curC, newR, newC, false, curPiece);
+							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
 						}
@@ -225,7 +225,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							castledRook->updatePiece(newR, newC + 1);
 							squares[newR][newC + 1].setPiece(castledRook);
 							squares[curR][curC - 4].setPiece(nullptr);
-							updateTurn(curR, curC, newR, newC, false, curPiece);
+							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
 						} 
@@ -272,7 +272,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								remove = true;
 							}
 						}
-						updateTurn(curR, curC, newR, newC, remove, curPiece);
+						updateTurn(curR, curC, newR, newC, curPiece);
 					}
 					curPiece->changeCastle(0);
 				} catch (string msg) {
@@ -287,18 +287,6 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 	} else {
 		cout << "Invalid coordinates." << endl;
 	}
-}
-
-void Board::incWhiteScore() {
-	whiteScore++;
-}
-
-void Board::incBlackScore() {
-	blackScore++;
-}
-
-bool Board::isWhitesTurn() {
-	return whitesTurn;
 }
 
 void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {	
