@@ -22,7 +22,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 			} else {
 				cout << "  ";
 			}
-			*/
+			*/	
 			
 		
 			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
@@ -35,6 +35,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 			} else {
 				out << piece->getId()[0];
 			}
+		
 		}
 		out << endl;
 	}
@@ -56,17 +57,6 @@ Board::Board() {
 			defSquares[r].emplace_back(s);
 		}
 	}
-	/*
-	shared_ptr<Piece> rook1b = make_shared<Knight>(7, 5, true, "n1", 0);	
-	defSquares[7][5].setPiece(rook1b);
-
-	//shared_ptr<Piece> rook2b = make_shared<Rook>(7, 6, false, "r2", 0);
-	//defSquares[7][6].setPiece(rook2b);
-
-	//shared_ptr<Piece> rook3b = make_shared<Rook>(3, 3, false, "r3", 0);
-	//defSquares[3][3].setPiece(rook3b);
-*/
-	
 	shared_ptr<Piece> rook1b = make_shared<Rook>(0, 0, false, "r1", 0);
 	defSquares[0][0].setPiece(rook1b);
 	shared_ptr<Piece> knight1b = make_shared<Knight>(0, 1, false, "n1", 0);
@@ -107,7 +97,6 @@ Board::Board() {
                 shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i+1), 0);
                 defSquares[6][i].setPiece(pawnw);
 	}
-	
 }
 
 Board::Board(vector<vector<Square>> squares): squares{squares}{}
@@ -299,7 +288,11 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	State rState{StateType::PieceRemoved, Direction::N, false, piece, false};
 	squares[curR][curC].setState(rState);
 	squares[curR][curC].notifyObservers();
-
+	if (squares[newR][newC].getInfo().piece != nullptr) {
+		State mState{StateType::PieceRemoved, Direction::N, false,  squares[newR][newC].getInfo().piece, false};
+		squares[newR][newC].setState(mState);
+		squares[newR][newC].notifyObservers();
+	}
 	squares[newR][newC].setPiece(piece);
 	State nState{StateType::PieceAdded, Direction::N, true, piece, false};
 	squares[newR][newC].setState(nState);

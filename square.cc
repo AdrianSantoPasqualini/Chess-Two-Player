@@ -33,15 +33,15 @@ void Square::removeAttacker(bool white, string id) {
 		for (int i = 0; i < wAttacks.size(); i++) {
 			if (wAttacks[i]->getId() == id) {
 				wAttacks.erase(wAttacks.begin() + i);
+				break;
 			}
-			break;
 		}
 	} else {
 		for (int i = 0; i < bAttacks.size(); i++) {
 			if (bAttacks[i]->getId() == id) {
 				bAttacks.erase(bAttacks.begin() + i);
+				break;
 			}
-			break;
 		}
 	}
 }
@@ -166,10 +166,13 @@ void Square::notify(Subject & whoFrom) {
 				notifyObservers();
 			} else if (recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') {
 				if (vertical || horizontal) {
-					State nState{StateType::Relay, direction, true, recState.piece, false};
+					State nState{StateType::Relay, direction, true, recState.piece, true};
 					setState(nState);
 					notifyObservers();
 				}
+				State nState{StateType::Relay, direction, false, recState.piece, false};
+				setState(nState);
+				notifyObservers();
 			} else {
 				State nState{StateType::Relay, direction, true, recState.piece, false};
 				setState(nState);
@@ -191,7 +194,7 @@ void Square::notify(Subject & whoFrom) {
 				}
 			} else if (recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') {
 				if (vertical || horizontal) {
-					State nState{StateType::Relay, direction, true, recState.piece, false};
+					State nState{StateType::Relay, direction, true, recState.piece, true};
 					setState(nState);
 					notifyObservers();
 				}
@@ -199,7 +202,6 @@ void Square::notify(Subject & whoFrom) {
 				//King and Queen
 				addAttacker(recState.piece->getIsWhite(), recState.piece);
 			}
-
 			if (getPiece()->getId()[0] == 'r' || getPiece()->getId()[0] == 'R') {
 				if (vertical || horizontal) {
 					State nState{StateType::Reply, revDir, true, getPiece(), false};
@@ -226,6 +228,11 @@ void Square::notify(Subject & whoFrom) {
 		}
 	} else if (recState.type == StateType::PieceRemoved) {
 		//cout << "Piece Removed" << endl;
+		if (recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') {
+			State nState{StateType::Relay, direction, false, recState.piece, true};
+			setState(nState);
+			notifyObservers();
+		}
 		if (getPiece() == nullptr) {
 			State nState{StateType::Relay, direction, false, recState.piece, false};
 			setState(nState);
@@ -258,19 +265,19 @@ void Square::notify(Subject & whoFrom) {
 		removeAttacker(recState.piece->getIsWhite(), recState.piece->getId());
 	} else if (recState.type == StateType::Relay) {
 		if (direction == recState.direction) {
-			if (recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') {
+			if ((recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') && recState.knightMovement) {
 				if (vertical) {
-					State rState{StateType::Reply, Direction::E, recState.attacked, recState.piece, false};
+					State rState{StateType::Reply, Direction::E, recState.attacked, recState.piece, true};
 					setState(rState);
 					notifyObservers();
-					State lState{StateType::Reply, Direction::W, recState.attacked, recState.piece, false};
+					State lState{StateType::Reply, Direction::W, recState.attacked, recState.piece, true};
 					setState(lState);
 					notifyObservers();
 				} else if (horizontal) {
-					State rState{StateType::Reply, Direction::N, recState.attacked, recState.piece, false};
+					State rState{StateType::Reply, Direction::N, recState.attacked, recState.piece, true};
 					setState(rState);
 					notifyObservers();
-					State lState{StateType::Reply, Direction::S, recState.attacked, recState.piece, false};
+					State lState{StateType::Reply, Direction::S, recState.attacked, recState.piece, true};
 					setState(lState);
 					notifyObservers();
 				}
@@ -309,14 +316,12 @@ void Square::notify(Subject & whoFrom) {
 					}
 				}
 			}
-
-
 		}
 	} else if (recState.type == StateType::Reply) {
 		if (direction == recState.direction) {
 			//cout << "Reply" << endl;
 			//////////////////////////////This section needs work.
-			if (recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') {
+			if ((recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') && recState.knightMovement) {
 				toggleAttacker(recState.attacked, recState.piece);
 			} else {
 				if (getPiece() == nullptr) {
