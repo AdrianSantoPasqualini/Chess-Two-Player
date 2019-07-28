@@ -6,6 +6,7 @@
 #include <utility> //for pair
 #include <stdlib.h> //for abs 
 #include <memory>
+#include <iostream>
 using namespace std;
 
 class Piece {

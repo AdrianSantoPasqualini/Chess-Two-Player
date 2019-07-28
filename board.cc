@@ -21,11 +21,11 @@ Board::Board() {
 			Square s = Square(r, c, nullptr);
 			defSquares[r].emplace_back(s);
 		}
-	}	
+	}
 	shared_ptr<Piece> rook1b = make_shared<Rook>(0, 0, false, "r1", 0);
 	defSquares[0][0].setPiece(rook1b);
 	shared_ptr<Piece> knight1b = make_shared<Knight>(0, 1, false, "n1", 0);
-        defSquares[0][1].setPiece(knight1b);
+	defSquares[0][1].setPiece(knight1b);
 	shared_ptr<Piece> bishop1b = make_shared<Bishop>(0, 2, false, "b1", 0);
         defSquares[0][2].setPiece(bishop1b);
 	shared_ptr<Piece> queenb = make_shared<Queen>(0, 3, false, "q", 0);
@@ -61,7 +61,7 @@ Board::Board() {
         for (int i = 0; i < 8; i++) {
                 shared_ptr<Piece> pawnw = make_shared<Pawn>(6, i, true, "P" + to_string(i + 1), 0);
                 defSquares[6][i].setPiece(pawnw);
-        }
+	}
 }
 
 void Board::draw() {
@@ -97,8 +97,8 @@ void Board::draw() {
 					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, 0);	
 				}
 			}
-			if (defSquares[i][j].getPiece() != nullptr) {
-				drawPiece(defSquares[i][j].getPiece());
+			if (defSquares[i][j].getInfo().piece != nullptr) {
+				drawPiece(defSquares[i][j].getInfo().piece);
 			}
 		}	
 	}
@@ -173,16 +173,6 @@ void Board::init() {
 	whitesTurn = defWhitesTurn;
 	squares.clear();
 	squares = defSquares;
-
-	for (int i = 0; i < 8; i++) {
-		for (int j = 0; j < 8; j++) {
-			if (squares[i][j].getInfo().piece != nullptr) {
-				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getInfo().piece};
-				squares[i][j].setState(nState);
-				squares[i][j].notifyObservers();
-			}
-		}
-	}
 	for (size_t i = 0; i < 8; i++) {
 		for (size_t j = 0; j < 8; j++) {
 			for (int k = -1; k <= 1; k++) {
@@ -196,7 +186,15 @@ void Board::init() {
 			}
 		}
 	}
-
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (squares[i][j].getInfo().piece != nullptr) {
+				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getInfo().piece, false};
+				squares[i][j].setState(nState);
+				squares[i][j].notifyObservers();
+			}
+		}
+	}
 }
 
 void Board::setPlayer(string colour, string type) {
@@ -294,6 +292,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 				try {
 					curPiece->move(newR, newC, pieceOnSq, blocked, moveIntoAttack);
 					shared_ptr<Piece> castledRook;
+					// Kingside castling
 					if (curPiece->getCastle() == 1) {
 						castledRook = squares[curR][curC + 3].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
@@ -305,6 +304,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
 						}
+					// Queenside castling
 					} else if (curPiece->getCastle() == 2) {
 						castledRook = squares[curR][curC - 4].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
@@ -317,6 +317,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							cout << "King cannot castle, rook has already moved." << endl;
 						} 
 					} else {
+						// Pawn promotion
 						if ((curPiece->getId()[0] == 'P' && newR == 0) || (curPiece->getId()[0] == 'p' && newR == 7)) {
 							char promotion;
 							cin >> promotion;
@@ -350,6 +351,14 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								}		
 							}
 						}
+						bool remove = false;
+						if (pieceOnSq) {
+							if (whitesTurn && !squares[newR][newC].getInfo().piece->getIsWhite()) {
+								remove = true;
+							} else if (!whitesTurn && squares[newR][newC].getInfo().piece->getIsWhite()) {
+								remove = true;
+							}
+						}
 						updateTurn(curR, curC, newR, newC, curPiece);
 					}
 					curPiece->changeCastle(0);
@@ -367,11 +376,25 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 	}
 }
 
-void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {
+void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {	
+	squares[curR][curC].setPiece(nullptr);	
+	State rState{StateType::PieceRemoved, Direction::N, false, piece, false};
+	squares[curR][curC].setState(rState);
+	squares[curR][curC].notifyObservers();
+	if (squares[newR][newC].getInfo().piece != nullptr) {
+		State mState{StateType::PieceRemoved, Direction::N, false,  squares[newR][newC].getInfo().piece, false};
+		squares[newR][newC].setState(mState);
+		squares[newR][newC].notifyObservers();
+	}
 	squares[newR][newC].setPiece(piece);
-	squares[curR][curC].setPiece(nullptr);
+
 	drawPiece(piece);
 	undrawPiece(curR, curC);
+
+	State nState{StateType::PieceAdded, Direction::N, true, piece, false};
+	squares[newR][newC].setState(nState);
+	squares[newR][newC].notifyObservers();
+
 	cout << *this;
 	if (whitesTurn) {
 		whitesTurn = false;

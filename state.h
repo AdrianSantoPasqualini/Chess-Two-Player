@@ -13,5 +13,6 @@ struct State {
 	Direction direction;
 	bool attacked;
 	shared_ptr<Piece> piece;
+	bool knightMovement;
 };
 #endif

@@ -17,8 +17,8 @@ class Square: public Subject, public Observer  {
 	int c;
 	
 	public:
-		shared_ptr<Piece> getPiece() const;
-		pair<int,int> getCoords() const;
+		//shared_ptr<Piece> getPiece() const;
+		//pair<int,int> getCoords() const;
 		void setPiece(shared_ptr<Piece> piece);
 		void removeAttacker(bool white, string id);
 		void addAttacker(bool white, shared_ptr<Piece> piece);
