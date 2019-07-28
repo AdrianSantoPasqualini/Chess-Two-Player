@@ -1,3 +1,4 @@
+#include "window.h"
 #include "board.h"
 #include "player.h"
 #include "info.h"
@@ -63,6 +64,91 @@ Board::Board() {
 	}
 }
 
+void Board::draw() {
+	window.drawString(90, 570, "a", 1);
+	window.drawString(150, 570, "b", 1);
+	window.drawString(210, 570, "c", 1);
+	window.drawString(270, 570, "d", 1);
+	window.drawString(330, 570, "e", 1);
+	window.drawString(390, 570, "f", 1);
+	window.drawString(450, 570, "g", 1);
+	window.drawString(510, 570, "h", 1);
+	window.drawString(30, 90, "8", 1);
+	window.drawString(30, 150, "7", 1);
+	window.drawString(30, 210, "6", 1);
+	window.drawString(30, 270, "5", 1);
+	window.drawString(30, 330, "4", 1);
+	window.drawString(30, 390, "3", 1);
+	window.drawString(30, 450, "2", 1);
+	window.drawString(30, 510, "1", 1);
+
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (i%2 == 0) {
+				if (j%2 == 0) {
+					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, 0);	
+				} else { 
+					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, 1);	
+				}
+			} else {
+				if (j%2 == 0) {
+					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, 1);	
+				} else { 
+					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, 0);	
+				}
+			}
+			if (defSquares[i][j].getInfo().piece != nullptr) {
+				drawPiece(defSquares[i][j].getInfo().piece);
+			}
+		}	
+	}
+}
+
+void Board::drawScore() {
+
+}
+
+void Board::drawPiece(shared_ptr<Piece> piece) {
+	pair<int, int> coords = piece->getCoor();
+	int r = coords.first;
+	int c = coords.second;
+	int colour = piece->getIsWhite() ? 4 : 11;
+	char id = toupper(piece->getId().at(0));
+	if (id == 'K') {
+		window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
+		window.fillRectangle(c*60 + 75, r*60 + 80, 30, 10, colour);	
+		window.fillRectangle(c*60 + 85, r*60 + 70, 10, 30, colour);
+	} else if (id == 'Q') {
+		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+	} else if (id == 'B') {
+		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+	} else if (id == 'R') {
+		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+	} else if (id == 'N') {
+		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+	} else if (id == 'P') {
+		window.fillCircle(c*60 + 90, r*60 + 80, 20, colour);	
+		//window.fillPolygon(c * 60 + 90, r * 60 + 80, 3, 30, 0, colour);
+	} 
+	//cout << id << " " << r << " " << c << endl;
+}
+
+void Board::undrawPiece(int r, int c) {
+	if (r%2 == 0) {
+		if (c%2 == 0) {
+			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, 0);	
+		} else { 
+			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, 1);	
+		}
+	} else {
+		if (c%2 == 0) {
+			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, 1);	
+		} else { 
+			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, 0);	
+		}
+	}
+}
+
 void Board::incWhiteScore() {
 	whiteScore++;
 }
@@ -85,6 +171,7 @@ int Board::getBlackScore() {
 
 void Board::init() {
 	whitesTurn = defWhitesTurn;
+	squares.clear();
 	squares = defSquares;
 	for (size_t i = 0; i < 8; i++) {
 		for (size_t j = 0; j < 8; j++) {
@@ -122,7 +209,9 @@ void Board::setPlayer(string colour, string type) {
 			player1 = make_unique<Level3>(true);
 		} else if (type == "computer4") {
 			player1 = make_unique<Level4>(true);
-		}	
+		}
+		shared_ptr<Board> currBoard{this};
+		player1->attachBoard(currBoard);
 	} else if (colour == "black") {
 		if (type == "human") {
 			player2 = make_unique<Human>(false);
@@ -134,7 +223,9 @@ void Board::setPlayer(string colour, string type) {
 			player2 = make_unique<Level3>(false);
 		} else if (type == "computer4") {
 			player2 = make_unique<Level4>(false);
-		}
+		}	
+		shared_ptr<Board> currBoard{this};
+		player2->attachBoard(currBoard);
 	}
 }
 
@@ -211,8 +302,14 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						if (castledRook->getMovesMade() == 0) {
 							curPiece->updatePiece(newR, newC);
 							castledRook->updatePiece(newR, newC - 1);
-							squares[newR][newC - 1].setPiece(castledRook);
 							squares[curR][curC + 3].setPiece(nullptr);
+							State rState{StateType::PieceRemoved, Direction::N, false, castledRook, false};
+							squares[curR][curC + 3].setState(rState);
+							squares[curR][curC + 3].notifyObservers();
+							squares[newR][newC - 1].setPiece(castledRook);
+							State nState{StateType::PieceAdded, Direction::N, true, castledRook, false};
+							squares[newR][newC - 1].setState(nState);
+							squares[newR][newC - 1].notifyObservers();
 							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
@@ -223,8 +320,14 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						if (castledRook->getMovesMade() == 0) {
 							curPiece->updatePiece(newR, newC);
 							castledRook->updatePiece(newR, newC + 1);
-							squares[newR][newC + 1].setPiece(castledRook);
 							squares[curR][curC - 4].setPiece(nullptr);
+							State rState{StateType::PieceRemoved, Direction::N, false, castledRook, false};
+							squares[curR][curC - 4].setState(rState);
+							squares[curR][curC - 4].notifyObservers();
+							squares[newR][newC + 1].setPiece(castledRook);
+							State nState{StateType::PieceAdded, Direction::N, true, castledRook, false};
+							squares[newR][newC + 1].setState(nState);
+							squares[newR][newC + 1].notifyObservers();
 							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
@@ -300,6 +403,10 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 		squares[newR][newC].notifyObservers();
 	}
 	squares[newR][newC].setPiece(piece);
+
+	drawPiece(piece);
+	undrawPiece(curR, curC);
+
 	State nState{StateType::PieceAdded, Direction::N, true, piece, false};
 	squares[newR][newC].setState(nState);
 	squares[newR][newC].notifyObservers();
@@ -312,10 +419,31 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	}
 }
 
+
+void Board::printDefault() {
+	for (int i = 0; i < 8; ++i) {
+		cout << 8 - i << " ";
+		for (int j = 0; j < 8; ++j) {
+			shared_ptr<Piece> piece = (defSquares[i][j]).getInfo().piece;
+			if (piece == nullptr) {
+				if ((i + j) % 2 == 0) {
+					cout << " ";
+				} else {
+					cout << "-";
+				}
+			} else {
+				cout << piece->getId()[0];
+			}
+		}
+		cout << endl;
+	}
+	cout << endl <<  "  abcdefgh" << endl;
+}
+	
+
 void Board::setup() {
-	Board def = Board(defSquares);
+	printDefault();
 	vector<char> validPieces = {'K', 'Q', 'B', 'R', 'N', 'P', 'k', 'q', 'b', 'r', 'n', 'p'};
-	cout << def;
 	bool done = false;
 		while (!done) {
 		try {
@@ -390,8 +518,8 @@ void Board::setup() {
 					throw e;
 				}
 				defSquares[8 - row][col - 'a'].setPiece(p);
-				def = Board(defSquares);
-				cout << def;
+				printDefault();
+				drawPiece(p);
 			} else if (cmd == "-") {
 				char col;
 				int row;	
@@ -447,8 +575,8 @@ void Board::setup() {
 						default: break;
 					}
 					defSquares[8 - row][col - 'a'].setPiece(nullptr);
-					def = Board(defSquares);
-					cout << def;
+					undrawPiece(8-row, col-'a');
+					printDefault();
 				}
 			} else if (cmd == "=") {
 				string player;

@@ -1,5 +1,6 @@
 #include "player.h"
 #include "piece.h"
+#include "board.h"
 using namespace std;
 
 Player::Player(bool isWhite): isWhite {isWhite} {
@@ -18,8 +19,12 @@ bool Player::isInCheck() const {
 	return check;
 }
 
+void Player::attachBoard(shared_ptr<Board> currBoard) {
+	board = currBoard;
+}
+
+
 void Player::addPiece(shared_ptr<Piece> p) {
-	// is the string in pieces the id of piece?
 	pieces.emplace(p->getId(), p);
 }
 
@@ -31,7 +36,10 @@ void Player::removePiece(string id) {
 Human::Human(bool isWhite): Player{isWhite} {}
 
 void Human::makeMove() {
-
+	string oldCoord;
+	string newCoord;
+	cin >> oldCoord >> newCoord;
+	board->movePiece('8' - oldCoord[1], oldCoord[0] - 'a', '8' - newCoord[1], newCoord[0] - 'a');
 }
 
 
