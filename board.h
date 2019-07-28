@@ -7,6 +7,7 @@
 #include <memory>
 #include <algorithm> // for find
 #include "square.h"
+#include "window.h"
 ////////////////////////////////
 // try forward declarations first. Only if they dont work, include the .h file
 ///////////////////////////////
@@ -20,7 +21,7 @@ class Board {
 	vector<int> blackCounts;
 	bool defWhitesTurn;
 	vector<vector<Square>> squares;
-	//Xwindow window;
+	Xwindow window;
 	unique_ptr<Player> player1;
 	unique_ptr<Player> player2;
 	bool whitesTurn;
@@ -29,8 +30,13 @@ class Board {
 
 	// private methods
 	Board(vector<vector<Square>>);
+	void drawPiece(shared_ptr<Piece> piece);
+	void undrawPiece(int r, int c);
+	void drawScore();
+	void printDefault();
 	public:
 		Board();
+		void draw();
 		void setPlayer(string colour, string type);
 		void init();
 		void setup();

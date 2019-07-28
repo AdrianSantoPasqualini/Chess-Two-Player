@@ -24,6 +24,7 @@ class Square: public Subject, public Observer  {
 		void addAttacker(bool white, shared_ptr<Piece> piece);
 		void toggleAttacker(bool attacked, shared_ptr<Piece> piece);
 		Square(int r, int c, shared_ptr<Piece> currPiece);  
+		Square(const Square & other);
 		void notify(Subject & whoFrom) override;
 		Info getInfo() const override;
 };

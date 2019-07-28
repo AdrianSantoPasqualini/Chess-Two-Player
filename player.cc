@@ -11,7 +11,6 @@ bool Player::isInCheck() const {
 }
 
 void Player::addPiece(shared_ptr<Piece> p) {
-	// is the string in pieces the id of piece?
 	pieces.emplace(p->getId(), p);
 }
 

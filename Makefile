@@ -1,10 +1,10 @@
 CXX=g++
-CXXFLAGS=-std=c++14 -Wall -MMD -Werror=vla
-OBJECTS=board.o square.o piece.o player.o main.o
-EPENDS=${OBJECTS:.o=.d}
+CXXFLAGS=-std=c++14 -Wall -MMD -Werror=vla -lX11
+OBJECTS=board.o square.o piece.o player.o window.o main.o
+DEPENDS=${OBJECTS:.o=.d}
 EXEC=chess
 ${EXEC} : ${OBJECTS}
-	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
+	${CXX} ${OBJECTS} -o ${EXEC} ${CXXFLAGS}
 -include ${DEPENDS}
 
 clean:

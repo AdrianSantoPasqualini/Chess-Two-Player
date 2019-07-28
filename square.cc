@@ -7,6 +7,28 @@ using namespace std;
 
 Square::Square(int r, int c, shared_ptr<Piece> currPiece): currPiece{currPiece}, r{r}, c{c} {}
 
+Square::Square(const Square & other): r{other.r}, c{other.c} {
+	shared_ptr<Piece> piece = other.getInfo().piece;
+	if (piece == nullptr) {
+		currPiece = nullptr;	
+	} else {
+		char id = toupper(piece->getId().at(0));
+		if (id == 'K') {
+			currPiece = make_shared<King>(r, c, piece->getIsWhite(), piece->getId());
+		} else if (id == 'Q') {
+			currPiece = make_shared<Queen>(r, c, piece->getIsWhite(), piece->getId());
+		} else if (id == 'B') {
+			currPiece = make_shared<Bishop>(r, c, piece->getIsWhite(), piece->getId());
+		} else if (id == 'R') {
+			currPiece = make_shared<Rook>(r, c, piece->getIsWhite(), piece->getId());
+		} else if (id == 'N') {
+			currPiece = make_shared<Knight>(r, c, piece->getIsWhite(), piece->getId());
+		} else if (id == 'P') {
+			currPiece = make_shared<Pawn>(r, c, piece->getIsWhite(), piece->getId());
+		}
+	}
+}
+
 shared_ptr<Piece> Square::getPiece() const {
 	return currPiece;
 }
