@@ -6,17 +6,20 @@
 using namespace std;
 
 class Piece;
+class Board;
 
 class Player {
 	map<string, shared_ptr<Piece>> pieces;
 	bool isWhite;
 	int score;
+	shared_ptr<Board> board;
 	public:
 		Player(bool isWhite); 
 		virtual void makeMove() = 0;
 		bool isInCheck() const;
 		void addPiece(shared_ptr<Piece>);
 		void removePiece(string id);
+		void attachBoard(shared_ptr<Board>);
 };
 
 class Human final: public Player {

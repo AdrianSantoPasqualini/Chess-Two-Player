@@ -122,7 +122,9 @@ void Board::setPlayer(string colour, string type) {
 			player1 = make_unique<Level3>(true);
 		} else if (type == "computer4") {
 			player1 = make_unique<Level4>(true);
-		}	
+		}
+		shared_ptr<Board> currBoard{this};
+		player1->attachBoard(currBoard);
 	} else if (colour == "black") {
 		if (type == "human") {
 			player2 = make_unique<Human>(false);
@@ -134,7 +136,9 @@ void Board::setPlayer(string colour, string type) {
 			player2 = make_unique<Level3>(false);
 		} else if (type == "computer4") {
 			player2 = make_unique<Level4>(false);
-		}
+		}	
+		shared_ptr<Board> currBoard{this};
+		player2->attachBoard(currBoard);
 	}
 }
 
@@ -211,8 +215,14 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						if (castledRook->getMovesMade() == 0) {
 							curPiece->updatePiece(newR, newC);
 							castledRook->updatePiece(newR, newC - 1);
-							squares[newR][newC - 1].setPiece(castledRook);
 							squares[curR][curC + 3].setPiece(nullptr);
+							State rState{StateType::PieceRemoved, Direction::N, false, castledRook, false};
+							squares[curR][curC + 3].setState(rState);
+							squares[curR][curC + 3].notifyObservers();
+							squares[newR][newC - 1].setPiece(castledRook);
+							State nState{StateType::PieceAdded, Direction::N, true, castledRook, false};
+							squares[newR][newC - 1].setState(nState);
+							squares[newR][newC - 1].notifyObservers();
 							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
@@ -223,8 +233,14 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						if (castledRook->getMovesMade() == 0) {
 							curPiece->updatePiece(newR, newC);
 							castledRook->updatePiece(newR, newC + 1);
-							squares[newR][newC + 1].setPiece(castledRook);
 							squares[curR][curC - 4].setPiece(nullptr);
+							State rState{StateType::PieceRemoved, Direction::N, false, castledRook, false};
+							squares[curR][curC - 4].setState(rState);
+							squares[curR][curC - 4].notifyObservers();
+							squares[newR][newC + 1].setPiece(castledRook);
+							State nState{StateType::PieceAdded, Direction::N, true, castledRook, false};
+							squares[newR][newC + 1].setState(nState);
+							squares[newR][newC + 1].notifyObservers();
 							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
