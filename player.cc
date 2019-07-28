@@ -7,7 +7,15 @@ Player::Player(bool isWhite): isWhite {isWhite} {
 }
 
 bool Player::isInCheck() const {
-	return false;
+	bool check = false;
+	pair<int, int> coor;
+	if (isWhite) {
+		coor = pieces.find("K")->second->getCoor();
+	} else {
+		coor = pieces.find("k")->second->getCoor();
+	}
+	
+	return check;
 }
 
 void Player::addPiece(shared_ptr<Piece> p) {

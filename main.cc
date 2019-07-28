@@ -31,13 +31,15 @@ int main() {
 				matchOngoing = true;
 				cout << board;
 			} else {
-				cout << "Please enter valid players." << endl;
+				cout << "Invalid players." << endl;
 			}
 		} else if (cmd == "resign" && matchOngoing) {
 			if (board.isWhitesTurn()){
-				board.incBlackScore();	
+				board.incBlackScore();
+				cout << "Black wins!" << endl;
 			} else {
 				board.incWhiteScore();
+				cout << "White wins!" << endl;
 			} 
 			matchOngoing = false;
 		} else if (cmd == "move" && matchOngoing) {
@@ -46,6 +48,8 @@ int main() {
 			board.movePiece('8' - c1[1], c1[0] - 'a', '8' - c2[1], c2[0] - 'a');
 		} else if (cmd == "setup" && !matchOngoing) {
 			board.setup();
+		} else {
+			cout << "Invalid command." << endl;
 		}
 	} 
 	cout << "Final Score:" << endl;
