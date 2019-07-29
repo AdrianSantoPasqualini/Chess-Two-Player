@@ -14,11 +14,11 @@ class Board;
 
 class Player {
 	map<string, shared_ptr<Piece>> pieces;
-	vector<Move> legalMoves;
 	bool isWhite;
 	int score;
 	protected:
 		shared_ptr<Board> board;
+		vector<Move> legalMoves;
 	public:
 		Player(bool isWhite); 
 		virtual void makeMove() = 0;

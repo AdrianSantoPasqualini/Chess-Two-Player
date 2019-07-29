@@ -46,6 +46,7 @@ class Board {
 		int getBlackScore();
 		bool isWhitesTurn();
 		pair<int,int> getAttacks(int r, int c);
+		void makeMove();
 		void movePiece(int curR, int curC, int newR, int newC);
 		bool isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC);
 		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece);

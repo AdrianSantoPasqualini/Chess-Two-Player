@@ -42,14 +42,14 @@ Info Square::getInfo() const {
 
 void Square::removeAttacker(bool white, string id) {
 	if (white) {
-		for (int i = 0; i < wAttacks.size(); i++) {
+		for (unsigned int i = 0; i < wAttacks.size(); i++) {
 			if (wAttacks[i]->getId() == id) {
 				wAttacks.erase(wAttacks.begin() + i);
 				break;
 			}
 		}
 	} else {
-		for (int i = 0; i < bAttacks.size(); i++) {
+		for (unsigned int i = 0; i < bAttacks.size(); i++) {
 			if (bAttacks[i]->getId() == id) {
 				bAttacks.erase(bAttacks.begin() + i);
 				break;
@@ -61,7 +61,7 @@ void Square::removeAttacker(bool white, string id) {
 void Square::addAttacker(bool white, shared_ptr<Piece> piece) {
 	if (white) {
 		bool found = false;
-		for (int i = 0; i < wAttacks.size(); i++) {
+		for (unsigned int i = 0; i < wAttacks.size(); i++) {
 			if (piece->getId() == wAttacks[i]->getId()) {
 				found = true;
 				break;
@@ -72,7 +72,7 @@ void Square::addAttacker(bool white, shared_ptr<Piece> piece) {
 		}
 	} else {	
 		bool found = false;
-		for (int i = 0; i < bAttacks.size(); i++) {
+		for (unsigned int i = 0; i < bAttacks.size(); i++) {
 			if (piece->getId() == bAttacks[i]->getId()) {
 				found = true;
 				break;
@@ -300,9 +300,7 @@ void Square::notify(Subject & whoFrom) {
 				} else if (getInfo().piece != nullptr) {
 					toggleAttacker(recState.attacked, recState.piece);
 					if (getInfo().piece->getId()[0] == 'r' || getInfo().piece->getId()[0] == 'R') {
-						cout << getInfo().piece->getId() << " received relay" << endl;
 						if (vertical || horizontal) {
-							cout << getInfo().piece->getId() << " sent Reply" << endl;
 							State nState{StateType::Reply, revDir, true, getInfo().piece, false};
 							setState(nState);
 							notifyObservers();
