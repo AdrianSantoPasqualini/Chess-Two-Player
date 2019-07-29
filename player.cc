@@ -1,7 +1,20 @@
 #include "player.h"
 #include "piece.h"
 #include "board.h"
+#include <ctime>    
+#include <cstdlib>
+
 using namespace std;
+
+
+
+
+
+///////////////////////// HOW TO RANDOM ////////////////////////////
+// srand(time(0)); // Sets the random seed based on the current time.
+// r = (rand() % x); // Generates random number from 0 to x.
+////////////////////////////////////////////////////////////////////
+
 
 Player::Player(bool isWhite): isWhite {isWhite} {
 	score = 0;	
