@@ -41,12 +41,11 @@ class Board {
 		void init();
 		void setup();
 		int whoWon();
-		void incWhiteScore();
-		void incBlackScore();
+		void incScore(int w, int b);
 		int getWhiteScore();
 		int getBlackScore();
 		bool isWhitesTurn();
-		shared_ptr<Square> getSquare(int r, int c);
+		pair<int,int> getAttacks(int r, int c);
 		void movePiece(int curR, int curC, int newR, int newC);
 		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece);
 		friend ostream & operator<<(ostream &out, const Board &b); 

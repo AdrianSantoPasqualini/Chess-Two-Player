@@ -149,12 +149,9 @@ void Board::undrawPiece(int r, int c) {
 	}
 }
 
-void Board::incWhiteScore() {
-	whiteScore++;
-}
-
-void Board::incBlackScore() {
-	blackScore++;
+void Board::incScore(int w, int b) {
+	whiteScore += w;
+	blackScore += b;
 }
 
 bool Board::isWhitesTurn() {
@@ -169,9 +166,8 @@ int Board::getBlackScore() {
 	return blackScore;
 }
 
-shared_ptr<Square> Board::getSquare(int r, int c) {
-	shared_ptr<Square> square{&squares[r][c]};
-	return square;
+pair<int,int> Board::getAttacks(int r, int c) {
+	return make_pair(squares[r][c].getInfo().wTotAttacks, squares[r][c].getInfo().bTotAttacks);
 }
 
 void Board::init() {
@@ -399,16 +395,18 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						}
 						bool remove = false;
 						updateTurn(curR, curC, newR, newC, curPiece);
-						// If king is under check reverse move
+						// If king is under check, reverse move
 						if (whitesTurn) {
-							if (player1->isInCheck()) {
-								curPiece->updatePiece(curR, curC);
-								updateTurn(newR, newC, curR, curC, curPiece);
-							}
-						} else {
 							if (player2->isInCheck()) {
 								curPiece->updatePiece(curR, curC);
 								updateTurn(newR, newC, curR, curC, curPiece);
+								cout << "King will be under check if this piece moves." << endl;
+							}
+						} else {
+							if (player1->isInCheck()) {
+								curPiece->updatePiece(curR, curC);
+								updateTurn(newR, newC, curR, curC, curPiece);
+								cout << "King will be under check if this piece moves." << endl;
 							}
 						}
 					}
@@ -449,7 +447,6 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	squares[newR][newC].setState(nState);
 	squares[newR][newC].notifyObservers();
 
-	cout << *this;
 	if (whitesTurn) {
 		whitesTurn = false;
 	} else {
@@ -654,7 +651,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 			Info info = b.squares[i][j].getInfo();
 			
 			if (info.wAttacked || info.bAttacked) {
-				cout << "A";
+				cout << info.bTotAttacks;
 			} else {
 				cout << " ";
 			}
@@ -670,6 +667,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 			} else {
 				out << piece->getId()[0];
 			}
+			
 		}
 		out << endl;
 	}

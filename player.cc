@@ -21,14 +21,14 @@ bool Player::isInCheck() const {
 	pair<int, int> coor;
 	if (isWhite) {
 		coor = pieces.find("K")->second->getCoor();
-		Info info = board->getSquare(coor.first, coor.second)->getInfo();
-		if (info.wAttacked) {
+		int bAttacks = board->getAttacks(coor.first, coor.second).second;
+		if (bAttacks) {
 			check = true;
 		}
 	} else {
 		coor = pieces.find("k")->second->getCoor();
-		Info info = board->getSquare(coor.first, coor.second)->getInfo();
-		if (info.bAttacked) {
+		int wAttacks = board->getAttacks(coor.first, coor.second).first;
+		if (wAttacks) {
 			check = true;
 		}
 	}
