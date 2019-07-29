@@ -105,30 +105,51 @@ void Board::draw() {
 }
 
 void Board::drawScore() {
-	//window.draw
+	string wScore = "White's Score: " + to_string(whiteScore);
+	string bScore = "Black's Score: " + to_string(blackScore);
+	string turn = whitesTurn ? "White's Turn" : "Black's Turn";
+	window.drawString(10, 10, wScore, 1);
+	window.drawString(500, 10, bScore, 1);
+	window.drawString(250, 50, turn, 1);
 }
+
 
 void Board::drawPiece(shared_ptr<Piece> piece) {
 	pair<int, int> coords = piece->getCoor();
 	int r = coords.first;
 	int c = coords.second;
-	int colour = piece->getIsWhite() ? 4 : 11;
+	int colour = piece->getIsWhite() ? 7 : 4;
 	char id = toupper(piece->getId().at(0));
 	if (id == 'K') {
 		window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
 		window.fillRectangle(c*60 + 75, r*60 + 80, 30, 10, colour);	
 		window.fillRectangle(c*60 + 85, r*60 + 70, 10, 30, colour);
 	} else if (id == 'Q') {
-		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+		window.fillCircle(c*60 + 89, r*60 + 78, 10, colour);
+		window.fillPolygon(c * 60 + 62, r * 60 + 91, 3, 25,0, colour);
+		window.fillPolygon(c * 60 + 68, r * 60 + 111, 3, 41,1, colour);
+		window.fillPolygon(c * 60 + 90, r * 60 + 91, 3, 25,0, colour);
 	} else if (id == 'B') {
-		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+		window.fillCircle(c*60 + 90, r*60 + 68, 10, colour);
+		window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);
+		window.fillRectangle(c*60 + 80, r*60 + 85, 20, 20, colour);
+		window.fillPolygon(c*60 + 78, r*60 + 87, 3, 25,1, colour);
 	} else if (id == 'R') {
-		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+		window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
+		window.fillRectangle(c*60 + 80, r*60 + 80, 20, 20, colour);	
+		window.fillRectangle(c*60 + 78, r*60 + 75, 6, 10, colour);	
+		window.fillRectangle(c*60 + 88, r*60 + 75, 6, 10, colour);	
+		window.fillRectangle(c*60 + 97, r*60 + 75, 6, 10, colour);	
 	} else if (id == 'N') {
-		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+		window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
+		window.fillRectangle(c*60 + 82, r*60 + 80, 15, 20, colour);	
+		window.fillPolygon(c*60 + 80, r*60 + 72, 4, 12, -1, colour);
+		window.fillPolygon(c*60 + 88, r*60 + 68, 4, 12, -1, colour);
+		window.fillPolygon(c*60 + 80, r*60 + 82, 3, 20, 1, colour);
+
 	} else if (id == 'P') {
-		window.fillCircle(c*60 + 90, r*60 + 80, 20, colour);	
-		//window.fillPolygon(c * 60 + 90, r * 60 + 80, 3, 30, 0, colour);
+		window.fillCircle(c*60 + 87, r*60 + 77, 20, colour);	
+		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 40,-1, colour);
 	} 
 	//cout << id << " " << r << " " << c << endl;
 }
@@ -483,6 +504,10 @@ void Board::printDefault() {
 void Board::setup() {
 	printDefault();
 	vector<char> validPieces = {'K', 'Q', 'B', 'R', 'N', 'P', 'k', 'q', 'b', 'r', 'n', 'p'};
+	/*	
+	window.fillRectangle(0, 45, 600, 30, 0);
+	window.drawString(250, 30, "IN SETUP", 1);
+	*/
 	bool done = false;
 		while (!done) {
 		try {
@@ -651,16 +676,17 @@ ostream & operator<<(ostream &out, const Board &b) {
 		out << 8 - i << " ";
 		for (int j = 0; j < 8; ++j) {
 			
-			/*
-			Info info = b.squares[i][j].getInfo();
 			
+			Info info = b.squares[i][j].getInfo();
+			/*
+			if (info.wTotAttacks > 0) {
+				cout << info.wTotAttacks << " ";
 			if (info.wAttacked || info.bAttacked) {
 				cout << info.bTotAttacks;
 			} else {
-				cout << " ";
+				cout << "  ";
 			}
 			*/
-			
 			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {
@@ -671,10 +697,9 @@ ostream & operator<<(ostream &out, const Board &b) {
 			} else {
 				out << piece->getId()[0];
 			}
-			
 		}
 		out << endl;
 	}
-	out << endl <<  "  abcdefgh" << endl;
+	out << endl <<  "  a b c d e f g h" << endl;
 	return out;	
 }
