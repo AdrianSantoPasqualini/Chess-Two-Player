@@ -236,7 +236,11 @@ void Human::makeMove() {
 Level1::Level1(bool isWhite): Player{isWhite} {}
 
 void Level1::makeMove() {
-
+	srand(time(NULL));	
+	int i = rand() % legalMoves.size();
+	pair<int, int> oldCoords = legalMoves[i].piece->getCoor();
+	pair<int, int> newCoords = legalMoves[i].nCoords;
+	board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second);
 }
 
 Level2::Level2(bool isWhite): Player{isWhite} {}

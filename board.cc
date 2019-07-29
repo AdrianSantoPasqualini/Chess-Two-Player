@@ -191,6 +191,14 @@ int Board::getBlackScore() {
 	return blackScore;
 }
 
+void Board::makeMove() {
+	if (isWhitesTurn()) {
+		player1->makeMove();
+	} else {
+		player2->makeMove();
+	}
+}
+
 pair<int,int> Board::getAttacks(int r, int c) {
 	return make_pair(squares[r][c].getInfo().wTotAttacks, squares[r][c].getInfo().bTotAttacks);
 }
