@@ -404,6 +404,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
 								squares[curR][curC].setState(rState);
 								squares[curR][curC].notifyObservers();
+								player1->removePiece(curPiece->getId());
 								if (promotion == 'Q') {
 									curPiece = make_shared<Queen>(newR, newC, true, "Q2" + curPiece->getId(), curPiece->getMovesMade());
 								} else if (promotion == 'N') {
@@ -413,6 +414,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								} else if (promotion == 'B') {
 									curPiece = make_shared<Bishop>(newR, newC, true, "B3" + curPiece->getId(), curPiece->getMovesMade());
 								}
+								player1->addPiece(curPiece);
 								State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
 								squares[curR][curC].setState(nState);
 								squares[curR][curC].notifyObservers();
@@ -424,6 +426,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
 								squares[curR][curC].setState(rState);
 								squares[curR][curC].notifyObservers();
+								player2->removePiece(curPiece->getId());
 								if (promotion == 'q') {
 									curPiece = make_shared<Queen>(newR, newC, false, "q2", curPiece->getMovesMade());
 								} else if (promotion == 'n') {
@@ -433,6 +436,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								} else if (promotion == 'b') {
 									curPiece = make_shared<Bishop>(newR, newC, false, "b3", curPiece->getMovesMade());
 								}
+								player2->addPiece(curPiece);
 								State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
 								squares[curR][curC].setState(nState);
 								squares[curR][curC].notifyObservers();
@@ -443,6 +447,8 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						// Detecting check
 						if (whitesTurn) {
 							if (player2->isInCheck()) {
+								player2->removePiece(curPiece->getId());
+								curPiece->updatePiece(curR, curC);
 								if (promotion != '0') {
 									State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
 									squares[newR][newC].setState(rState);
@@ -452,6 +458,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 									squares[newR][newC].setState(nState);
 									squares[newR][newC].notifyObservers();
 								}
+								player2->addPiece(curPiece);
 								// Move pieces back
 								updateTurn(newR, newC, curR, curC, curPiece);
 								curPiece->decrementMoves();
@@ -467,8 +474,8 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								cout << "White is in check." << endl;
 							}
 						} else {
-							cout << 1 << endl;
 							if (player1->isInCheck()) {
+								player1->removePiece(curPiece->getId());
 								curPiece->updatePiece(curR, curC);
 								if (promotion != '0') {
 									State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
@@ -479,6 +486,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 									squares[newR][newC].setState(nState);
 									squares[newR][newC].notifyObservers();
 								}
+								player1->addPiece(curPiece);
 								// Move piece back
 								updateTurn(newR, newC, curR, curC, curPiece);
 								curPiece->decrementMoves();
@@ -545,11 +553,9 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	}
 }
 
-
 bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 	
 }
-
 
 void Board::printDefault() {
 	for (int i = 0; i < 8; ++i) {
@@ -570,7 +576,6 @@ void Board::printDefault() {
 	}
 	cout << endl <<  "  abcdefgh" << endl;
 }
-	
 
 void Board::setup() {
 	printDefault();
