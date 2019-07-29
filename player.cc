@@ -2,7 +2,15 @@
 #include "piece.h"
 #include "board.h"
 #include "info.h"
+#include <ctime>    
+#include <cstdlib>
+
 using namespace std;
+
+///////////////////////// HOW TO RANDOM ////////////////////////////
+// srand(time(0)); // Sets the random seed based on the current time.
+// r = (rand() % x); // Generates random number from 0 to x.
+////////////////////////////////////////////////////////////////////
 
 Player::Player(bool isWhite): isWhite {isWhite} {
 	score = 0;	
@@ -39,7 +47,6 @@ void Player::removePiece(string id) {
 	pieces.erase(id);
 }
 
-
 Human::Human(bool isWhite): Player{isWhite} {}
 
 void Human::makeMove() {
@@ -48,7 +55,6 @@ void Human::makeMove() {
 	cin >> oldCoord >> newCoord;
 	board->movePiece('8' - oldCoord[1], oldCoord[0] - 'a', '8' - newCoord[1], newCoord[0] - 'a');
 }
-
 
 Level1::Level1(bool isWhite): Player{isWhite} {}
 
@@ -62,13 +68,11 @@ void Level2::makeMove() {
 
 }
 
-
 Level3::Level3(bool isWhite): Player{isWhite} {}
 
 void Level3::makeMove() {
 
 }
-
 
 Level4::Level4(bool isWhite): Player{isWhite} {}
 

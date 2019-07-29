@@ -105,7 +105,7 @@ void Board::draw() {
 }
 
 void Board::drawScore() {
-
+	//window.draw
 }
 
 void Board::drawPiece(shared_ptr<Piece> piece) {
@@ -217,6 +217,16 @@ void Board::setPlayer(string colour, string type) {
 		}
 		shared_ptr<Board> currBoard{this};
 		player1->attachBoard(currBoard);
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (squares[i][j].getInfo().piece != nullptr) {
+					string id = squares[i][j].getInfo().piece->getId();
+					if (id[0] == 'K' || id[0] == 'B' || id[0] == 'R' || id[0] == 'Q' || id[0] == 'N' || id[0] == 'P') {
+						player1->addPiece(squares[i][j].getInfo().piece); 
+					}
+				}
+			}
+		}
 	} else if (colour == "black") {
 		if (type == "human") {
 			player2 = make_unique<Human>(false);
@@ -231,6 +241,16 @@ void Board::setPlayer(string colour, string type) {
 		}	
 		shared_ptr<Board> currBoard{this};
 		player2->attachBoard(currBoard);
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (squares[i][j].getInfo().piece != nullptr) {
+					string id = squares[i][j].getInfo().piece->getId();
+					if (id[0] == 'k' || id[0] == 'b' || id[0] == 'r' || id[0] == 'q' || id[0] == 'n' || id[0] == 'p') {
+						player2->addPiece(squares[i][j].getInfo().piece); 
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -238,6 +258,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
 		shared_ptr<Piece> curPiece = squares[curR][curC].getInfo().piece;
 		Info newInfo;
+		/////////////////// Get rid of new;
 		if (curPiece != nullptr) {
 			bool pieceOnSq = false;
 			bool blocked = false;
@@ -305,6 +326,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 					if (curPiece->getCastle() == 1) {
 						castledRook = squares[curR][curC + 3].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
+							undrawPiece(curR, curC+3);
 							curPiece->updatePiece(newR, newC);
 							castledRook->updatePiece(newR, newC - 1);
 							squares[curR][curC + 3].setPiece(nullptr);
@@ -315,6 +337,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							State nState{StateType::PieceAdded, Direction::N, true, castledRook, false};
 							squares[newR][newC - 1].setState(nState);
 							squares[newR][newC - 1].notifyObservers();
+							drawPiece(castledRook);
 							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
@@ -323,6 +346,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 					} else if (curPiece->getCastle() == 2) {
 						castledRook = squares[curR][curC - 4].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
+							undrawPiece(curR, curC-4);
 							curPiece->updatePiece(newR, newC);
 							castledRook->updatePiece(newR, newC + 1);
 							squares[curR][curC - 4].setPiece(nullptr);
@@ -333,6 +357,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							State nState{StateType::PieceAdded, Direction::N, true, castledRook, false};
 							squares[newR][newC + 1].setState(nState);
 							squares[newR][newC + 1].notifyObservers();
+							drawPiece(castledRook);
 							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
@@ -407,10 +432,13 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	State rState{StateType::PieceRemoved, Direction::N, false, piece, false};
 	squares[curR][curC].setState(rState);
 	squares[curR][curC].notifyObservers();
-	if (squares[newR][newC].getInfo().piece != nullptr) {
-		State mState{StateType::PieceRemoved, Direction::N, false,  squares[newR][newC].getInfo().piece, false};
+
+	shared_ptr<Piece> attackedPiece = squares[newR][newC].getInfo().piece;
+	if (attackedPiece != nullptr) {
+		State mState{StateType::PieceRemoved, Direction::N, false, attackedPiece, false};
 		squares[newR][newC].setState(mState);
 		squares[newR][newC].notifyObservers();
+		player1->removePiece(attackedPiece->getId());
 	}
 	squares[newR][newC].setPiece(piece);
 

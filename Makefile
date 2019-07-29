@@ -1,5 +1,5 @@
 CXX=g++
-CXXFLAGS=-std=c++14 -Wall -MMD -Werror=vla -I/usr/X11/include/
+CXXFLAGS=-std=c++14 -Wall -MMD -Werror=vla -I/usr/X11/include/ 
 OBJECTS=board.o square.o piece.o player.o window.o main.o
 DEPENDS=${OBJECTS:.o=.d}
 EXEC=chess
