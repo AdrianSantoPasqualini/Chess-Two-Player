@@ -1,15 +1,20 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include <map>
+#include <vector>
 #include <string>
 #include <memory>
+#include <stdlib.h> //for abs
+#include "move.h"
 using namespace std;
 
 class Piece;
 class Board;
 
+
 class Player {
 	map<string, shared_ptr<Piece>> pieces;
+	vector<Move> legalMoves;
 	bool isWhite;
 	int score;
 	protected:
@@ -21,6 +26,7 @@ class Player {
 		void addPiece(shared_ptr<Piece>);
 		void removePiece(string id);
 		void attachBoard(shared_ptr<Board>);
+		void generateLegalMoves();
 };
 
 class Human final: public Player {

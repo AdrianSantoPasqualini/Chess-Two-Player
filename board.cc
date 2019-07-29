@@ -423,7 +423,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								updateTurn(newR, newC, curR, curC, curPiece);
 								curPiece->decrementMoves();
 								curPiece->decrementMoves();
-								cout << "King will be under check if this piece moves." << endl;
+								cout << "Invalid: King is under check after this move." << endl;
 							}
 						} else {
 							if (player1->isInCheck()) {
@@ -431,7 +431,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								updateTurn(newR, newC, curR, curC, curPiece);
 								curPiece->decrementMoves();
 								curPiece->decrementMoves();
-								cout << "King will be under check if this piece moves." << endl;
+								cout << "Invalid: King is under check after this move." << endl;
 							}
 						}
 					}
@@ -477,6 +477,11 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	} else {
 		whitesTurn = true;
 	}
+}
+
+
+bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
+	
 }
 
 
@@ -672,6 +677,7 @@ void Board::setup() {
 }
 
 ostream & operator<<(ostream &out, const Board &b) {
+	out << endl;
 	for (int i = 0; i < 8; ++i) {
 		out << 8 - i << " ";
 		for (int j = 0; j < 8; ++j) {
@@ -700,6 +706,6 @@ ostream & operator<<(ostream &out, const Board &b) {
 		}
 		out << endl;
 	}
-	out << endl <<  "  a b c d e f g h" << endl;
+	out << endl <<  " abcdefgh" << endl << endl;
 	return out;	
 }
