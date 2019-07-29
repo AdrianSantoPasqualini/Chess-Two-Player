@@ -246,7 +246,8 @@ void Level1::makeMove() {
 Level2::Level2(bool isWhite): Player{isWhite} {}
 
 void Level2::makeMove() {
-	for (int i = 0; i < legalMoves.size(); i++) {
+	generateLegalMoves();
+	for (unsigned int i = 0; i < legalMoves.size(); i++) {
 		if (legalMoves[i].toCapture || legalMoves[i].toCheck) {
 			pair<int, int> oldCoords = legalMoves[i].piece->getCoor();
 			pair<int, int> newCoords = legalMoves[i].nCoords;
@@ -265,7 +266,8 @@ void Level2::makeMove() {
 Level3::Level3(bool isWhite): Player{isWhite} {}
 
 void Level3::makeMove() {
-	for (int i = 0; i < legalMoves.size(); i++) {
+	generateLegalMoves();
+	for (unsigned int i = 0; i < legalMoves.size(); i++) {
 		if (legalMoves[i].toAvoid || legalMoves[i].toCapture || legalMoves[i].toCheck) {
 			pair<int, int> oldCoords = legalMoves[i].piece->getCoor();
 			pair<int, int> newCoords = legalMoves[i].nCoords;
