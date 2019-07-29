@@ -9,5 +9,8 @@ class Piece;
 struct Move {
 	pair<int, int> nCoords;
 	shared_ptr<Piece> piece;
+	bool check;
+	bool capture;
+	bool escape;
 };
 #endif
