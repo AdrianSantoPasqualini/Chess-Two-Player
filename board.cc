@@ -64,9 +64,67 @@ Board::Board() {
 	}
 }
 
-void Board::draw() {
+void Board::drawMenu() {
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			if (i%2 == 0) {
+				if (j%2 == 0) {
+					window.fillRectangle(j*60, i*60, 60, 60, 0);	
+				} else { 
+					window.fillRectangle(j*60, i*60, 60, 60, 1);	
+				}
+			} else {
+				if (j%2 == 0) {
+					window.fillRectangle(j*60, i*60, 60, 60, 1);	
+				} else { 
+					window.fillRectangle(j*60, i*60, 60, 60, 0);	
+				}
+			}
+		}	
+	}
+	window.fillRectangle(100, 130, 400, 200, 0);
+	window.drawString(280, 200, "CHESS", 1);
+	window.drawString(150, 230, "<game> <white-player> <black-player> to start a game!", 1); 
+	window.drawString(170, 250, "players can be one of: human computer1 computer2", 1);
+	window.drawString(320, 270, "computer3 computer4", 1);
+	window.drawString(150, 300, "<setup> to set up the board!", 1); 
+	
+	/*	
+	window.fillRectangle(60 + 75, 60 + 100, 30, 10, colour);	
+	window.fillRectangle(60 + 75, 60 + 80, 30, 10, colour);	
+	window.fillRectangle(60 + 85, 60 + 70, 10, 30, colour);
+
+	window.fillCircle(c*60 + 89, r*60 + 78, 10, colour);
+	window.fillPolygon(c * 60 + 62, r * 60 + 91, 3, 25,0, colour);
+	window.fillPolygon(c * 60 + 68, r * 60 + 111, 3, 41,1, colour);
+	window.fillPolygon(c * 60 + 90, r * 60 + 91, 3, 25,0, colour);
+
+	window.fillCircle(c*60 + 90, r*60 + 68, 10, colour);
+	window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);
+	window.fillRectangle(c*60 + 80, r*60 + 85, 20, 20, colour);
+	window.fillPolygon(c*60 + 78, r*60 + 87, 3, 25,1, colour);
+
+	window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
+	window.fillRectangle(c*60 + 80, r*60 + 80, 20, 20, colour);	
+	window.fillRectangle(c*60 + 78, r*60 + 75, 6, 10, colour);	
+	window.fillRectangle(c*60 + 88, r*60 + 75, 6, 10, colour);	
+	window.fillRectangle(c*60 + 97, r*60 + 75, 6, 10, colour);	
+
+	window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
+	window.fillRectangle(c*60 + 82, r*60 + 80, 15, 20, colour);	
+	window.fillPolygon(c*60 + 80, r*60 + 72, 4, 12, -1, colour);
+	window.fillPolygon(c*60 + 88, r*60 + 68, 4, 12, -1, colour);
+	window.fillPolygon(c*60 + 80, r*60 + 82, 3, 20, 1, colour);
+
+	window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
+	window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
+	*/	
+}
+
+void Board::drawBoard() {
+	window.fillRectangle(0, 0, 600, 600, 0);
 	int bColour = 9;
-	int wColour = 6;
+	int wColour = 3;
 	window.drawString(90, 570, "a", 1);
 	window.drawString(150, 570, "b", 1);
 	window.drawString(210, 570, "c", 1);
@@ -150,14 +208,14 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillPolygon(c*60 + 80, r*60 + 82, 3, 20, 1, colour);
 
 	} else if (id == 'P') {
-		window.fillCircle(c*60 + 87, r*60 + 77, 20, colour);	
-		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 40,-1, colour);
+		window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
+		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
 	} 
 	//cout << id << " " << r << " " << c << endl;
 }
 
 void Board::undrawPiece(int r, int c) {
-	int wColour = 6;
+	int wColour = 3;
 	int bColour = 9;
 	if (r%2 == 0) {
 		if (c%2 == 0) {

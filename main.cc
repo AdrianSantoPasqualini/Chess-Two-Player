@@ -11,7 +11,7 @@ int main() {
 	bool matchOngoing = false;
 	vector<string> players = {"human", "computer1", "computer2", "computer3", "computer4"};
  	string cmd;
-	board.draw();
+	board.drawMenu();
 	while (!cin.eof()) {
 		if (matchOngoing && board.isWhitesTurn()) {
 			cout << "White to move." << endl;
@@ -27,7 +27,7 @@ int main() {
 			it2 = find(players.begin(), players.end(), p2);
 			if (it1 != players.end() && it2 != players.end()) {
 				board.init();
-				board.draw();
+				board.drawBoard();
 				board.drawScore();
 				board.setPlayer("white", p1);
 				board.setPlayer("black", p2);
