@@ -40,13 +40,13 @@ class Board {
 		void setPlayer(string colour, string type);
 		void init();
 		void setup();
-		void movePiece(int curR, int curC, int newR, int newC);
 		int whoWon();
-		void incWhiteScore();
-		void incBlackScore();
+		void incScore(int w, int b);
 		int getWhiteScore();
 		int getBlackScore();
 		bool isWhitesTurn();
+		pair<int,int> getAttacks(int r, int c);
+		void movePiece(int curR, int curC, int newR, int newC);
 		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece);
 		friend ostream & operator<<(ostream &out, const Board &b); 
 };

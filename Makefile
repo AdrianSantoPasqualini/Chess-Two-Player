@@ -4,7 +4,7 @@ OBJECTS=board.o square.o piece.o player.o window.o main.o
 DEPENDS=${OBJECTS:.o=.d}
 EXEC=chess
 ${EXEC} : ${OBJECTS}
-	${CXX} ${CXXFLAGS} $^ -o  $@ -L/usr/X11/lib -lX11
+	${CXX} ${CXXFLAGS} $^ -o $@ -L/usr/X11/lib -lX11
 -include ${DEPENDS}
 
 clean:
