@@ -11,6 +11,6 @@ struct Move {
 	shared_ptr<Piece> piece;
 	bool check;
 	bool capture;
-	bool escape;
+	bool avoid;
 };
 #endif
