@@ -28,6 +28,7 @@ int main() {
 			if (it1 != players.end() && it2 != players.end()) {
 				board.init();
 				board.draw();
+				board.drawScore();
 				board.setPlayer("white", p1);
 				board.setPlayer("black", p2);
 				matchOngoing = true;
@@ -45,6 +46,7 @@ int main() {
 			string c1, c2;
 			cin >> c1 >> c2;
 			board.movePiece('8' - c1[1], c1[0] - 'a', '8' - c2[1], c2[0] - 'a');
+			board.drawScore();
 		} else if (cmd == "setup" && !matchOngoing) {
 			board.setup();
 		}

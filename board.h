@@ -32,11 +32,11 @@ class Board {
 	Board(vector<vector<Square>>);
 	void drawPiece(shared_ptr<Piece> piece);
 	void undrawPiece(int r, int c);
-	void drawScore();
 	void printDefault();
 	public:
 		Board();
 		void draw();
+		void drawScore();
 		void setPlayer(string colour, string type);
 		void init();
 		void setup();
