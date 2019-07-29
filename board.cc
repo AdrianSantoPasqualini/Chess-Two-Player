@@ -125,9 +125,15 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillRectangle(c*60 + 75, r*60 + 80, 30, 10, colour);	
 		window.fillRectangle(c*60 + 85, r*60 + 70, 10, 30, colour);
 	} else if (id == 'Q') {
-		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+		window.fillCircle(c*60 + 89, r*60 + 78, 10, colour);
+		window.fillPolygon(c * 60 + 62, r * 60 + 91, 3, 25,0, colour);
+		window.fillPolygon(c * 60 + 68, r * 60 + 111, 3, 41,1, colour);
+		window.fillPolygon(c * 60 + 90, r * 60 + 91, 3, 25,0, colour);
 	} else if (id == 'B') {
-		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+		window.fillCircle(c*60 + 90, r*60 + 68, 10, colour);
+		window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);
+		window.fillRectangle(c*60 + 80, r*60 + 85, 20, 20, colour);
+		window.fillPolygon(c*60 + 78, r*60 + 87, 3, 25,1, colour);
 	} else if (id == 'R') {
 		window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
 		window.fillRectangle(c*60 + 80, r*60 + 80, 20, 20, colour);	
@@ -142,8 +148,8 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillPolygon(c*60 + 80, r*60 + 82, 3, 20, 1, colour);
 
 	} else if (id == 'P') {
-		window.fillCircle(c*60 + 90, r*60 + 80, 20, colour);	
-		//window.fillPolygon(c * 60 + 90, r * 60 + 80, 3, 30, 0, colour);
+		window.fillCircle(c*60 + 87, r*60 + 77, 20, colour);	
+		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 40,-1, colour);
 	} 
 	//cout << id << " " << r << " " << c << endl;
 }
@@ -164,12 +170,9 @@ void Board::undrawPiece(int r, int c) {
 	}
 }
 
-void Board::incWhiteScore() {
-	whiteScore++;
-}
-
-void Board::incBlackScore() {
-	blackScore++;
+void Board::incScore(int w, int b) {
+	whiteScore += w;
+	blackScore += b;
 }
 
 bool Board::isWhitesTurn() {
@@ -182,6 +185,10 @@ int Board::getWhiteScore() {
 
 int Board::getBlackScore() {
 	return blackScore;
+}
+
+pair<int,int> Board::getAttacks(int r, int c) {
+	return make_pair(squares[r][c].getInfo().wTotAttacks, squares[r][c].getInfo().bTotAttacks);
 }
 
 void Board::init() {
@@ -408,14 +415,21 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							}
 						}
 						bool remove = false;
-						if (pieceOnSq) {
-							if (whitesTurn && !squares[newR][newC].getInfo().piece->getIsWhite()) {
-								remove = true;
-							} else if (!whitesTurn && squares[newR][newC].getInfo().piece->getIsWhite()) {
-								remove = true;
+						updateTurn(curR, curC, newR, newC, curPiece);
+						// If king is under check, reverse move
+						if (whitesTurn) {
+							if (player2->isInCheck()) {
+								curPiece->updatePiece(curR, curC);
+								updateTurn(newR, newC, curR, curC, curPiece);
+								cout << "King will be under check if this piece moves." << endl;
+							}
+						} else {
+							if (player1->isInCheck()) {
+								curPiece->updatePiece(curR, curC);
+								updateTurn(newR, newC, curR, curC, curPiece);
+								cout << "King will be under check if this piece moves." << endl;
 							}
 						}
-						updateTurn(curR, curC, newR, newC, curPiece);
 					}
 					curPiece->changeCastle(0);
 				} catch (string msg) {
@@ -454,7 +468,6 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	squares[newR][newC].setState(nState);
 	squares[newR][newC].notifyObservers();
 
-	cout << *this;
 	if (whitesTurn) {
 		whitesTurn = false;
 	} else {
@@ -659,16 +672,17 @@ ostream & operator<<(ostream &out, const Board &b) {
 		out << 8 - i << " ";
 		for (int j = 0; j < 8; ++j) {
 			
-			/*
-			Info info = b.squares[i][j].getInfo();
 			
+			Info info = b.squares[i][j].getInfo();
+			/*
+			if (info.wTotAttacks > 0) {
+				cout << info.wTotAttacks << " ";
 			if (info.wAttacked || info.bAttacked) {
-				cout << "A";
+				cout << info.bTotAttacks;
 			} else {
-				cout << " ";
+				cout << "  ";
 			}
 			*/
-			
 			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {
@@ -682,6 +696,6 @@ ostream & operator<<(ostream &out, const Board &b) {
 		}
 		out << endl;
 	}
-	out << endl <<  "  abcdefgh" << endl;
+	out << endl <<  "  a b c d e f g h" << endl;
 	return out;	
 }
