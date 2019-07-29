@@ -36,7 +36,7 @@ Info Square::getInfo() const {
 	pair<int, int> coords{r, c};
 	int wTotAttacks = wAttacks.size();
 	int bTotAttacks = bAttacks.size();
-	Info nInfo{coords, currPiece, wAttacks.size() != 0, bAttacks.size() != 0, wTotAttacks,bTotAttacks};
+	Info nInfo{coords, currPiece, wAttacks.size() != 0, bAttacks.size() != 0, wTotAttacks, bTotAttacks};
 	return nInfo;
 }
 

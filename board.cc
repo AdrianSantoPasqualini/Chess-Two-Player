@@ -338,7 +338,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 				// Move piece
 				try {
 					curPiece->move(newR, newC, pieceOnSq, blocked, moveIntoAttack);
-					shared_ptr<Piece> castledRook;
+					shared_ptr<Piece> castledRook = nullptr;
 					// Kingside castling
 					if (curPiece->getCastle() == 1) {
 						castledRook = squares[curR][curC + 3].getInfo().piece;
@@ -381,28 +381,37 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						} 
 					} else {
 						// Pawn promotion
+						char promotion = '0';
 						if ((curPiece->getId()[0] == 'P' && newR == 0) || (curPiece->getId()[0] == 'p' && newR == 7)) {
-							char promotion;
 							cin >> promotion;
 							if (whitesTurn) {
 								while (promotion != 'Q' && promotion != 'N' && promotion != 'R' && promotion != 'B') {
-									cout << "Invalid promotion." << endl;
+									cout << "Enter a valid promotion piece." << endl;
 									cin >> promotion;
 								}
+								State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
+								squares[curR][curC].setState(rState);
+								squares[curR][curC].notifyObservers();
 								if (promotion == 'Q') {
-									curPiece = make_shared<Queen>(newR, newC, true, "Q2", curPiece->getMovesMade());
+									curPiece = make_shared<Queen>(newR, newC, true, "Q2" + curPiece->getId(), curPiece->getMovesMade());
 								} else if (promotion == 'N') {
-									curPiece = make_shared<Knight>(newR, newC, true, "N3", curPiece->getMovesMade());
+									curPiece = make_shared<Knight>(newR, newC, true, "N3" + curPiece->getId(), curPiece->getMovesMade());
 								} else if (promotion == 'R') {
-									curPiece = make_shared<Rook>(newR, newC, true, "R3", curPiece->getMovesMade());
+									curPiece = make_shared<Rook>(newR, newC, true, "R3" + curPiece->getId(), curPiece->getMovesMade());
 								} else if (promotion == 'B') {
-									curPiece = make_shared<Bishop>(newR, newC, true, "B3", curPiece->getMovesMade());
+									curPiece = make_shared<Bishop>(newR, newC, true, "B3" + curPiece->getId(), curPiece->getMovesMade());
 								}
+								State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
+								squares[curR][curC].setState(nState);
+								squares[curR][curC].notifyObservers();
 							} else {
 								while (promotion != 'q' && promotion != 'n' && promotion != 'r' && promotion != 'b') {
-									cout << "Invalid promotion." << endl;
+									cout << "Enter a valid promotion piece." << endl;
 									cin >> promotion;
 								}
+								State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
+								squares[curR][curC].setState(rState);
+								squares[curR][curC].notifyObservers();
 								if (promotion == 'q') {
 									curPiece = make_shared<Queen>(newR, newC, false, "q2", curPiece->getMovesMade());
 								} else if (promotion == 'n') {
@@ -411,27 +420,66 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 									curPiece = make_shared<Rook>(newR, newC, false, "r3", curPiece->getMovesMade());
 								} else if (promotion == 'b') {
 									curPiece = make_shared<Bishop>(newR, newC, false, "b3", curPiece->getMovesMade());
-								}		
+								}
+								State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
+								squares[curR][curC].setState(nState);
+								squares[curR][curC].notifyObservers();
 							}
 						}
-						bool remove = false;
+						shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
 						updateTurn(curR, curC, newR, newC, curPiece);
-						// If king is under check, reverse move
+						// Detecting check
 						if (whitesTurn) {
 							if (player2->isInCheck()) {
-								curPiece->updatePiece(curR, curC);
+								if (promotion != '0') {
+									State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
+									squares[newR][newC].setState(rState);
+									squares[newR][newC].notifyObservers();
+									curPiece = make_shared<Pawn>(curR, curC, false, curPiece->getId().substr(2, 2), curPiece->getMovesMade());
+									State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
+									squares[newR][newC].setState(nState);
+									squares[newR][newC].notifyObservers();
+								}
+								// Move pieces back
 								updateTurn(newR, newC, curR, curC, curPiece);
 								curPiece->decrementMoves();
 								curPiece->decrementMoves();
-								cout << "Invalid: King is under check after this move." << endl;
+								if (capturedPiece != nullptr) {
+									// Update twice to reset turn
+									updateTurn(newR, newC, newR, newC, capturedPiece);
+									updateTurn(newR, newC, newR, newC, capturedPiece);
+									player1->addPiece(capturedPiece);
+								}
+								cout << "Invalid, king is under check after this move." << endl;
+							} else if (player1->isInCheck()) {
+								cout << "White is in check." << endl;
 							}
 						} else {
+							cout << 1 << endl;
 							if (player1->isInCheck()) {
 								curPiece->updatePiece(curR, curC);
+								if (promotion != '0') {
+									State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
+									squares[newR][newC].setState(rState);
+									squares[newR][newC].notifyObservers();
+									curPiece = make_shared<Pawn>(curR, curC, true, curPiece->getId().substr(2, 2), curPiece->getMovesMade());
+									State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
+									squares[newR][newC].setState(nState);
+									squares[newR][newC].notifyObservers();
+								}
+								// Move piece back
 								updateTurn(newR, newC, curR, curC, curPiece);
 								curPiece->decrementMoves();
 								curPiece->decrementMoves();
-								cout << "Invalid: King is under check after this move." << endl;
+								if (capturedPiece != nullptr) {
+									// Update twice to reset turn
+									updateTurn(newR, newC, newR, newC, capturedPiece);
+									updateTurn(newR, newC, newR, newC, capturedPiece);
+									player2->addPiece(capturedPiece);
+								}
+								cout << "Invalid, king is under check after this move." << endl;
+							} else if (player2->isInCheck()) {
+								cout << "Black is in check." << endl;
 							}
 						}
 					}
@@ -461,12 +509,16 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 		State mState{StateType::PieceRemoved, Direction::N, false, attackedPiece, false};
 		squares[newR][newC].setState(mState);
 		squares[newR][newC].notifyObservers();
-		player1->removePiece(attackedPiece->getId());
+		if (whitesTurn) {
+			player2->removePiece(attackedPiece->getId());
+		} else {
+			player1->removePiece(attackedPiece->getId());
+		}
 	}
 	squares[newR][newC].setPiece(piece);
 
-	drawPiece(piece);
 	undrawPiece(curR, curC);
+	drawPiece(piece);
 
 	State nState{StateType::PieceAdded, Direction::N, true, piece, false};
 	squares[newR][newC].setState(nState);
@@ -706,6 +758,6 @@ ostream & operator<<(ostream &out, const Board &b) {
 		}
 		out << endl;
 	}
-	out << endl <<  " abcdefgh" << endl << endl;
+	out << endl <<  "  abcdefgh" << endl << endl;
 	return out;	
 }
