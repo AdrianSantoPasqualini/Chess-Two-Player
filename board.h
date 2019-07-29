@@ -35,7 +35,8 @@ class Board {
 	void printDefault();
 	public:
 		Board();
-		void draw();
+		void drawMenu();
+		void drawBoard();
 		void drawScore();
 		void setPlayer(string colour, string type);
 		void init();
