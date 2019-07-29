@@ -105,7 +105,7 @@ void Board::draw() {
 }
 
 void Board::drawScore() {
-
+	//window.draw
 }
 
 void Board::drawPiece(shared_ptr<Piece> piece) {
@@ -300,6 +300,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 					if (curPiece->getCastle() == 1) {
 						castledRook = squares[curR][curC + 3].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
+							undrawPiece(curR, curC+3);
 							curPiece->updatePiece(newR, newC);
 							castledRook->updatePiece(newR, newC - 1);
 							squares[curR][curC + 3].setPiece(nullptr);
@@ -310,6 +311,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							State nState{StateType::PieceAdded, Direction::N, true, castledRook, false};
 							squares[newR][newC - 1].setState(nState);
 							squares[newR][newC - 1].notifyObservers();
+							drawPiece(castledRook);
 							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
@@ -318,6 +320,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 					} else if (curPiece->getCastle() == 2) {
 						castledRook = squares[curR][curC - 4].getInfo().piece;
 						if (castledRook->getMovesMade() == 0) {
+							undrawPiece(curR, curC-4);
 							curPiece->updatePiece(newR, newC);
 							castledRook->updatePiece(newR, newC + 1);
 							squares[curR][curC - 4].setPiece(nullptr);
@@ -328,6 +331,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							State nState{StateType::PieceAdded, Direction::N, true, castledRook, false};
 							squares[newR][newC + 1].setState(nState);
 							squares[newR][newC + 1].notifyObservers();
+							drawPiece(castledRook);
 							updateTurn(curR, curC, newR, newC, curPiece);
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
