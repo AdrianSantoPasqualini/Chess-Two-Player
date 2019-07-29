@@ -12,7 +12,7 @@ class Player {
 	map<string, shared_ptr<Piece>> pieces;
 	bool isWhite;
 	int score;
-	protected: 
+	protected:
 		shared_ptr<Board> board;
 	public:
 		Player(bool isWhite); 

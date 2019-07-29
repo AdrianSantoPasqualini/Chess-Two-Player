@@ -41,7 +41,6 @@ int main() {
 			} else {
 				board.incWhiteScore();
 			} 
-			matchOngoing = false;
 		} else if (cmd == "move" && matchOngoing) {
 			string c1, c2;
 			cin >> c1 >> c2;
