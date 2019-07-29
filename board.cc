@@ -119,16 +119,22 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillRectangle(c*60 + 75, r*60 + 80, 30, 10, colour);	
 		window.fillRectangle(c*60 + 85, r*60 + 70, 10, 30, colour);
 	} else if (id == 'Q') {
-		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+		window.fillCircle(c*60 + 89, r*60 + 78, 10, colour);
+		window.fillPolygon(c * 60 + 62, r * 60 + 91, 3, 25,0, colour);
+		window.fillPolygon(c * 60 + 68, r * 60 + 111, 3, 41,1, colour);
+		window.fillPolygon(c * 60 + 90, r * 60 + 91, 3, 25,0, colour);
 	} else if (id == 'B') {
-		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
+		window.fillCircle(c*60 + 90, r*60 + 68, 10, colour);
+		window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);
+		window.fillRectangle(c*60 + 80, r*60 + 85, 20, 20, colour);
+		window.fillPolygon(c*60 + 78, r*60 + 87, 3, 25,1, colour);
 	} else if (id == 'R') {
 		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
 	} else if (id == 'N') {
 		window.fillCircle(c*60 + 90, r*60 + 90, 30, colour);	
 	} else if (id == 'P') {
-		window.fillCircle(c*60 + 90, r*60 + 80, 20, colour);	
-		//window.fillPolygon(c * 60 + 90, r * 60 + 80, 3, 30, 0, colour);
+		window.fillCircle(c*60 + 87, r*60 + 77, 20, colour);	
+		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 40,-1, colour);
 	} 
 	//cout << id << " " << r << " " << c << endl;
 }
@@ -636,16 +642,16 @@ ostream & operator<<(ostream &out, const Board &b) {
 		out << 8 - i << " ";
 		for (int j = 0; j < 8; ++j) {
 			
-			/*
+			
 			Info info = b.squares[i][j].getInfo();
 			
-			if (info.wAttacked || info.bAttacked) {
-				cout << "A";
+			if (info.wTotAttacks > 0) {
+				cout << info.wTotAttacks << " ";
 			} else {
-				cout << " ";
+				cout << "  ";
 			}
-			*/
 			
+			/*
 			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {
@@ -656,9 +662,10 @@ ostream & operator<<(ostream &out, const Board &b) {
 			} else {
 				out << piece->getId()[0];
 			}
+			*/
 		}
 		out << endl;
 	}
-	out << endl <<  "  abcdefgh" << endl;
+	out << endl <<  "  a b c d e f g h" << endl;
 	return out;	
 }
