@@ -14,6 +14,10 @@ void Piece::updatePiece(int r, int c) {
 	movesMade++;
 }
 
+void Piece::decrementMoves() {
+	movesMade--;
+}
+
 bool Piece::getIsWhite() {
 	return isWhite;
 }

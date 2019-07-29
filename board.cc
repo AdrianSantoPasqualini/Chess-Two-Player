@@ -400,12 +400,16 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							if (player2->isInCheck()) {
 								curPiece->updatePiece(curR, curC);
 								updateTurn(newR, newC, curR, curC, curPiece);
+								curPiece->decrementMoves();
+								curPiece->decrementMoves();
 								cout << "King will be under check if this piece moves." << endl;
 							}
 						} else {
 							if (player1->isInCheck()) {
 								curPiece->updatePiece(curR, curC);
 								updateTurn(newR, newC, curR, curC, curPiece);
+								curPiece->decrementMoves();
+								curPiece->decrementMoves();
 								cout << "King will be under check if this piece moves." << endl;
 							}
 						}
