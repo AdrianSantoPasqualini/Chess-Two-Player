@@ -14,6 +14,7 @@ using namespace std;
 
 Player::Player(bool isWhite): isWhite {isWhite} {
 	score = 0;	
+	legalMoves = {};
 }
 
 bool Player::isInCheck() const {
@@ -46,6 +47,182 @@ void Player::addPiece(shared_ptr<Piece> p) {
 void Player::removePiece(string id) {
 	pieces.erase(id);
 }
+
+
+
+void Player::generateLegalMoves() {
+	legalMoves.clear();
+	for (auto p:pieces) {
+		string id = p.first;
+		shared_ptr<Piece> piece = p.second;
+		int curR = piece->getCoor().first;
+		int curC = piece->getCoor().second;
+		if (id[0] == 'R' || id[0] == 'r') {
+			for (int i = 1; i < 8; i ++) {
+				bool legalUp = board->isLegalMove(piece, curR + i, curC);
+				bool legalDown = board->isLegalMove(piece, curR - i, curC);
+				bool legalLeft = board->isLegalMove(piece, curR, curC - i);
+				bool legalRight = board->isLegalMove(piece, curR, curC + i);
+				if (legalUp) {
+					Move move{make_pair(curR + i, curC), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalDown) {
+					Move move{make_pair(curR - i, curC), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalLeft) {
+					Move move{make_pair(curR, curC - i), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalRight) {
+					Move move{make_pair(curR, curC + i), piece};
+					legalMoves.emplace_back(move);
+				}
+			}
+		} else if (id[0] == 'B' || id[0] == 'b') {
+			for (int i = 1; i < 8; i ++) {
+				bool legalNE = board->isLegalMove(piece, curR + i, curC + i);
+				bool legalNW = board->isLegalMove(piece, curR + i, curC - i);
+				bool legalSW = board->isLegalMove(piece, curR - i, curC - i);
+				bool legalSE = board->isLegalMove(piece, curR - i, curC + i);
+				if (legalNE) {
+					Move move{make_pair(curR + i, curC + i), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalNW) {
+					Move move{make_pair(curR + i, curC - i), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalSW) {
+					Move move{make_pair(curR - i, curC - i), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalSE) {
+					Move move{make_pair(curR - i, curC + i), piece};
+					legalMoves.emplace_back(move);
+				}
+			}
+		} else if (id[0] == 'P') {
+			if (board->isLegalMove(piece, curR - 1, curC - 1)) {
+				Move move{make_pair(curR - 1, curC - 1), piece};
+				legalMoves.emplace_back(move);
+			} 
+			if (board->isLegalMove(piece, curR - 1, curC)) {
+				Move move{make_pair(curR - 1, curC), piece};
+				legalMoves.emplace_back(move);
+
+			}
+			if (board->isLegalMove(piece, curR - 1, curC + 1)) {
+				Move move{make_pair(curR - 1, curC + 1), piece};
+				legalMoves.emplace_back(move);
+			}
+		} else if (id[0] == 'p') {
+			if (board->isLegalMove(piece, curR + 1, curC - 1)) {
+				Move move{make_pair(curR + 1, curC - 1), piece};
+				legalMoves.emplace_back(move);
+			} 
+			if (board->isLegalMove(piece, curR + 1, curC)) {
+				Move move{make_pair(curR + 1, curC), piece};
+				legalMoves.emplace_back(move);
+
+			}
+			if (board->isLegalMove(piece, curR + 1, curC + 1)) {
+				Move move{make_pair(curR + 1, curC + 1), piece};
+				legalMoves.emplace_back(move);
+			}
+		} else if (id[0] == 'K' || id[0] == 'k') {
+			for (int h = -1; h <= 1; h++) {
+				for (int w = -1; w <= 1; w++) {
+					if (((w != 0) || (h != 0)) && board->isLegalMove(piece, curR + h, curC + w)) {
+						Move move{make_pair(curR + h, curC + w), piece};
+						legalMoves.emplace_back(move);
+					}
+				}
+			}
+		} else if (id[0] == 'N' || id[0] == 'n') {
+			if (board->isLegalMove(piece, curR + 1, curC + 2)) {
+				Move move{make_pair(curR + 1, curC + 2), piece};
+				legalMoves.emplace_back(move);
+			} 
+			if (board->isLegalMove(piece, curR + 1, curC - 2)) {
+				Move move{make_pair(curR + 1, curC - 2), piece};
+				legalMoves.emplace_back(move);
+
+			}
+			if (board->isLegalMove(piece, curR - 1, curC + 2)) {
+				Move move{make_pair(curR - 1, curC + 2), piece};
+				legalMoves.emplace_back(move);
+			}
+			if (board->isLegalMove(piece, curR - 1, curC - 2)) {
+				Move move{make_pair(curR - 1, curC - 2), piece};
+				legalMoves.emplace_back(move);
+			} 
+			if (board->isLegalMove(piece, curR + 2, curC + 1)) {
+				Move move{make_pair(curR + 2, curC + 1), piece};
+				legalMoves.emplace_back(move);
+
+			}
+			if (board->isLegalMove(piece, curR + 2, curC - 1)) {
+				Move move{make_pair(curR + 2, curC - 1), piece};
+				legalMoves.emplace_back(move);
+			}
+			if (board->isLegalMove(piece, curR - 2, curC + 1)) {
+				Move move{make_pair(curR - 2, curC + 1), piece};
+				legalMoves.emplace_back(move);
+			} 
+			if (board->isLegalMove(piece, curR - 2, curC - 1)) {
+				Move move{make_pair(curR - 2, curC - 1), piece};
+				legalMoves.emplace_back(move);
+			}
+		} else {
+			for (int i = 1; i < 8; i++) {
+				bool legalUp = board->isLegalMove(piece, curR + i, curC);
+				bool legalDown = board->isLegalMove(piece, curR - i, curC);
+				bool legalLeft = board->isLegalMove(piece, curR, curC - i);
+				bool legalRight = board->isLegalMove(piece, curR, curC + i);
+				bool legalNE = board->isLegalMove(piece, curR + i, curC + i);
+				bool legalNW = board->isLegalMove(piece, curR + i, curC - i);
+				bool legalSW = board->isLegalMove(piece, curR - i, curC - i);
+				bool legalSE = board->isLegalMove(piece, curR - i, curC + i);
+				if (legalUp) {
+					Move move{make_pair(curR + i, curC), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalDown) {
+					Move move{make_pair(curR - i, curC), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalLeft) {
+					Move move{make_pair(curR, curC - i), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalRight) {
+					Move move{make_pair(curR, curC + i), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalNE) {
+					Move move{make_pair(curR + i, curC + i), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalNW) {
+					Move move{make_pair(curR + i, curC - i), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalSW) {
+					Move move{make_pair(curR - i, curC - i), piece};
+					legalMoves.emplace_back(move);
+				}
+				if (legalSE) {
+					Move move{make_pair(curR - i, curC + i), piece};
+					legalMoves.emplace_back(move);
+				}
+			}
+		}
+	}
+}
+
+
 
 Human::Human(bool isWhite): Player{isWhite} {}
 
