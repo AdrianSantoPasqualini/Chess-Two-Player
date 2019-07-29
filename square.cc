@@ -300,9 +300,7 @@ void Square::notify(Subject & whoFrom) {
 				} else if (getInfo().piece != nullptr) {
 					toggleAttacker(recState.attacked, recState.piece);
 					if (getInfo().piece->getId()[0] == 'r' || getInfo().piece->getId()[0] == 'R') {
-						cout << getInfo().piece->getId() << " received relay" << endl;
 						if (vertical || horizontal) {
-							cout << getInfo().piece->getId() << " sent Reply" << endl;
 							State nState{StateType::Reply, revDir, true, getInfo().piece, false};
 							setState(nState);
 							notifyObservers();

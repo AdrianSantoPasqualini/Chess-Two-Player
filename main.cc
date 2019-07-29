@@ -43,6 +43,7 @@ int main() {
 				board.incScore(1, 0);
 				cout << "White wins!" << endl;
 			} 
+			matchOngoing = false;
 		} else if (cmd == "move" && matchOngoing) {
 			string c1, c2;
 			cin >> c1 >> c2;

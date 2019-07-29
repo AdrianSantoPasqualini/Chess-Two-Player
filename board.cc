@@ -65,6 +65,8 @@ Board::Board() {
 }
 
 void Board::draw() {
+	int bColour = 9;
+	int wColour = 6;
 	window.drawString(90, 570, "a", 1);
 	window.drawString(150, 570, "b", 1);
 	window.drawString(210, 570, "c", 1);
@@ -86,15 +88,15 @@ void Board::draw() {
 		for (int j = 0; j < 8; j++) {
 			if (i%2 == 0) {
 				if (j%2 == 0) {
-					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, 0);	
+					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, wColour);	
 				} else { 
-					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, 1);	
+					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, bColour);	
 				}
 			} else {
 				if (j%2 == 0) {
-					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, 1);	
+					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, bColour);	
 				} else { 
-					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, 0);	
+					window.fillRectangle(60 + j*60, 60 + i*60, 60, 60, wColour);	
 				}
 			}
 			if (defSquares[i][j].getInfo().piece != nullptr) {
@@ -118,7 +120,7 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 	pair<int, int> coords = piece->getCoor();
 	int r = coords.first;
 	int c = coords.second;
-	int colour = piece->getIsWhite() ? 7 : 4;
+	int colour = piece->getIsWhite() ? 0 : 1;
 	char id = toupper(piece->getId().at(0));
 	if (id == 'K') {
 		window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
@@ -155,17 +157,19 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 }
 
 void Board::undrawPiece(int r, int c) {
+	int wColour = 6;
+	int bColour = 9;
 	if (r%2 == 0) {
 		if (c%2 == 0) {
-			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, 0);	
+			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, wColour);	
 		} else { 
-			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, 1);	
+			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, bColour);	
 		}
 	} else {
 		if (c%2 == 0) {
-			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, 1);	
+			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, bColour);	
 		} else { 
-			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, 0);	
+			window.fillRectangle(60 + c*60, 60 + r*60, 60, 60, wColour);	
 		}
 	}
 }
@@ -465,6 +469,7 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 	}
 	squares[newR][newC].setPiece(piece);
 
+	undrawPiece(newR, newC);
 	drawPiece(piece);
 	undrawPiece(curR, curC);
 
