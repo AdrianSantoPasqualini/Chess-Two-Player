@@ -66,7 +66,7 @@ Board::Board() {
 
 void Board::draw() {
 	int bColour = 9;
-	int wColour = 6;
+	int wColour = 3;
 	window.drawString(90, 570, "a", 1);
 	window.drawString(150, 570, "b", 1);
 	window.drawString(210, 570, "c", 1);
@@ -150,14 +150,14 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillPolygon(c*60 + 80, r*60 + 82, 3, 20, 1, colour);
 
 	} else if (id == 'P') {
-		window.fillCircle(c*60 + 87, r*60 + 77, 20, colour);	
-		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 40,-1, colour);
+		window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
+		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
 	} 
 	//cout << id << " " << r << " " << c << endl;
 }
 
 void Board::undrawPiece(int r, int c) {
-	int wColour = 6;
+	int wColour = 3;
 	int bColour = 9;
 	if (r%2 == 0) {
 		if (c%2 == 0) {
