@@ -169,6 +169,11 @@ int Board::getBlackScore() {
 	return blackScore;
 }
 
+shared_ptr<Square> Board::getSquare(int r, int c) {
+	shared_ptr<Square> square{&squares[r][c]};
+	return square;
+}
+
 void Board::init() {
 	whitesTurn = defWhitesTurn;
 	squares.clear();
@@ -368,14 +373,19 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							}
 						}
 						bool remove = false;
-						if (pieceOnSq) {
-							if (whitesTurn && !squares[newR][newC].getInfo().piece->getIsWhite()) {
-								remove = true;
-							} else if (!whitesTurn && squares[newR][newC].getInfo().piece->getIsWhite()) {
-								remove = true;
+						updateTurn(curR, curC, newR, newC, curPiece);
+						// If king is under check reverse move
+						if (whitesTurn) {
+							if (player1->isInCheck()) {
+								curPiece->updatePiece(curR, curC);
+								updateTurn(newR, newC, curR, curC, curPiece);
+							}
+						} else {
+							if (player2->isInCheck()) {
+								curPiece->updatePiece(curR, curC);
+								updateTurn(newR, newC, curR, curC, curPiece);
 							}
 						}
-						updateTurn(curR, curC, newR, newC, curPiece);
 					}
 					curPiece->changeCastle(0);
 				} catch (string msg) {

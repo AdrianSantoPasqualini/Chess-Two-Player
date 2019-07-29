@@ -12,7 +12,8 @@ class Player {
 	map<string, shared_ptr<Piece>> pieces;
 	bool isWhite;
 	int score;
-	shared_ptr<Board> board;
+	protected:
+		shared_ptr<Board> board;
 	public:
 		Player(bool isWhite); 
 		virtual void makeMove() = 0;

@@ -1,6 +1,7 @@
 #include "player.h"
 #include "piece.h"
 #include "board.h"
+#include "info.h"
 using namespace std;
 
 Player::Player(bool isWhite): isWhite {isWhite} {
@@ -12,17 +13,23 @@ bool Player::isInCheck() const {
 	pair<int, int> coor;
 	if (isWhite) {
 		coor = pieces.find("K")->second->getCoor();
+		Info info = board->getSquare(coor.first, coor.second)->getInfo();
+		if (info.wAttacked) {
+			check = true;
+		}
 	} else {
 		coor = pieces.find("k")->second->getCoor();
+		Info info = board->getSquare(coor.first, coor.second)->getInfo();
+		if (info.bAttacked) {
+			check = true;
+		}
 	}
-	
 	return check;
 }
 
 void Player::attachBoard(shared_ptr<Board> currBoard) {
 	board = currBoard;
 }
-
 
 void Player::addPiece(shared_ptr<Piece> p) {
 	pieces.emplace(p->getId(), p);
