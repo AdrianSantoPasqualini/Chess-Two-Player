@@ -293,6 +293,7 @@ void Board::init() {
 void Board::setPlayer(string colour, string type) {
 	if (colour == "white") {
 		if (type == "human") {
+			cout << "in human" << endl;
 			player1 = make_unique<Human>(true);
 		} else if (type == "computer1") {
 			player1 = make_unique<Level1>(true);
@@ -303,7 +304,7 @@ void Board::setPlayer(string colour, string type) {
 		} else if (type == "computer4") {
 			player1 = make_unique<Level4>(true);
 		}
-		shared_ptr<Board> currBoard{this};
+		//shared_ptr<Board> currBoard{this};
 		player1->attachBoard(currBoard);
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -327,7 +328,7 @@ void Board::setPlayer(string colour, string type) {
 		} else if (type == "computer4") {
 			player2 = make_unique<Level4>(false);
 		}	
-		shared_ptr<Board> currBoard{this};
+		//shared_ptr<Board> currBoard{this};
 		player2->attachBoard(currBoard);
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
@@ -971,9 +972,13 @@ void Board::setup() {
 					cout << "Options are white or black." << endl;
 				}
 			} else if (cmd == "done") {
+				init();
+				setPlayer("white", "human");
+				setPlayer("black", "human");
 				if (whiteCounts[0] == 0 || blackCounts[0] == 0) {
 					cout << "Both kings must be on the board." << endl;
-				// add checks to make sure neither player is in check	
+				} else if (player1->isInCheck() || player2->isInCheck()) {
+					cout << "Kings cannot be in check." << endl;	
 				} else {
 					done = true;
 				}

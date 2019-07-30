@@ -6,7 +6,7 @@ using namespace std;
 
 Square::Square(int r, int c, shared_ptr<Piece> currPiece): currPiece{currPiece}, r{r}, c{c} {}
 
-Square::Square(const Square & other): r{other.r}, c{other.c} {
+Square::Square(const Square & other): r{other.r}, c{other.c}  {
 	shared_ptr<Piece> piece = other.getInfo().piece;
 	if (piece == nullptr) {
 		currPiece = nullptr;	
