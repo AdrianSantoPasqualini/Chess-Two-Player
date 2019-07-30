@@ -948,13 +948,12 @@ void Board::printDefault() {
 }
 
 void Board::setup() {
-	cin.exceptions(ios::failbit|ios::eofbit);
 	drawBoard();
 	drawSetupMenu();
 	printDefault();
 	vector<char> validPieces = {'K', 'Q', 'B', 'R', 'N', 'P', 'k', 'q', 'b', 'r', 'n', 'p'};
 	bool done = false;
-		while (!done) {
+		while (!cin.eof() && !done) {
 		try {
 			string cmd;
 			cin >> cmd;
@@ -1126,8 +1125,6 @@ void Board::setup() {
 			}	
 		} catch (string e) {
 			cout << e << endl;
-		} catch (ios::failure &) {
-			return;
 		} catch (...) { 
 			cin.clear();
 			cin.ignore();
