@@ -942,6 +942,7 @@ void Board::printDefault() {
 }
 
 void Board::setup() {
+	cin.exceptions(ios::failbit|ios::eofbit);
 	drawBoard();
 	drawSetupMenu();
 	printDefault();
@@ -1119,6 +1120,8 @@ void Board::setup() {
 			}	
 		} catch (string e) {
 			cout << e << endl;
+		} catch (ios::failure &) {
+			return;
 		} catch (...) { 
 			cin.clear();
 			cin.ignore();
