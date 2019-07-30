@@ -1,0 +1,8 @@
+setup
+clear
++ K e1
++ R a1
++ k d8
+done
+game computer1 computer1
+move
