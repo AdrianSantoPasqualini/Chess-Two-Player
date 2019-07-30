@@ -68,7 +68,7 @@ bool Pawn::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 		return true;
 	} else if ((currCoor.first - r == dir * 1 && abs(currCoor.second - c) == 1) && pieceOnSq) {
 		return true;
-	} else if ((currCoor.first - r == dir * 1 && abs(currCoor.second - c) == 1) && getEnPassant() == moves - 1) {
+	} else if ((currCoor.first - r == dir * 1 && abs(currCoor.second - c) == 1) && (getEnPassant() == moves - 1 && moves > 3)) {
 		return true;
 	} else {
 		msg = "Invalid pawn movement.";

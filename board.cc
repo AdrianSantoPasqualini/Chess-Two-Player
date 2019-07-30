@@ -461,7 +461,8 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							cout << "King cannot castle, rook has already moved." << endl;
 						} 
 					// En passant
-					} else if (curPiece->getEnPassant() == moves - 1 && moves > 1) {
+					} else if (curPiece->getEnPassant() == moves - 1 && moves > 3) {
+						cout << moves << endl;
 						updateTurn(curR, curC, newR, newC, curPiece);
 						// Remove opponent's piece
 						int row;
