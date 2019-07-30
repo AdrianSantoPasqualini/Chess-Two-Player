@@ -26,6 +26,7 @@ void Player::clearPieces() {
 	pieces.clear();
 }
 
+
 bool Player::isInCheck() const {
 	bool check = false;
 	pair<int, int> coor;

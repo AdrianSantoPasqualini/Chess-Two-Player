@@ -91,8 +91,32 @@ string Board::whoWon() {
 		}
 		squares.clear();
 	} else {
-			
-		return "noone";
+		int wB = 0, wN = 0, bB = 0, bN = 0;	
+		char id;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (squares[i][j].getInfo().piece != nullptr) {
+					id = squares[i][j].getInfo().piece->getId()[0];
+					if (toupper(id) == 'Q' || toupper(id) == 'P' || toupper(id) == 'R'){
+						return "noone";
+					} else if (id == 'N') {
+						wN++;
+					} else if (id == 'n') {
+						bN++;
+					} else if (id == 'B') {
+						wB++;
+					} else if (id == 'b') {
+						bB++;
+					}
+					if (wN == 2 || bN == 2 || wB == 2 || bB == 2) {
+						return "noone";
+					} else if ((wN == 1 && wB == 1) || (bN == 1 && bB == 1)) {
+						return "noone";
+					}
+				}
+			}
+		}
+		return "stalemate";
 	}
 }
 
@@ -960,6 +984,49 @@ void Board::setup() {
 				if (it == validPieces.end()) {
 					string e = "Given piece is not valid.";
 					throw e;
+				}
+				if (defSquares[8 - row][col - 'a'].getInfo().piece != nullptr) {
+					char id = defSquares[8 - row][col - 'a'].getInfo().piece->getId()[0];
+					switch(id) {
+						case 'K': 
+							whiteCounts[0]--;
+							break;	
+						case 'Q': 
+							whiteCounts[1]--;
+							break;
+						case 'B': 
+							whiteCounts[2]--;
+							break;
+						case 'R': 
+							whiteCounts[3]--;
+							break;
+						case 'N': 
+							whiteCounts[4]--;
+							break;
+						case 'P': 
+							whiteCounts[5]--;
+							break;
+						case 'k': 
+							blackCounts[0]--;
+							break;
+						case 'q': 
+							blackCounts[1]--;
+							break;
+						case 'b': 
+							blackCounts[2]--;
+							break;
+						case 'r': 
+							blackCounts[3]--;
+							break;
+						case 'n': 
+							blackCounts[4]--;
+							break;
+						case 'p': 
+							blackCounts[5]--;
+							break;
+						default: break;
+					}
+					undrawPiece(8-row, col-'a');
 				}
 				if (piece == 'K' && whiteCounts[0] == 0) {
 					p = make_shared<King>(8 - row, col - 'a', true, "K", 0);
