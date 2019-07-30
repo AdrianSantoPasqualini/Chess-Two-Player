@@ -26,12 +26,14 @@ int main() {
 			it1 = find(players.begin(), players.end(), p1);
 			it2 = find(players.begin(), players.end(), p2);
 			if (it1 != players.end() && it2 != players.end()) {
-				board.init();
 				board.setPlayer("white", p1);
 				board.setPlayer("black", p2);
+				board.init();
 				board.drawBoard();
 				board.drawScore();
 				board.drawTurn();
+				board.generatePlayerMoves(true);	
+				board.generatePlayerMoves(false);
 				matchOngoing = true;
 			} else {
 				cout << "Invalid players." << endl;
@@ -75,14 +77,21 @@ int main() {
 			board.drawScore();
 			board.drawTurn();
 			cout << board;
+			if (board.isWhitesTurn()) {
+				board.generatePlayerMoves(true);
+			} else {
+				board.generatePlayerMoves(false);
+			}
 			string winner = board.whoWon();
-			//cout << winner << endl;
 			if (winner == "white") {
 				board.incScore(1, 0);
+				cout << "Checkmate! White Wins!" << endl;
 			} else if (winner == "black") {
 				board.incScore(0, 1);
+				cout << "Checkmate! Black Wins!" << endl;
 			} else if (winner == "stalemate") {
 				board.incScore(0.5, 0.5);
+				cout << "Stalemate!" << endl;
 			}
 			if (winner != "noone") {
 				cout << "Would you like to play another round? (y/n)" << endl;

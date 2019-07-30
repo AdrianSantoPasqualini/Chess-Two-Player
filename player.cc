@@ -21,6 +21,10 @@ int Player::howManyLegalMoves() {
 	return legalMoves.size();
 }
 
+void Player::clearPieces() {
+	pieces.clear();
+}
+
 bool Player::isInCheck() const {
 	bool check = false;
 	pair<int, int> coor;
@@ -33,7 +37,6 @@ bool Player::isInCheck() const {
 	} else {
 		coor = pieces.find("k")->second->getCoor();
 		int wAttacks = board->getAttacks(coor.first, coor.second).first;
-		//cout << "wAttacks: " << wAttacks << endl;
 		if (wAttacks) {
 			check = true;
 		}
@@ -56,7 +59,6 @@ void Player::removePiece(string id) {
 
 
 void Player::generateLegalMoves() {
-	//cout << "generate legal moves" << endl;
 	legalMoves.clear();
 	map<string, shared_ptr<Piece>>::iterator it = pieces.begin();
 	while(it != pieces.end()) {
@@ -139,16 +141,12 @@ void Player::generateLegalMoves() {
 				legalMoves.emplace_back(move);
 			}
 		} else if (id[0] == 'K' || id[0] == 'k') {
-			//cout << "generate legal moves - king" << endl;
 			for (int h = -1; h <= 1; h++) {
 				for (int w = -1; w <= 1; w++) {
 					if ((w != 0) || (h != 0)) {
-						//cout << "w: " << w << " h : " << h << endl;
 						move = board->isLegalMove(piece, curR + h, curC + w);
-						//cout << "move is legal? " << move.isLegal << endl;
 						if (move.isLegal) {
 							legalMoves.emplace_back(move);
-							//cout << "in king: legalMoves size " << legalMoves.size() << endl;
 						}
 					}
 				}
@@ -240,11 +238,11 @@ void Player::generateLegalMoves() {
 Human::Human(bool isWhite): Player{isWhite} {}
 
 void Human::makeMove() {
+	//	generateLegalMoves();
 	string oldCoord;
 	string newCoord;
 	cin >> oldCoord >> newCoord;
 	board->movePiece('8' - oldCoord[1], oldCoord[0] - 'a', '8' - newCoord[1], newCoord[0] - 'a');
-//	generateLegalMoves();
 }
 
 Level1::Level1(bool isWhite): Player{isWhite} {}
@@ -261,31 +259,22 @@ void Level1::makeMove() {
 Level2::Level2(bool isWhite): Player{isWhite} {}
 
 void Level2::makeMove() {
-	//cout << "Level 2 making a move" << endl;
 	generateLegalMoves();
 	int prefMoves = 0;
 	srand(time(NULL));	
-	//cout << "level2: 1" << endl;
 	for (unsigned int i = 0; i < legalMoves.size(); i++) {
 		if (legalMoves[i].toCapture || legalMoves[i].toCheck) {
 			prefMoves++;
 		}
 	}
-	//cout << "level2: 2" << endl;
 	if (prefMoves == 0) {
-		//cout << "level2: 3" << endl;
-		//cout << "legal moves size: " << legalMoves.size() << endl;
 		int r = rand() % legalMoves.size();
-		//cout << "level2: 4" << endl;
 		pair<int, int> oldCoords = legalMoves[r].piece->getCoor();
 		pair<int, int> newCoords = legalMoves[r].nCoords;
 		board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second);
-		//cout << "level2: 5" << endl;
 
 	} else {
-		//cout << "level2: 6" << endl;
 		int r = rand() % prefMoves;
-		//cout << "level2: 7" << endl;
 		for (unsigned int i = 0; i < legalMoves.size(); i++) {
 			if (legalMoves[i].toCapture || legalMoves[i].toCheck) {
 				if (r == 0) {

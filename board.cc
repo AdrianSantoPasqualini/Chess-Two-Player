@@ -65,25 +65,34 @@ Board::Board() {
 	}
 }
 
+void Board::generatePlayerMoves(bool white) {
+	if (white) {
+		player1->generateLegalMoves();
+	} else {
+		player2->generateLegalMoves();
+	}
+}
+
 string Board::whoWon() {
 	int wLegalMoves = player1->howManyLegalMoves();
 	int bLegalMoves = player2->howManyLegalMoves();
-//	cout << wLegalMoves << " " << bLegalMoves << endl;
-/*	if (wLegalMoves == 0) {
+	if (wLegalMoves == 0) {
 		if (player1->isInCheck()) {
 			return "black";
 		} else {
 			return "stalemate";
 		}
+		squares.clear();
 	} else if (bLegalMoves == 0) {
 		if (player2->isInCheck()) {
 			return "white";
 		} else {
 			return "stalemate";
 		}
+		squares.clear();
 	} else {
 		return "noone";
-	}*/
+	}
 	return "noone";
 }
 
@@ -182,22 +191,19 @@ void Board::drawBoard() {
 				}
 			}
 			if (defSquares[i][j].getInfo().piece != nullptr) {
-				drawPiece(squares[i][j].getInfo().piece);
+				drawPiece(defSquares[i][j].getInfo().piece);
 			}
 		}	
 	}
 }
 
 void Board::drawScore() {
-	/*
 	window.fillRectangle(0, 0, 600, 60, 0);
-	int wScoreInt = (int)whiteScore;
-	int bScoreInt = (int)blackScore;
-	string wScore = "White's Score: " + to_string(wScoreInt);
-	string bScore = "Black's Score: " + to_string(bScoreInt);
+	string wScore = "White's Score: " + to_string(whiteScore).substr(0,3);
+	string bScore = "Black's Score: " + to_string(blackScore).substr(0,3);
 	window.drawString(10, 10, wScore, 1);
-	window.drawString(500, 10, bScore, 1);
-	*/
+	//window.drawString(500, 10, bScore, 1);
+	window.drawString(485, 10, bScore, 1);
 }
 
 void Board::drawTurn() {
@@ -254,7 +260,6 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
 		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
 	} 
-	cout << id << " " << r << " " << c << endl;
 }
 
 void Board::undrawPiece(int r, int c) {
@@ -317,15 +322,45 @@ void Board::init() {
 			}
 		}
 	}
+//	player1->clearPieces();
+//	player2->clearPieces();
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (squares[i][j].getInfo().piece != nullptr) {
+//				if (squares[i][j].getInfo().piece->getIsWhite()) {
+//					player1->addPiece(squares[i][j].getInfo().piece);
+//				} else {
+//					player2->addPiece(squares[i][j].getInfo().piece);
+//				}
 				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getInfo().piece, false};
 				squares[i][j].setState(nState);
 				squares[i][j].notifyObservers();
 			}
 		}
 	}
+	player1->clearPieces();
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (squares[i][j].getInfo().piece != nullptr) {
+				string id = squares[i][j].getInfo().piece->getId();
+				if (id[0] == 'K' || id[0] == 'B' || id[0] == 'R' || id[0] == 'Q' || id[0] == 'N' || id[0] == 'P') {
+					player1->addPiece(squares[i][j].getInfo().piece); 
+				}
+			}
+		}
+	}
+	player2->clearPieces();
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (squares[i][j].getInfo().piece != nullptr) {
+				string id = squares[i][j].getInfo().piece->getId();
+				if (id[0] == 'k' || id[0] == 'b' || id[0] == 'r' || id[0] == 'q' || id[0] == 'n' || id[0] == 'p') {
+					player2->addPiece(squares[i][j].getInfo().piece); 
+				}
+			}
+		}
+	}
+
 }
 
 void Board::setPlayer(string colour, string type) {
@@ -342,17 +377,6 @@ void Board::setPlayer(string colour, string type) {
 			player1 = make_shared<Level4>(true);
 		}
 		player1->attachBoard(this);
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (squares[i][j].getInfo().piece != nullptr) {
-					string id = squares[i][j].getInfo().piece->getId();
-					if (id[0] == 'K' || id[0] == 'B' || id[0] == 'R' || id[0] == 'Q' || id[0] == 'N' || id[0] == 'P') {
-						player1->addPiece(squares[i][j].getInfo().piece); 
-					}
-				}
-			}
-		}
-		player1->generateLegalMoves();
 	} else if (colour == "black") {
 		if (type == "human") {
 			player2 = make_shared<Human>(false);
@@ -366,17 +390,6 @@ void Board::setPlayer(string colour, string type) {
 			player2 = make_shared<Level4>(false);
 		}	
 		player2->attachBoard(this);
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (squares[i][j].getInfo().piece != nullptr) {
-					string id = squares[i][j].getInfo().piece->getId();
-					if (id[0] == 'k' || id[0] == 'b' || id[0] == 'r' || id[0] == 'q' || id[0] == 'n' || id[0] == 'p') {
-						player2->addPiece(squares[i][j].getInfo().piece); 
-					}
-				}
-			}
-		}
-		player2->generateLegalMoves();
 	}
 }
 
@@ -619,9 +632,9 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
  							}
 						}
 						// Move piece
+						shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
 						updateTurn(curR, curC, newR, newC, curPiece);
 						// Detect check
-						shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
 						if (whitesTurn) {
 							if (player2->isInCheck()) {
 								player2->removePiece(curPiece->getId());
@@ -736,7 +749,6 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 }
 
 Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
-	//cout << "isLegalMove" << endl;
 	int curR = curPiece->getCoor().first;
 	int curC = curPiece->getCoor().second;
 	bool pieceOnSq = false;
@@ -828,7 +840,6 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		// Move piece
 		try {
 			move.isLegal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
-
 			shared_ptr<Piece> castledRook = nullptr;
 			// Castle
 			if (curPiece->getCastle() == 1) {
@@ -859,10 +870,8 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				// Detect check
 				if (whitesTurn) {
 					if (!player2->isInCheck()) {
-						//cout << "isLegalMove: 1" << endl;
 						move.isLegal = true;
 					} else {
-						//cout << "isLegalMove: 2" << endl;
 						move.isLegal = false;
 					}
 					curPiece->updatePiece(curR, curC);
@@ -880,10 +889,8 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 					}
 				} else {
 					if (!player1->isInCheck()) {
-						//cout << "isLegalMove: 3" << endl;
 						move.isLegal = true;
 					} else {
-						//cout << "isLegalMove: 4" << endl;
 						move.isLegal = false;
 					}
 					curPiece->updatePiece(curR, curC);
@@ -906,7 +913,6 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		}
 		return move;
 	} else {
-		//cout << "move is illegal!" << endl;
 		move.isLegal = false;
 		return move;
 	}
@@ -1093,9 +1099,9 @@ void Board::setup() {
 				drawSetupMenu();
 				printDefault();
 			} else if (cmd == "done") {
-				init();
 				setPlayer("white", "human");
 				setPlayer("black", "human");
+				init();
 				if (whiteCounts[0] == 0 || blackCounts[0] == 0) {
 					cout << "Both kings must be on the board." << endl;
 				} else if (player1->isInCheck() || player2->isInCheck()) {
@@ -1126,11 +1132,12 @@ ostream & operator<<(ostream &out, const Board &b) {
 			
 			
 			Info info = b.squares[i][j].getInfo();
-			/*
+		/*	
 			if (info.wTotAttacks > 0) {
 				cout << info.wTotAttacks << " ";
-			if (info.wAttacked || info.bAttacked) {
-				cout << info.bTotAttacks;
+			
+			//else if (info.wAttacked || info.bAttacked) {
+			//	cout << info.bTotAttacks;
 			} else {
 				cout << "  ";
 			}
@@ -1148,6 +1155,6 @@ ostream & operator<<(ostream &out, const Board &b) {
 		}
 		out << endl;
 	}
-	out << endl <<  "  abcdefgh" << endl << endl;
+	out << endl <<  "  a b c d e f g h" << endl << endl;
 	return out;	
 }
