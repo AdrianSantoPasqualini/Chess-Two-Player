@@ -190,8 +190,10 @@ void Board::drawBoard() {
 
 void Board::drawScore() {
 	window.fillRectangle(0, 0, 600, 60, 0);
-	string wScore = "White's Score: " + to_string(whiteScore);
-	string bScore = "Black's Score: " + to_string(blackScore);
+	int wScoreInt = (int)whiteScore;
+	int bScoreInt = (int)blackScore;
+	string wScore = "White's Score: " + to_string(wScoreInt);
+	string bScore = "Black's Score: " + to_string(bScoreInt);
 	window.drawString(10, 10, wScore, 1);
 	window.drawString(500, 10, bScore, 1);
 }
@@ -200,6 +202,11 @@ void Board::drawTurn() {
 	window.fillRectangle(0, 30, 600, 30, 0);
 	string turn = whitesTurn ? "White's Turn" : "Black's Turn";
 	window.drawString(250, 50, turn, 1);
+	if (player1->isInCheck()) {
+		window.drawString(350, 50, "-- White is in Check!", 2);
+	} else if (player2->isInCheck()) {
+		window.drawString(350, 50, "-- Black is in Check!", 2);
+	}
 }
 
 void Board::drawSetupMenu() {
@@ -818,14 +825,6 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		// Move piece
 		try {
 			move.isLegal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
-			// Check if move will put opponent in check
-			if (curWhite && player1->isInCheck()) {
-				move.toCheck = true;
-			} else if (!curWhite && player2->isInCheck()) {
-				move.toCheck = true;
-			} else {
-				move.toCheck = false;
-			}
 
 			shared_ptr<Piece> castledRook = nullptr;
 			// Castle
@@ -842,7 +841,18 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 			} else {
 				
 				shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
+
 				updateTurn(curR, curC, newR, newC, curPiece);
+
+				// Check if move will put opponent in check
+				if (curWhite && player2->isInCheck()) {
+					move.toCheck = true;
+				} else if (!curWhite && player1->isInCheck()) {
+					move.toCheck = true;
+				} else {
+					move.toCheck = false;
+				}
+
 				// Detect check
 				if (whitesTurn) {
 					if (!player2->isInCheck()) {
