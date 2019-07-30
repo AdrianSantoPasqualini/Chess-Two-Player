@@ -28,6 +28,7 @@ class Board {
 	int whiteScore;
 	int blackScore;
 	shared_ptr<Board> currBoard{this};
+	int moves; 
 
 	// private methods
 	Board(vector<vector<Square>>);
