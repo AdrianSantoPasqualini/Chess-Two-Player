@@ -182,13 +182,14 @@ bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 	}
 	if ((currCoor.first - r) * (currCoor.first - r) + (currCoor.second - c) * (currCoor.second - c) <= 2) {
 		return true;
-	} else if (!pieceOnSq) {
+	} else if ((currCoor.first == r && abs(currCoor.second - c) == 2) && !pieceOnSq) {
 		if ((r == 0 || r == 7) && c == 6) {
 			if (checked) {
 				msg = "King is under check.";
 				throw msg;
 			} else if (getMovesMade() == 0) {
 				changeCastle(1);
+				return true;
 			} else {
 				msg = "King cannot castle, king has already moved.";
 				throw msg;
@@ -199,10 +200,14 @@ bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 				throw msg;
 			} else if (getMovesMade() == 0) {
 				changeCastle(2);
+				return true;
 			} else {
 				msg = "King cannot castle, king has already moved.";
 				throw msg;
 			}
+		} else {
+			msg = "Invalid king movement.";
+			throw msg;
 		}
 	} else if (pieceOnSq) {
 		msg = "King cannot castle, enemy piece on square.";

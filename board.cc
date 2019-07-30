@@ -1155,6 +1155,6 @@ ostream & operator<<(ostream &out, const Board &b) {
 		}
 		out << endl;
 	}
-	out << endl <<  "  a b c d e f g h" << endl << endl;
+	out << endl <<  "  abcdefgh" << endl << endl;
 	return out;	
 }
