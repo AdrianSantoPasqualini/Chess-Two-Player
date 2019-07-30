@@ -836,7 +836,6 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		// Move piece
 		try {
 			move.isLegal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
-			curPiece->updatePiece(newR, newC);
 			shared_ptr<Piece> castledRook = nullptr;
 			// Castle
 			if (curPiece->getCastle() == 1) {
@@ -851,6 +850,7 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				}
 			} else {
 				shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
+				curPiece->updatePiece(newR, newC);
 				updateTurn(curR, curC, newR, newC, curPiece, false);
 				// Check if move will put opponent in check
 				if (curWhite && player2->isInCheck()) {
