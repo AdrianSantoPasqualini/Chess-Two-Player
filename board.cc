@@ -751,6 +751,8 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 			} else {
 				blocked = true;
 			}				
+		} else {
+			move.toCapture = false;
 		}
 
 		// Check if move is avoiding capture
