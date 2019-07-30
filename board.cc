@@ -294,7 +294,6 @@ void Board::init() {
 void Board::setPlayer(string colour, string type) {
 	if (colour == "white") {
 		if (type == "human") {
-			cout << "in human" << endl;
 			player1 = make_unique<Human>(true);
 		} else if (type == "computer1") {
 			player1 = make_unique<Level1>(true);
@@ -1068,6 +1067,17 @@ void Board::setup() {
 				} else {
 					cout << "Options are white or black." << endl;
 				}
+			} else if (cmd == "clear") {
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						defSquares[i][j].setPiece(nullptr);
+					}
+				}
+				drawBoard();
+				whiteCounts = {0, 0, 0, 0, 0, 0};
+				blackCounts = {0, 0, 0, 0, 0, 0};
+				window.fillRectangle(0, 0, 600, 60, 0);
+				window.drawString(250, 30, "SETUP MODE", 1);
 			} else if (cmd == "done") {
 				init();
 				setPlayer("white", "human");
