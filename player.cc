@@ -161,6 +161,14 @@ void Player::generateLegalMoves() {
 					}
 				}
 			}
+			move = board->isLegalMove(piece, curR, curC + 2);
+			if (move.isLegal) {
+				legalMoves.emplace_back(move);
+			}
+			move = board->isLegalMove(piece, curR, curC - 2);
+			if (move.isLegal) {
+				legalMoves.emplace_back(move);
+			}
 		} else if (id[0] == 'N' || id[0] == 'n') {
 			move = board->isLegalMove(piece, curR + 1, curC + 2);
 			if (move.isLegal) {
