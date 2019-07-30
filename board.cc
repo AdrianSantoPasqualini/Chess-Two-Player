@@ -512,6 +512,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 							drawPiece(castledRook);
 							updateTurn(curR, curC, newR, newC, curPiece, true);
 						} else {
+							curPiece->updatePiece(curR, curC);
 							cout << "King cannot castle, rook has already moved." << endl;
 						}
 					// Queenside castling
@@ -531,6 +532,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 							drawPiece(castledRook);
 							updateTurn(curR, curC, newR, newC, curPiece, true);
 						} else {
+							curPiece->updatePiece(curR, curC);
 							cout << "King cannot castle, rook has already moved." << endl;
 						} 
 					// En passant
@@ -587,6 +589,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 							}
 						}
 					} else {
+						
 						// Pawn promotion
 						char promotion = '0';
 						if ((curPiece->getId()[0] == 'P' && newR == 0) || (curPiece->getId()[0] == 'p' && newR == 7)) {
