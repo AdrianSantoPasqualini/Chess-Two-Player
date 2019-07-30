@@ -35,6 +35,9 @@ int main() {
 			} else {
 				cout << "Invalid players." << endl;
 			}
+			if (matchOngoing) {
+				cout << board;
+			}
 		} else if (cmd == "resign" && matchOngoing) {
 			if (board.isWhitesTurn()){
 				board.incScore(0, 1);
