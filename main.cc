@@ -74,14 +74,21 @@ int main() {
 			board.drawScore();
 			board.drawTurn();
 			cout << board;
+			if (board.isWhitesTurn()) {
+				board.generatePlayerMoves(true);
+			} else {
+				board.generatePlayerMoves(false);
+			}
 			string winner = board.whoWon();
-			//cout << winner << endl;
 			if (winner == "white") {
 				board.incScore(1, 0);
+				cout << "Checkmate! White Wins!" << endl;
 			} else if (winner == "black") {
 				board.incScore(0, 1);
+				cout << "Checkmate! Black Wins!" << endl;
 			} else if (winner == "stalemate") {
 				board.incScore(0.5, 0.5);
+				cout << "Stalemate!" << endl;
 			}
 			if (winner != "noone") {
 				cout << "Would you like to play another round? (y/n)" << endl;

@@ -25,6 +25,7 @@ class Player {
 		virtual void makeMove() = 0;
 		bool isInCheck() const;
 		int howManyLegalMoves();
+		void clearPieces();
 		void addPiece(shared_ptr<Piece>);
 		void removePiece(string id);
 		void attachBoard(Board * board);
