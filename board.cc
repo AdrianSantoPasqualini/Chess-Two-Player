@@ -538,7 +538,6 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								// Update twice to reset turn
 								updateTurn(row, newC, row, newC, attackedPiece, true);
 								updateTurn(row, newC, row, newC, attackedPiece, true);
-								attackedPiece->decrementMoves(2);
 								player1->addPiece(attackedPiece);
 								moves -= 2;
 								cout << "Invalid, king is under check after this move." << endl;
@@ -554,7 +553,6 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								// Update twice to reset turn
 								updateTurn(row, newC, row, newC, attackedPiece, true);
 								updateTurn(row, newC, row, newC, attackedPiece, true);
-								attackedPiece->decrementMoves(2);
 								player2->addPiece(attackedPiece);
 								moves -= 2;
 								cout << "Invalid, king is under check after this move." << endl;
@@ -657,7 +655,6 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 									// Update twice to reset turn
 									updateTurn(newR, newC, newR, newC, capturedPiece, true);
 									updateTurn(newR, newC, newR, newC, capturedPiece, true);
-									capturedPiece->decrementMoves(2);
 									player1->addPiece(capturedPiece);
 									moves -= 2;
 								}
@@ -687,7 +684,6 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 									// Update twice to reset turn
 									updateTurn(newR, newC, newR, newC, capturedPiece, true);
 									updateTurn(newR, newC, newR, newC, capturedPiece, true);
-									capturedPiece->decrementMoves(2);
 									player2->addPiece(capturedPiece);
 									moves -= 2;
 								}
@@ -759,10 +755,7 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 	bool checked = false;
 	bool curWhite = curPiece->getIsWhite();
 	Move move{pair<int, int>(newR, newC), curPiece};
-
-	
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
-
 		// Check new square
 		Info newInfo = squares[newR][newC].getInfo();
 		if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
@@ -778,7 +771,6 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		} else {
 			move.toCapture = false;
 		}
-
 		// Check if move is avoiding capture
 		Info curInfo = squares[curR][curC].getInfo();
 		if (curWhite && curInfo.bAttacked && !moveIntoAttack) {
@@ -788,7 +780,6 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		} else {
 			move.toAvoid = false;
 		}
-
 		// Check path to new square
 		int inc1 = 0;
 		int inc2 = 0;
@@ -830,15 +821,12 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				}
 			}
 		}
-
-
 		// Check if square is under attack (for king)
 		newInfo = squares[curR][curC].getInfo();
 		if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
 			checked = true;
 		}
 		move.isLegal = false;
-		
 		// Move piece
 		try {
 			move.isLegal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
@@ -856,11 +844,8 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 					move.isLegal = true;
 				}
 			} else {
-				
 				shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
-				
 				updateTurn(curR, curC, newR, newC, curPiece, false);
-
 				// Check if move will put opponent in check
 				if (curWhite && player2->isInCheck()) {
 					move.toCheck = true;
@@ -869,7 +854,6 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				} else {
 					move.toCheck = false;
 				}
-
 				// Detect check
 				if (whitesTurn) {
 					if (!player2->isInCheck()) {
@@ -886,7 +870,6 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 						// Update twice to reset turn
 						updateTurn(newR, newC, newR, newC, capturedPiece, false);
 						updateTurn(newR, newC, newR, newC, capturedPiece, false);
-						capturedPiece->decrementMoves(2);
 						player1->addPiece(capturedPiece);
 						moves -= 2;
 					}
@@ -905,11 +888,12 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 						// Update twice to reset turn
 						updateTurn(newR, newC, newR, newC, capturedPiece, false);
 						updateTurn(newR, newC, newR, newC, capturedPiece, false);
-						capturedPiece->decrementMoves(2);
 						player2->addPiece(capturedPiece);
 						moves -= 2;
 					}
 				}
+				curPiece->changeCastle(0);
+				curPiece->changeEnPassant(0);
 			}
 		} catch (string msg) {
 			return move;
