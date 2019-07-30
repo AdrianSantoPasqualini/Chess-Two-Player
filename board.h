@@ -40,6 +40,8 @@ class Board {
 		void drawMenu();
 		void drawBoard();
 		void drawScore();
+		void drawTurn();
+		void drawSetupMenu();
 		void setPlayer(string colour, string type);
 		void init();
 		void setup();

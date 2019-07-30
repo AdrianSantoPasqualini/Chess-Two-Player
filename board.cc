@@ -169,10 +169,19 @@ void Board::drawScore() {
 	window.fillRectangle(0, 0, 600, 60, 0);
 	string wScore = "White's Score: " + to_string(whiteScore);
 	string bScore = "Black's Score: " + to_string(blackScore);
-	string turn = whitesTurn ? "White's Turn" : "Black's Turn";
 	window.drawString(10, 10, wScore, 1);
 	window.drawString(500, 10, bScore, 1);
+}
+
+void Board::drawTurn() {
+	window.fillRectangle(0, 30, 600, 30, 0);
+	string turn = whitesTurn ? "White's Turn" : "Black's Turn";
 	window.drawString(250, 50, turn, 1);
+}
+
+void Board::drawSetupMenu() {
+	window.fillRectangle(0, 0, 600, 60, 0);
+	window.drawString(250, 30, "SETUP MODE", 1);
 }
 
 
@@ -919,10 +928,9 @@ void Board::printDefault() {
 
 void Board::setup() {
 	drawBoard();
+	drawSetupMenu();
 	printDefault();
 	vector<char> validPieces = {'K', 'Q', 'B', 'R', 'N', 'P', 'k', 'q', 'b', 'r', 'n', 'p'};
-	window.fillRectangle(0, 0, 600, 60, 0);
-	window.drawString(250, 30, "SETUP MODE", 1);
 	bool done = false;
 		while (!done) {
 		try {
@@ -1076,8 +1084,8 @@ void Board::setup() {
 				drawBoard();
 				whiteCounts = {0, 0, 0, 0, 0, 0};
 				blackCounts = {0, 0, 0, 0, 0, 0};
-				window.fillRectangle(0, 0, 600, 60, 0);
-				window.drawString(250, 30, "SETUP MODE", 1);
+				drawSetupMenu();
+				printDefault();
 			} else if (cmd == "done") {
 				init();
 				setPlayer("white", "human");
