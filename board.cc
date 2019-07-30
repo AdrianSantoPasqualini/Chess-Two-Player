@@ -252,12 +252,8 @@ bool Board::isWhitesTurn() {
 	return whitesTurn;
 }
 
-int Board::getWhiteScore() {
-	return whiteScore;
-}
-
-int Board::getBlackScore() {
-	return blackScore;
+pair<int,int> Board::getScore() {
+	return make_pair(whiteScore, blackScore);
 }
 
 void Board::makeMove() {
@@ -490,14 +486,12 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							if (player2->isInCheck()) {
 								curPiece->updatePiece(curR, curC);
 								updateTurn(newR, newC, curR, curC, curPiece);
-								curPiece->decrementMoves();
-								curPiece->decrementMoves();
+								curPiece->decrementMoves(2);
 								moves -= 2;
 								// Update twice to reset turn
 								updateTurn(row, newC, row, newC, attackedPiece);
 								updateTurn(row, newC, row, newC, attackedPiece);
-								attackedPiece->decrementMoves();
-								attackedPiece->decrementMoves();
+								attackedPiece->decrementMoves(2);
 								player1->addPiece(attackedPiece);
 								moves -= 2;
 								cout << "Invalid, king is under check after this move." << endl;
@@ -508,14 +502,12 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							if (player1->isInCheck()) {
 								curPiece->updatePiece(curR, curC);
 								updateTurn(newR, newC, curR, curC, curPiece);
-								curPiece->decrementMoves();
-								curPiece->decrementMoves();
+								curPiece->decrementMoves(2);
 								moves -= 2;
 								// Update twice to reset turn
 								updateTurn(row, newC, row, newC, attackedPiece);
 								updateTurn(row, newC, row, newC, attackedPiece);
-								attackedPiece->decrementMoves();
-								attackedPiece->decrementMoves();
+								attackedPiece->decrementMoves(2);
 								player2->addPiece(attackedPiece);
 								moves -= 2;
 								cout << "Invalid, king is under check after this move." << endl;
@@ -612,15 +604,13 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								player2->addPiece(curPiece);
 								// Move pieces back
 								updateTurn(newR, newC, curR, curC, curPiece);
-								curPiece->decrementMoves();
-								curPiece->decrementMoves();
+								curPiece->decrementMoves(2);
 								moves -= 2;
 								if (capturedPiece != nullptr) {
 									// Update twice to reset turn
 									updateTurn(newR, newC, newR, newC, capturedPiece);
 									updateTurn(newR, newC, newR, newC, capturedPiece);
-									capturedPiece->decrementMoves();
-									capturedPiece->decrementMoves();
+									capturedPiece->decrementMoves(2);
 									player1->addPiece(capturedPiece);
 									moves -= 2;
 								}
@@ -644,15 +634,13 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								player1->addPiece(curPiece);
 								// Move pieces back
 								updateTurn(newR, newC, curR, curC, curPiece);
-								curPiece->decrementMoves();
-								curPiece->decrementMoves();
+								curPiece->decrementMoves(2);
 								moves -= 2;
 								if (capturedPiece != nullptr) {
 									// Update twice to reset turn
 									updateTurn(newR, newC, newR, newC, capturedPiece);
 									updateTurn(newR, newC, newR, newC, capturedPiece);
-									capturedPiece->decrementMoves();
-									capturedPiece->decrementMoves();
+									capturedPiece->decrementMoves(2);
 									player2->addPiece(capturedPiece);
 									moves -= 2;
 								}
@@ -858,15 +846,13 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				player2->addPiece(curPiece);
 				// Move pieces back
 				updateTurn(newR, newC, curR, curC, curPiece);
-				curPiece->decrementMoves();
-				curPiece->decrementMoves();
+				curPiece->decrementMoves(2);
 				moves -= 2;
 				if (capturedPiece != nullptr) {
 					// Update twice to reset turn
 					updateTurn(newR, newC, newR, newC, capturedPiece);
 					updateTurn(newR, newC, newR, newC, capturedPiece);
-					capturedPiece->decrementMoves();
-					capturedPiece->decrementMoves();
+					capturedPiece->decrementMoves(2);
 					player1->addPiece(capturedPiece);
 					moves -= 2;
 				}
@@ -888,15 +874,13 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				player1->addPiece(curPiece);
 				// Move piece back
 				updateTurn(newR, newC, curR, curC, curPiece);
-				curPiece->decrementMoves();
-				curPiece->decrementMoves();
+				curPiece->decrementMoves(2);
 				moves -= 2;
 				if (capturedPiece != nullptr) {
 					// Update twice to reset turn
 					updateTurn(newR, newC, newR, newC, capturedPiece);
 					updateTurn(newR, newC, newR, newC, capturedPiece);
-					capturedPiece->decrementMoves();
-					capturedPiece->decrementMoves();
+					capturedPiece->decrementMoves(2);
 					player2->addPiece(capturedPiece);
 					moves -= 2;
 				}

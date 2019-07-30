@@ -47,8 +47,7 @@ class Board {
 		void setup();
 		int whoWon();
 		void incScore(int w, int b);
-		int getWhiteScore();
-		int getBlackScore();
+		pair<int,int> getScore();
 		bool isWhitesTurn();
 		pair<int,int> getAttacks(int r, int c);
 		void makeMove();
