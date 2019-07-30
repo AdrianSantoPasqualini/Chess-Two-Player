@@ -17,6 +17,10 @@ Player::Player(bool isWhite): isWhite {isWhite} {
 	legalMoves = {};
 }
 
+int Player::howManyLegalMoves() {
+	return legalMoves.size();
+}
+
 bool Player::isInCheck() const {
 	bool check = false;
 	pair<int, int> coor;
@@ -234,6 +238,7 @@ void Human::makeMove() {
 	string newCoord;
 	cin >> oldCoord >> newCoord;
 	board->movePiece('8' - oldCoord[1], oldCoord[0] - 'a', '8' - newCoord[1], newCoord[0] - 'a');
+//	generateLegalMoves();
 }
 
 Level1::Level1(bool isWhite): Player{isWhite} {}
