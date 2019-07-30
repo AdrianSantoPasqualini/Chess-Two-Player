@@ -243,12 +243,8 @@ bool Board::isWhitesTurn() {
 	return whitesTurn;
 }
 
-int Board::getWhiteScore() {
-	return whiteScore;
-}
-
-int Board::getBlackScore() {
-	return blackScore;
+pair<int,int> Board::getScore() {
+	return make_pair(whiteScore, blackScore);
 }
 
 void Board::makeMove() {

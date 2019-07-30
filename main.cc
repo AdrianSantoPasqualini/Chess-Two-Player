@@ -59,7 +59,7 @@ int main() {
 		}
 	} 
 	cout << "Final Score:" << endl;
-	cout << "White: " << board.getWhiteScore() << endl;
-	cout << "Black: " << board.getBlackScore() << endl;
+	cout << "White: " << board.getScore().first << endl;
+	cout << "Black: " << board.getScore().second << endl;
 }
 
