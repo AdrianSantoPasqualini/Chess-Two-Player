@@ -1,0 +1,10 @@
+setup
+clear
++ K a1
++ k g8
++ R c1
+done
+game computer3 computer3
+move
+move
+move
