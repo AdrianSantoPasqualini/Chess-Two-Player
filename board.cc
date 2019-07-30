@@ -259,7 +259,6 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
 		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
 	} 
-	//cout << id << " " << r << " " << c << endl;
 }
 
 void Board::undrawPiece(int r, int c) {
@@ -505,7 +504,6 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						} 
 					// En passant
 					} else if (curPiece->getEnPassant() == moves - 1 && moves > 3) {
-						cout << moves << endl;
 						updateTurn(curR, curC, newR, newC, curPiece);
 						// Remove opponent's piece
 						int row;
@@ -837,6 +835,7 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		// Move piece
 		try {
 			move.isLegal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
+			curPiece->updatePiece(newR, newC);
 			shared_ptr<Piece> castledRook = nullptr;
 			// Castle
 			if (curPiece->getCastle() == 1) {
@@ -852,7 +851,7 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 			} else {
 				
 				shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
-
+				
 				updateTurn(curR, curC, newR, newC, curPiece);
 
 				// Check if move will put opponent in check
@@ -1130,8 +1129,8 @@ ostream & operator<<(ostream &out, const Board &b) {
 			
 			Info info = b.squares[i][j].getInfo();
 		/*	
-			if (info.wTotAttacks > 0) {
-				cout << info.wTotAttacks << " ";
+			if (info.bTotAttacks > 0) {
+				cout << info.bTotAttacks << " ";
 			
 			//else if (info.wAttacked || info.bAttacked) {
 			//	cout << info.bTotAttacks;
@@ -1139,6 +1138,7 @@ ostream & operator<<(ostream &out, const Board &b) {
 				cout << "  ";
 			}
 			*/
+
 			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {

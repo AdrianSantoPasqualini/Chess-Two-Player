@@ -176,10 +176,6 @@ bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 		msg = "King is blocked or will be under check.";
 		throw msg;
 	}
-	if (moveIntoAttack) {
-		msg = "King is under check or cannot move onto a square that is under attack.";
-		throw msg;
-	}
 	if ((currCoor.first - r) * (currCoor.first - r) + (currCoor.second - c) * (currCoor.second - c) <= 2) {
 		return true;
 	} else if ((currCoor.first == r && abs(currCoor.second - c) == 2) && !pieceOnSq) {

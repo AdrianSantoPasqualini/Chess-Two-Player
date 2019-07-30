@@ -122,6 +122,10 @@ void Player::generateLegalMoves() {
 			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 			}
+			move = board->isLegalMove(piece, curR - 2, curC);
+			if (move.isLegal) {
+				legalMoves.emplace_back(move);
+			}
 			move = board->isLegalMove(piece, curR - 1, curC + 1);
 			if (move.isLegal) {
 				legalMoves.emplace_back(move);
@@ -135,6 +139,10 @@ void Player::generateLegalMoves() {
 			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 
+			}
+			move = board->isLegalMove(piece, curR + 2, curC);
+			if (move.isLegal) {
+				legalMoves.emplace_back(move);
 			}
 			move = board->isLegalMove(piece, curR + 1, curC + 1);
 			if (move.isLegal) {
@@ -248,7 +256,7 @@ void Human::makeMove() {
 Level1::Level1(bool isWhite): Player{isWhite} {}
 
 void Level1::makeMove() {
-	generateLegalMoves();
+//	generateLegalMoves();
 	srand(time(NULL));	
 	int r = rand() % legalMoves.size();
 	pair<int, int> oldCoords = legalMoves[r].piece->getCoor();
@@ -259,7 +267,7 @@ void Level1::makeMove() {
 Level2::Level2(bool isWhite): Player{isWhite} {}
 
 void Level2::makeMove() {
-	generateLegalMoves();
+//	generateLegalMoves();
 	int prefMoves = 0;
 	srand(time(NULL));	
 	for (unsigned int i = 0; i < legalMoves.size(); i++) {
@@ -292,7 +300,7 @@ void Level2::makeMove() {
 Level3::Level3(bool isWhite): Player{isWhite} {}
 
 void Level3::makeMove() {
-	generateLegalMoves();
+//	generateLegalMoves();
 	int prefMoves = 0;
 	srand(time(NULL));	
 	for (unsigned int i = 0; i < legalMoves.size(); i++) {
