@@ -174,6 +174,7 @@ bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 		throw msg;
 	}
 	if ((currCoor.first - r) * (currCoor.first - r) + (currCoor.second - c) * (currCoor.second - c) <= 2) {
+		cout << "this is true!!" << endl;
 		return true;
 	} else if (!pieceOnSq) {
 		if ((r == 0 || r == 7) && c == 6) {

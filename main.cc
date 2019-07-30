@@ -56,6 +56,7 @@ int main() {
 					board.init();
 					board.drawBoard();
 					board.drawScore();
+					board.drawTurn();
 					cout << board;
 					continuing = true;
 					break;
@@ -93,6 +94,7 @@ int main() {
 						board.init();
 						board.drawBoard();
 						board.drawScore();
+						board.drawTurn();
 						cout << board;
 						continuing = true;
 						break;

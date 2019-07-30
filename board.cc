@@ -182,13 +182,14 @@ void Board::drawBoard() {
 				}
 			}
 			if (defSquares[i][j].getInfo().piece != nullptr) {
-				drawPiece(defSquares[i][j].getInfo().piece);
+				drawPiece(squares[i][j].getInfo().piece);
 			}
 		}	
 	}
 }
 
 void Board::drawScore() {
+	/*
 	window.fillRectangle(0, 0, 600, 60, 0);
 	int wScoreInt = (int)whiteScore;
 	int bScoreInt = (int)blackScore;
@@ -196,6 +197,7 @@ void Board::drawScore() {
 	string bScore = "Black's Score: " + to_string(bScoreInt);
 	window.drawString(10, 10, wScore, 1);
 	window.drawString(500, 10, bScore, 1);
+	*/
 }
 
 void Board::drawTurn() {
@@ -252,7 +254,7 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
 		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
 	} 
-	//cout << id << " " << r << " " << c << endl;
+	cout << id << " " << r << " " << c << endl;
 }
 
 void Board::undrawPiece(int r, int c) {
@@ -350,7 +352,7 @@ void Board::setPlayer(string colour, string type) {
 				}
 			}
 		}
-		//player1->generateLegalMoves();
+		player1->generateLegalMoves();
 	} else if (colour == "black") {
 		if (type == "human") {
 			player2 = make_shared<Human>(false);
@@ -374,7 +376,7 @@ void Board::setPlayer(string colour, string type) {
 				}
 			}
 		}
-		//player2->generateLegalMoves();
+		player2->generateLegalMoves();
 	}
 }
 
@@ -734,6 +736,7 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 }
 
 Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
+	//cout << "isLegalMove" << endl;
 	int curR = curPiece->getCoor().first;
 	int curC = curPiece->getCoor().second;
 	bool pieceOnSq = false;
@@ -856,8 +859,10 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				// Detect check
 				if (whitesTurn) {
 					if (!player2->isInCheck()) {
+						//cout << "isLegalMove: 1" << endl;
 						move.isLegal = true;
 					} else {
+						//cout << "isLegalMove: 2" << endl;
 						move.isLegal = false;
 					}
 					curPiece->updatePiece(curR, curC);
@@ -875,8 +880,10 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 					}
 				} else {
 					if (!player1->isInCheck()) {
+						//cout << "isLegalMove: 3" << endl;
 						move.isLegal = true;
 					} else {
+						//cout << "isLegalMove: 4" << endl;
 						move.isLegal = false;
 					}
 					curPiece->updatePiece(curR, curC);
@@ -899,6 +906,7 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		}
 		return move;
 	} else {
+		//cout << "move is illegal!" << endl;
 		move.isLegal = false;
 		return move;
 	}
