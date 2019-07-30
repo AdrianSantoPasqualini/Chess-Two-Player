@@ -166,6 +166,7 @@ void Board::drawBoard() {
 }
 
 void Board::drawScore() {
+	window.fillRectangle(0, 0, 600, 60, 0);
 	string wScore = "White's Score: " + to_string(whiteScore);
 	string bScore = "Black's Score: " + to_string(blackScore);
 	string turn = whitesTurn ? "White's Turn" : "Black's Turn";
@@ -917,12 +918,11 @@ void Board::printDefault() {
 }
 
 void Board::setup() {
+	drawBoard();
 	printDefault();
 	vector<char> validPieces = {'K', 'Q', 'B', 'R', 'N', 'P', 'k', 'q', 'b', 'r', 'n', 'p'};
-	/*	
-	window.fillRectangle(0, 45, 600, 30, 0);
-	window.drawString(250, 30, "IN SETUP", 1);
-	*/
+	window.fillRectangle(0, 0, 600, 60, 0);
+	window.drawString(250, 30, "SETUP MODE", 1);
 	bool done = false;
 		while (!done) {
 		try {
@@ -1076,6 +1076,8 @@ void Board::setup() {
 				}
 			} else {
 				cout << "Please enter a valid command." << endl;
+				cin.clear();
+				cin.ignore();
 			}	
 		} catch (string e) {
 			cout << e << endl;
@@ -1084,6 +1086,7 @@ void Board::setup() {
 			cin.ignore();
 		}
 	} 
+	window.fillRectangle(0, 0, 600, 60, 0);
 }
 
 ostream & operator<<(ostream &out, const Board &b) {
