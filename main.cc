@@ -27,11 +27,11 @@ int main() {
 			it2 = find(players.begin(), players.end(), p2);
 			if (it1 != players.end() && it2 != players.end()) {
 				board.init();
+				board.setPlayer("white", p1);
+				board.setPlayer("black", p2);
 				board.drawBoard();
 				board.drawScore();
 				board.drawTurn();
-				board.setPlayer("white", p1);
-				board.setPlayer("black", p2);
 				matchOngoing = true;
 			} else {
 				cout << "Invalid players." << endl;

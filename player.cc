@@ -62,164 +62,165 @@ void Player::generateLegalMoves() {
 		shared_ptr<Piece> piece = it->second;
 		int curR = piece->getCoor().first;
 		int curC = piece->getCoor().second;
+		Move move;
 		if (id[0] == 'R' || id[0] == 'r') {
 			for (int i = 1; i < 8; i ++) {
-				bool legalUp = board->isLegalMove(piece, curR + i, curC);
-				bool legalDown = board->isLegalMove(piece, curR - i, curC);
-				bool legalLeft = board->isLegalMove(piece, curR, curC - i);
-				bool legalRight = board->isLegalMove(piece, curR, curC + i);
+				move = board->isLegalMove(piece, curR + i, curC);
+				bool legalUp = move.isLegal;
 				if (legalUp) {
-					Move move{make_pair(curR + i, curC), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR - i, curC);
+				bool legalDown = move.isLegal;
 				if (legalDown) {
-					Move move{make_pair(curR - i, curC), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR, curC - i);
+				bool legalLeft = move.isLegal;
 				if (legalLeft) {
-					Move move{make_pair(curR, curC - i), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curC, curC + i);
+				bool legalRight = move.isLegal;
 				if (legalRight) {
-					Move move{make_pair(curR, curC + i), piece};
 					legalMoves.emplace_back(move);
 				}
 			}
 		} else if (id[0] == 'B' || id[0] == 'b') {
 			for (int i = 1; i < 8; i ++) {
-				bool legalNE = board->isLegalMove(piece, curR + i, curC + i);
-				bool legalNW = board->isLegalMove(piece, curR + i, curC - i);
-				bool legalSW = board->isLegalMove(piece, curR - i, curC - i);
-				bool legalSE = board->isLegalMove(piece, curR - i, curC + i);
+				move = board->isLegalMove(piece, curR + i, curC + i);
+				bool legalNE = move.isLegal;
 				if (legalNE) {
-					Move move{make_pair(curR + i, curC + i), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR + i, curC - i);
+				bool legalNW = move.isLegal;
 				if (legalNW) {
-					Move move{make_pair(curR + i, curC - i), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR - i, curC - i);
+				bool legalSW = move.isLegal;
 				if (legalSW) {
-					Move move{make_pair(curR - i, curC - i), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR - i, curC + i);
+				bool legalSE = move.isLegal;
 				if (legalSE) {
-					Move move{make_pair(curR - i, curC + i), piece};
 					legalMoves.emplace_back(move);
 				}
 			}
 		} else if (id[0] == 'P') {
-			if (board->isLegalMove(piece, curR - 1, curC - 1)) {
-				Move move{make_pair(curR - 1, curC - 1), piece};
+			move = board->isLegalMove(piece, curR - 1, curC - 1);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 			} 
-			if (board->isLegalMove(piece, curR - 1, curC)) {
-				Move move{make_pair(curR - 1, curC), piece};
+			move = board->isLegalMove(piece, curR - 1, curC);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
-
 			}
-			if (board->isLegalMove(piece, curR - 1, curC + 1)) {
-				Move move{make_pair(curR - 1, curC + 1), piece};
+			move = board->isLegalMove(piece, curR - 1, curC + 1);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 			}
 		} else if (id[0] == 'p') {
-			if (board->isLegalMove(piece, curR + 1, curC - 1)) {
-				Move move{make_pair(curR + 1, curC - 1), piece};
+			move = board->isLegalMove(piece, curR + 1, curC - 1);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 			} 
-			if (board->isLegalMove(piece, curR + 1, curC)) {
-				Move move{make_pair(curR + 1, curC), piece};
+			move = board->isLegalMove(piece, curR + 1, curC);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 
 			}
-			if (board->isLegalMove(piece, curR + 1, curC + 1)) {
-				Move move{make_pair(curR + 1, curC + 1), piece};
+			move = board->isLegalMove(piece, curR + 1, curC + 1);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 			}
 		} else if (id[0] == 'K' || id[0] == 'k') {
 			for (int h = -1; h <= 1; h++) {
 				for (int w = -1; w <= 1; w++) {
-					if (((w != 0) || (h != 0)) && board->isLegalMove(piece, curR + h, curC + w)) {
-						Move move{make_pair(curR + h, curC + w), piece};
-						legalMoves.emplace_back(move);
+					if ((w != 0) || (h != 0)) {
+						move = board->isLegalMove(piece, curR + h, curC + w);
+						if (move.isLegal) {
+							legalMoves.emplace_back(move);
+						}
 					}
 				}
 			}
 		} else if (id[0] == 'N' || id[0] == 'n') {
-			if (board->isLegalMove(piece, curR + 1, curC + 2)) {
-				Move move{make_pair(curR + 1, curC + 2), piece};
+			move = board->isLegalMove(piece, curR + 1, curC + 2);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 			} 
-			if (board->isLegalMove(piece, curR + 1, curC - 2)) {
-				Move move{make_pair(curR + 1, curC - 2), piece};
+			move = board->isLegalMove(piece, curR + 1, curC - 2);
+			if (move.isLegal) {
+				legalMoves.emplace_back(move);
+			}
+			move = board->isLegalMove(piece, curR - 1, curC + 2);
+			if (move.isLegal) {
+				legalMoves.emplace_back(move);
+			}
+			move = board->isLegalMove(piece, curR - 1, curC - 2);
+			if (move.isLegal) {
+				legalMoves.emplace_back(move);
+			} 
+			move = board->isLegalMove(piece, curR + 2, curC + 1);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 
 			}
-			if (board->isLegalMove(piece, curR - 1, curC + 2)) {
-				Move move{make_pair(curR - 1, curC + 2), piece};
+			move = board->isLegalMove(piece, curR + 2, curC - 1);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 			}
-			if (board->isLegalMove(piece, curR - 1, curC - 2)) {
-				Move move{make_pair(curR - 1, curC - 2), piece};
+			move = board->isLegalMove(piece, curR - 2, curC + 1);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 			} 
-			if (board->isLegalMove(piece, curR + 2, curC + 1)) {
-				Move move{make_pair(curR + 2, curC + 1), piece};
-				legalMoves.emplace_back(move);
-
-			}
-			if (board->isLegalMove(piece, curR + 2, curC - 1)) {
-				Move move{make_pair(curR + 2, curC - 1), piece};
-				legalMoves.emplace_back(move);
-			}
-			if (board->isLegalMove(piece, curR - 2, curC + 1)) {
-				Move move{make_pair(curR - 2, curC + 1), piece};
-				legalMoves.emplace_back(move);
-			} 
-			if (board->isLegalMove(piece, curR - 2, curC - 1)) {
-				Move move{make_pair(curR - 2, curC - 1), piece};
+			move = board->isLegalMove(piece, curR - 2, curC - 1);
+			if (move.isLegal) {
 				legalMoves.emplace_back(move);
 			}
 		} else {
 			for (int i = 1; i < 8; i++) {
-				bool legalUp = board->isLegalMove(piece, curR + i, curC);
-				bool legalDown = board->isLegalMove(piece, curR - i, curC);
-				bool legalLeft = board->isLegalMove(piece, curR, curC - i);
-				bool legalRight = board->isLegalMove(piece, curR, curC + i);
-				bool legalNE = board->isLegalMove(piece, curR + i, curC + i);
-				bool legalNW = board->isLegalMove(piece, curR + i, curC - i);
-				bool legalSW = board->isLegalMove(piece, curR - i, curC - i);
-				bool legalSE = board->isLegalMove(piece, curR - i, curC + i);
+				move = board->isLegalMove(piece, curR + i, curC);
+				bool legalUp = move.isLegal;
 				if (legalUp) {
-					Move move{make_pair(curR + i, curC), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR - i, curC);
+				bool legalDown = move.isLegal;
 				if (legalDown) {
-					Move move{make_pair(curR - i, curC), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR, curC - i);
+				bool legalLeft = move.isLegal;
 				if (legalLeft) {
-					Move move{make_pair(curR, curC - i), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR, curC + i);
+				bool legalRight = move.isLegal;
 				if (legalRight) {
-					Move move{make_pair(curR, curC + i), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR + i, curC + i);
+				bool legalNE = move.isLegal;
 				if (legalNE) {
-					Move move{make_pair(curR + i, curC + i), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR + i, curC - i);
+				bool legalNW = move.isLegal;
 				if (legalNW) {
-					Move move{make_pair(curR + i, curC - i), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR - i, curC - i);
+				bool legalSW = move.isLegal;
 				if (legalSW) {
-					Move move{make_pair(curR - i, curC - i), piece};
 					legalMoves.emplace_back(move);
 				}
+				move = board->isLegalMove(piece, curR - i, curC + i);
+				bool legalSE = move.isLegal;
 				if (legalSE) {
-					Move move{make_pair(curR - i, curC + i), piece};
 					legalMoves.emplace_back(move);
 				}
 			}
