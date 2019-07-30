@@ -26,6 +26,7 @@ void Player::clearPieces() {
 	pieces.clear();
 }
 
+
 bool Player::isInCheck() const {
 	bool check = false;
 	pair<int, int> coor;
@@ -159,6 +160,14 @@ void Player::generateLegalMoves() {
 						}
 					}
 				}
+			}
+			move = board->isLegalMove(piece, curR, curC + 2);
+			if (move.isLegal) {
+				legalMoves.emplace_back(move);
+			}
+			move = board->isLegalMove(piece, curR, curC - 2);
+			if (move.isLegal) {
+				legalMoves.emplace_back(move);
 			}
 		} else if (id[0] == 'N' || id[0] == 'n') {
 			move = board->isLegalMove(piece, curR + 1, curC + 2);

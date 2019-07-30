@@ -40,6 +40,7 @@ int main() {
 			}
 			if (matchOngoing) {
 				cout << board;
+				//bool stalemate = (board.whoWon() == "stalemate");
 			}
 		} else if (cmd == "resign" && matchOngoing) {
 			if (board.isWhitesTurn()){

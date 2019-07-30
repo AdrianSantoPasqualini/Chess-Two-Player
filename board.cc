@@ -91,8 +91,32 @@ string Board::whoWon() {
 		}
 		squares.clear();
 	} else {
-			
-		return "noone";
+		int wB = 0, wN = 0, bB = 0, bN = 0;	
+		char id;
+		for (int i = 0; i < 8; i++) {
+			for (int j = 0; j < 8; j++) {
+				if (squares[i][j].getInfo().piece != nullptr) {
+					id = squares[i][j].getInfo().piece->getId()[0];
+					if (toupper(id) == 'Q' || toupper(id) == 'P' || toupper(id) == 'R'){
+						return "noone";
+					} else if (id == 'N') {
+						wN++;
+					} else if (id == 'n') {
+						bN++;
+					} else if (id == 'B') {
+						wB++;
+					} else if (id == 'b') {
+						bB++;
+					}
+					if (wN == 2 || bN == 2 || wB == 2 || bB == 2) {
+						return "noone";
+					} else if ((wN == 1 && wB == 1) || (bN == 1 && bB == 1)) {
+						return "noone";
+					}
+				}
+			}
+		}
+		return "stalemate";
 	}
 }
 
@@ -260,7 +284,7 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
 		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
 	} 
-	window.drawString(c*60 + 90, r*60 + 90, to_string(piece->getMovesMade()), 7);
+	//window.drawString(c*60 + 90, r*60 + 90, to_string(piece->getMovesMade()), 7);
 }
 
 void Board::undrawPiece(int r, int c) {
@@ -472,7 +496,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 					// Kingside castling
 					if (curPiece->getCastle() == 1) {
 						castledRook = squares[curR][curC + 3].getInfo().piece;
-						if (castledRook->getMovesMade() == 0) {
+						if (castledRook != nullptr && castledRook->getMovesMade() == 0) {
 							undrawPiece(curR, curC+3);
 							castledRook->updatePiece(newR, newC - 1);
 							squares[curR][curC + 3].setPiece(nullptr);
@@ -491,7 +515,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 					// Queenside castling
 					} else if (curPiece->getCastle() == 2) {
 						castledRook = squares[curR][curC - 4].getInfo().piece;
-						if (castledRook->getMovesMade() == 0) {
+						if (castledRook != nullptr && castledRook->getMovesMade() == 0) {
 							undrawPiece(curR, curC-4);
 							castledRook->updatePiece(newR, newC + 1);
 							squares[curR][curC - 4].setPiece(nullptr);
@@ -853,22 +877,23 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		int centerTotalAttacks = center1Attacks + center2Attacks + center3Attacks + center4Attacks;
 		// Move piece
 		try {
+			int tempEnPassant = curPiece->getEnPassant();
 			move.isLegal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
-			curPiece->updatePiece(newR, newC);
 			shared_ptr<Piece> castledRook = nullptr;
 			// Castle
 			if (curPiece->getCastle() == 1) {
 				castledRook = squares[curR][curC + 3].getInfo().piece;
-				if (castledRook->getMovesMade() == 0) {
+				if (castledRook != nullptr && castledRook->getMovesMade() == 0) {
 					move.isLegal = true;
 				}
 			} else if (curPiece->getCastle() == 2) {
 				castledRook = squares[curR][curC - 4].getInfo().piece;
-				if (castledRook->getMovesMade() == 0) {
+				if (castledRook != nullptr && castledRook->getMovesMade() == 0) {
 					move.isLegal = true;
 				}
 			} else {
 				shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
+				curPiece->updatePiece(newR, newC);
 				updateTurn(curR, curC, newR, newC, curPiece, false);
 				// Check if move will put opponent in check
 				if (curWhite && player2->isInCheck()) {
@@ -939,9 +964,9 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 						moves -= 2;
 					}
 				}
-				curPiece->changeCastle(0);
-				curPiece->changeEnPassant(0);
 			}
+			curPiece->changeCastle(0);
+			curPiece->changeEnPassant(tempEnPassant);
 		} catch (string msg) {
 			return move;
 		}
@@ -1001,6 +1026,49 @@ void Board::setup() {
 				if (it == validPieces.end()) {
 					string e = "Given piece is not valid.";
 					throw e;
+				}
+				if (defSquares[8 - row][col - 'a'].getInfo().piece != nullptr) {
+					char id = defSquares[8 - row][col - 'a'].getInfo().piece->getId()[0];
+					switch(id) {
+						case 'K': 
+							whiteCounts[0]--;
+							break;	
+						case 'Q': 
+							whiteCounts[1]--;
+							break;
+						case 'B': 
+							whiteCounts[2]--;
+							break;
+						case 'R': 
+							whiteCounts[3]--;
+							break;
+						case 'N': 
+							whiteCounts[4]--;
+							break;
+						case 'P': 
+							whiteCounts[5]--;
+							break;
+						case 'k': 
+							blackCounts[0]--;
+							break;
+						case 'q': 
+							blackCounts[1]--;
+							break;
+						case 'b': 
+							blackCounts[2]--;
+							break;
+						case 'r': 
+							blackCounts[3]--;
+							break;
+						case 'n': 
+							blackCounts[4]--;
+							break;
+						case 'p': 
+							blackCounts[5]--;
+							break;
+						default: break;
+					}
+					undrawPiece(8-row, col-'a');
 				}
 				if (piece == 'K' && whiteCounts[0] == 0) {
 					p = make_shared<King>(8 - row, col - 'a', true, "K", 0);
