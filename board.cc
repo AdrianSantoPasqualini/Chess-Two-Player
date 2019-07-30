@@ -9,6 +9,7 @@ using namespace std;
 Board::Board(vector<vector<Square>> squares): squares{squares} {}
 
 Board::Board() {
+	moves = 0;
 	whiteScore = 0;
 	blackScore = 0;
 	defWhitesTurn = true;
@@ -412,7 +413,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 				}
 				// Move piece
 				try {
-					bool legal = curPiece->move(newR, newC, pieceOnSq, blocked, moveIntoAttack);
+					bool legal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
 					curPiece->updatePiece(newR, newC);
 					shared_ptr<Piece> castledRook = nullptr;
 					// Kingside castling
@@ -453,6 +454,65 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						} else {
 							cout << "King cannot castle, rook has already moved." << endl;
 						} 
+					// En passant
+					} else if (curPiece->getEnPassant() == moves - 1 && moves > 1) {
+						updateTurn(curR, curC, newR, newC, curPiece);
+						// Remove opponent's piece
+						int row;
+						if (whitesTurn) {
+							row = newR - 1;
+						} else {
+							row = newR + 1;
+						}
+						shared_ptr<Piece> attackedPiece = squares[row][newC].getInfo().piece;
+						State mState{StateType::PieceRemoved, Direction::N, false, attackedPiece, false};
+						squares[row][newC].setState(mState);
+						squares[row][newC].notifyObservers();
+						if (whitesTurn) {
+							player2->removePiece(attackedPiece->getId());
+						} else {
+							player1->removePiece(attackedPiece->getId());
+						}
+						squares[row][newC].setPiece(nullptr);
+						undrawPiece(row, newC);
+						// Detect check
+						if (whitesTurn) {
+							if (player2->isInCheck()) {
+								curPiece->updatePiece(curR, curC);
+								updateTurn(newR, newC, curR, curC, curPiece);
+								curPiece->decrementMoves();
+								curPiece->decrementMoves();
+								moves -= 2;
+								// Update twice to reset turn
+								updateTurn(row, newC, row, newC, attackedPiece);
+								updateTurn(row, newC, row, newC, attackedPiece);
+								attackedPiece->decrementMoves();
+								attackedPiece->decrementMoves();
+								player1->addPiece(attackedPiece);
+								moves -= 2;
+								cout << "Invalid, king is under check after this move." << endl;
+							} else if (player1->isInCheck()) {
+								cout << "White is in check." << endl;
+							}
+						} else {						
+							if (player1->isInCheck()) {
+								curPiece->updatePiece(curR, curC);
+								updateTurn(newR, newC, curR, curC, curPiece);
+								curPiece->decrementMoves();
+								curPiece->decrementMoves();
+								moves -= 2;
+								// Update twice to reset turn
+								updateTurn(row, newC, row, newC, attackedPiece);
+								updateTurn(row, newC, row, newC, attackedPiece);
+								attackedPiece->decrementMoves();
+								attackedPiece->decrementMoves();
+								player2->addPiece(attackedPiece);
+								moves -= 2;
+								cout << "Invalid, king is under check after this move." << endl;
+							} else if (player2->isInCheck()) {
+								cout << "Black is in check." << endl;
+							}
+						}
 					} else {
 						// Pawn promotion
 						char promotion = '0';
@@ -463,6 +523,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 									cout << "Enter a valid promotion piece." << endl;
 									cin >> promotion;
 								}
+								// Change pawn to promoted piece
 								State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
 								squares[curR][curC].setState(rState);
 								squares[curR][curC].notifyObservers();
@@ -485,6 +546,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 									cout << "Enter a valid promotion piece." << endl;
 									cin >> promotion;
 								}
+								// Change pawn to promoted piece
 								State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
 								squares[curR][curC].setState(rState);
 								squares[curR][curC].notifyObservers();
@@ -504,9 +566,26 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								squares[curR][curC].notifyObservers();
 							}
 						}
-						shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
+						// Set up en passant
+						if (curPiece->getEnPassant() == moves) {
+							shared_ptr<Piece> beside = nullptr;
+							if (newC + 1 >= 0 && newC + 1 < 8) {
+								beside = squares[newR][newC + 1].getInfo().piece;
+							}
+							if (beside != nullptr) {
+								beside->changeEnPassant(moves);
+							}
+							if (newC - 1 >= 0 && newC - 1 < 8) {
+								beside = squares[newR][newC - 1].getInfo().piece;
+							}
+							if (beside != nullptr) {
+								beside->changeEnPassant(moves);
+ 							}
+						}
+						// Move piece
 						updateTurn(curR, curC, newR, newC, curPiece);
-						// Detecting check
+						// Detect check
+						shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
 						if (whitesTurn) {
 							if (player2->isInCheck()) {
 								player2->removePiece(curPiece->getId());
@@ -525,11 +604,15 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								updateTurn(newR, newC, curR, curC, curPiece);
 								curPiece->decrementMoves();
 								curPiece->decrementMoves();
+								moves -= 2;
 								if (capturedPiece != nullptr) {
 									// Update twice to reset turn
 									updateTurn(newR, newC, newR, newC, capturedPiece);
 									updateTurn(newR, newC, newR, newC, capturedPiece);
+									capturedPiece->decrementMoves();
+									capturedPiece->decrementMoves();
 									player1->addPiece(capturedPiece);
+									moves -= 2;
 								}
 								cout << "Invalid, king is under check after this move." << endl;
 							} else if (player1->isInCheck()) {
@@ -549,15 +632,19 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 									squares[newR][newC].notifyObservers();
 								}
 								player1->addPiece(curPiece);
-								// Move piece back
+								// Move pieces back
 								updateTurn(newR, newC, curR, curC, curPiece);
 								curPiece->decrementMoves();
 								curPiece->decrementMoves();
+								moves -= 2;
 								if (capturedPiece != nullptr) {
 									// Update twice to reset turn
 									updateTurn(newR, newC, newR, newC, capturedPiece);
 									updateTurn(newR, newC, newR, newC, capturedPiece);
+									capturedPiece->decrementMoves();
+									capturedPiece->decrementMoves();
 									player2->addPiece(capturedPiece);
+									moves -= 2;
 								}
 								cout << "Invalid, king is under check after this move." << endl;
 							} else if (player2->isInCheck()) {
@@ -581,10 +668,12 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 }
 
 void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece) {	
+	// Remove piece from current square
 	squares[curR][curC].setPiece(nullptr);	
 	State rState{StateType::PieceRemoved, Direction::N, false, piece, false};
 	squares[curR][curC].setState(rState);
 	squares[curR][curC].notifyObservers();
+	// Remove captured piece
 	shared_ptr<Piece> attackedPiece = squares[newR][newC].getInfo().piece;
 	if (attackedPiece != nullptr) {
 		State mState{StateType::PieceRemoved, Direction::N, false, attackedPiece, false};
@@ -597,16 +686,16 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 		}
 	}
 	squares[newR][newC].setPiece(piece);
-
+	// Update graphics
 	undrawPiece(newR, newC);
-	drawPiece(piece);
 	undrawPiece(curR, curC);
 	drawPiece(piece);
-
+	// Add piece to new square
 	State nState{StateType::PieceAdded, Direction::N, true, piece, false};
 	squares[newR][newC].setState(nState);
 	squares[newR][newC].notifyObservers();
-
+	// Progress game
+	moves++;
 	if (whitesTurn) {
 		whitesTurn = false;
 	} else {
@@ -682,7 +771,7 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 	bool legal = false;
 	// Move piece
 	try {
-		legal = curPiece->move(newR, newC, pieceOnSq, blocked, moveIntoAttack);
+		legal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
 		shared_ptr<Piece> castledRook = nullptr;
 		// Castle
 		if (curPiece->getCastle() == 1) {
@@ -761,11 +850,15 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				updateTurn(newR, newC, curR, curC, curPiece);
 				curPiece->decrementMoves();
 				curPiece->decrementMoves();
+				moves -= 2;
 				if (capturedPiece != nullptr) {
 					// Update twice to reset turn
 					updateTurn(newR, newC, newR, newC, capturedPiece);
 					updateTurn(newR, newC, newR, newC, capturedPiece);
+					capturedPiece->decrementMoves();
+					capturedPiece->decrementMoves();
 					player1->addPiece(capturedPiece);
+					moves -= 2;
 				}
 			} else {
 				if (!player1->isInCheck()) {
@@ -787,11 +880,15 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				updateTurn(newR, newC, curR, curC, curPiece);
 				curPiece->decrementMoves();
 				curPiece->decrementMoves();
+				moves -= 2;
 				if (capturedPiece != nullptr) {
 					// Update twice to reset turn
 					updateTurn(newR, newC, newR, newC, capturedPiece);
 					updateTurn(newR, newC, newR, newC, capturedPiece);
+					capturedPiece->decrementMoves();
+					capturedPiece->decrementMoves();
 					player2->addPiece(capturedPiece);
+					moves -= 2;
 				}
 			}
 		}

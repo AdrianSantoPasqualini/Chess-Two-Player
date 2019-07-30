@@ -16,6 +16,7 @@ class Piece {
 	string id;
 	int movesMade;
 	int castle;
+	int enPassant;
 	public:
 		pair<int,int> getCoor();
 		void updatePiece(int r, int c);
@@ -25,45 +26,46 @@ class Piece {
 		int getMovesMade();
 		int getCastle();
 		void changeCastle(int c);
-		Piece(int row, int col, bool isWhite, string id, int movesMade, int castle);
-		virtual bool move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) = 0;
+		int getEnPassant();
+		void changeEnPassant(int p);
+		Piece(int row, int col, bool isWhite, string id, int movesMade, int castle, int enPassant);
+		virtual bool move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) = 0;
 };
 
 class Pawn final: public Piece {
-	bool specialAdvance;
 	public:
-		Pawn(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0, bool specialAdvance = false);
-		bool move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
+		Pawn(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0, int enPassant = 0);
+		bool move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
 };
 
 class Knight final: public Piece {
         public:
-                Knight(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0);
-		bool move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
+                Knight(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0, int enPassant = 0);
+		bool move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
 };
 
 class Bishop final: public Piece {
         public:
-                Bishop(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0);
-		bool move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
+                Bishop(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0, int enPassant = 0);
+		bool move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
 };
 
 class Rook final: public Piece {
         public:
-                Rook(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0);
-		bool move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
+                Rook(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0, int enPassant = 0);
+		bool move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
 };
 
 class Queen final: public Piece {
         public:
-                Queen(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0);
-		bool move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
+                Queen(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0, int enPassant = 0);
+		bool move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
 };
 
 class King final: public Piece {
 	public:
-                King(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0);
-		bool move(int r, int c, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
+                King(int row, int col, bool isWhite, string id, int movesMade = 0, int castle = 0, int enPassant = 0);
+		bool move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) override;
 };
 
 #endif

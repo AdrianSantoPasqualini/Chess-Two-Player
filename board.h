@@ -27,6 +27,7 @@ class Board {
 	bool whitesTurn;
 	int whiteScore;
 	int blackScore;
+	int moves; 
 
 	// private methods
 	Board(vector<vector<Square>>);
