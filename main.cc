@@ -74,6 +74,39 @@ int main() {
 			board.drawScore();
 			board.drawTurn();
 			cout << board;
+			string winner = board.whoWon();
+			//cout << winner << endl;
+			if (winner == "white") {
+				board.incScore(1, 0);
+			} else if (winner == "black") {
+				board.incScore(0, 1);
+			} else if (winner == "stalemate") {
+				board.incScore(0.5, 0.5);
+			}
+			if (winner != "noone") {
+				cout << "Would you like to play another round? (y/n)" << endl;
+				string response;
+				cin >> response;
+				bool continuing;
+				while(true) {
+					if (response == "y" || response == "yes" || response == "Y" || response == "Yes") {
+						board.init();
+						board.drawBoard();
+						board.drawScore();
+						cout << board;
+						continuing = true;
+						break;
+					} else if (response == "n" || response == "no" || response == "N" || response == "No") {
+						continuing = false;
+						break;
+					} else {
+						cin >> response;
+					}
+				}
+				if (!continuing) {
+					break;
+				}
+			}
 		} else if (cmd == "setup" && !matchOngoing) {
 			board.setup();
 		}

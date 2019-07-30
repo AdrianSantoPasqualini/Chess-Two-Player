@@ -65,6 +65,29 @@ Board::Board() {
 	}
 }
 
+string Board::whoWon() {
+	int wLegalMoves = player1->howManyLegalMoves();
+	int bLegalMoves = player2->howManyLegalMoves();
+//	cout << wLegalMoves << " " << bLegalMoves << endl;
+/*	if (wLegalMoves == 0) {
+		if (player1->isInCheck()) {
+			return "black";
+		} else {
+			return "stalemate";
+		}
+	} else if (bLegalMoves == 0) {
+		if (player2->isInCheck()) {
+			return "white";
+		} else {
+			return "stalemate";
+		}
+	} else {
+		return "noone";
+	}*/
+	return "noone";
+}
+
+
 void Board::drawMenu() {
 	for (int i = 0; i < 10; i++) {
 		for (int j = 0; j < 10; j++) {
@@ -243,7 +266,7 @@ void Board::undrawPiece(int r, int c) {
 	}
 }
 
-void Board::incScore(int w, int b) {
+void Board::incScore(double w, double b) {
 	whiteScore += w;
 	blackScore += b;
 }
@@ -320,6 +343,7 @@ void Board::setPlayer(string colour, string type) {
 				}
 			}
 		}
+		//player1->generateLegalMoves();
 	} else if (colour == "black") {
 		if (type == "human") {
 			player2 = make_shared<Human>(false);
@@ -343,6 +367,7 @@ void Board::setPlayer(string colour, string type) {
 				}
 			}
 		}
+		//player2->generateLegalMoves();
 	}
 }
 

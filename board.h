@@ -25,8 +25,8 @@ class Board {
 	shared_ptr<Player> player1;
 	shared_ptr<Player> player2;
 	bool whitesTurn;
-	int whiteScore;
-	int blackScore;
+	double whiteScore;
+	double blackScore;
 	shared_ptr<Board> currBoard{this};
 	int moves; 
 
@@ -45,8 +45,8 @@ class Board {
 		void setPlayer(string colour, string type);
 		void init();
 		void setup();
-		int whoWon();
-		void incScore(int w, int b);
+		string whoWon();
+		void incScore(double w, double b);
 		pair<int,int> getScore();
 		bool isWhitesTurn();
 		pair<int,int> getAttacks(int r, int c);
