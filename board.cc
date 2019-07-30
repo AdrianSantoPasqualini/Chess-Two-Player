@@ -472,7 +472,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 					// Kingside castling
 					if (curPiece->getCastle() == 1) {
 						castledRook = squares[curR][curC + 3].getInfo().piece;
-						if (castledRook->getMovesMade() == 0) {
+						if (castledRook != nullptr && castledRook->getMovesMade() == 0) {
 							undrawPiece(curR, curC+3);
 							castledRook->updatePiece(newR, newC - 1);
 							squares[curR][curC + 3].setPiece(nullptr);
@@ -491,7 +491,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 					// Queenside castling
 					} else if (curPiece->getCastle() == 2) {
 						castledRook = squares[curR][curC - 4].getInfo().piece;
-						if (castledRook->getMovesMade() == 0) {
+						if (castledRook != nullptr && castledRook->getMovesMade() == 0) {
 							undrawPiece(curR, curC-4);
 							castledRook->updatePiece(newR, newC + 1);
 							squares[curR][curC - 4].setPiece(nullptr);
@@ -835,17 +835,18 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		move.isLegal = false;
 		// Move piece
 		try {
+			int tempEnPassant = curPiece->getEnPassant();
 			move.isLegal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
 			shared_ptr<Piece> castledRook = nullptr;
 			// Castle
 			if (curPiece->getCastle() == 1) {
 				castledRook = squares[curR][curC + 3].getInfo().piece;
-				if (castledRook->getMovesMade() == 0) {
+				if (castledRook != nullptr && castledRook->getMovesMade() == 0) {
 					move.isLegal = true;
 				}
 			} else if (curPiece->getCastle() == 2) {
 				castledRook = squares[curR][curC - 4].getInfo().piece;
-				if (castledRook->getMovesMade() == 0) {
+				if (castledRook != nullptr && castledRook->getMovesMade() == 0) {
 					move.isLegal = true;
 				}
 			} else {
@@ -898,9 +899,9 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 						moves -= 2;
 					}
 				}
-				curPiece->changeCastle(0);
-				curPiece->changeEnPassant(0);
 			}
+			curPiece->changeCastle(0);
+			curPiece->changeEnPassant(tempEnPassant);
 		} catch (string msg) {
 			return move;
 		}

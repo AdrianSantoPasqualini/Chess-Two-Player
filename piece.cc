@@ -66,7 +66,7 @@ bool Pawn::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 	}
 	if (currCoor.first - r == dir * 1 && currCoor.second - c == 0) {
 		return true;
-	} else if ((movesMade == 0) && (currCoor.first - r == dir * 2 && currCoor.second - c == 0)) {
+	} else if ((movesMade == 0 && (currCoor.first == 1 || currCoor.first == 6)) && (currCoor.first - r == dir * 2 && currCoor.second - c == 0)) {
 		changeEnPassant(moves);
 		return true;
 	} else if ((currCoor.first - r == dir * 1 && abs(currCoor.second - c) == 1) && pieceOnSq) {
