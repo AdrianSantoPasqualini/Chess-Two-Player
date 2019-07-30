@@ -231,13 +231,6 @@ void Player::generateLegalMoves() {
 		}
 		it++;
 	}
-	if (legalMoves.size() < 5) {
-		for (int i = 0; i < legalMoves.size(); i++) {
-			cout << "Legal Moves: " << endl;
-			cout << legalMoves[i].piece->getId() << endl;
-			cout << legalMoves[i].nCoords.first << " " << legalMoves[i].nCoords.second << endl;
-		}
-	}
 }
 
 

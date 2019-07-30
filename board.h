@@ -28,7 +28,6 @@ class Board {
 	bool whitesTurn;
 	double whiteScore;
 	double blackScore;
-	shared_ptr<Board> currBoard{this};
 	int moves; 
 
 	// private methods

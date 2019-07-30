@@ -55,11 +55,16 @@ int main() {
 			bool continuing;
 			while(true) {
 				if (response == "y" || response == "yes" || response == "Y" || response == "Yes") {
+					continuing = true;
 					board.init();
+					//board.setPlayer("white", p1);
+					//board.setPlayer("black", p2);
 					board.drawBoard();
 					board.drawScore();
-					cout << board;
-					continuing = true;
+					board.drawTurn();
+					board.generatePlayerMoves(true);	
+					board.generatePlayerMoves(false);
+					//matchOngoing = true;
 					break;
 				} else if (response == "n" || response == "no" || response == "N" || response == "No") {
 					continuing = false;
@@ -99,11 +104,16 @@ int main() {
 				bool continuing;
 				while(true) {
 					if (response == "y" || response == "yes" || response == "Y" || response == "Yes") {
+						continuing = true;
 						board.init();
+						//board.setPlayer("white", p1);
+						//board.setPlayer("black", p2);
 						board.drawBoard();
 						board.drawScore();
-						cout << board;
-						continuing = true;
+						board.drawTurn();
+						board.generatePlayerMoves(true);	
+						board.generatePlayerMoves(false);
+						//matchOngoing = true;
 						break;
 					} else if (response == "n" || response == "no" || response == "N" || response == "No") {
 						continuing = false;
@@ -119,7 +129,7 @@ int main() {
 		} else if (cmd == "setup" && !matchOngoing) {
 			board.setup();
 		}
-	} 
+	}
 	cout << "Final Score:" << endl;
 	cout << "White: " << board.getScore().first << endl;
 	cout << "Black: " << board.getScore().second << endl;

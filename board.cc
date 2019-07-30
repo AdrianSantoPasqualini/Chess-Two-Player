@@ -122,7 +122,7 @@ void Board::drawMenu() {
 	window.drawString(320, 270, "computer3 computer4", 1);
 	window.drawString(150, 300, "<setup> to set up the board!", 1); 
 	
-	/*	
+	/*		
 	window.fillRectangle(60 + 75, 60 + 100, 30, 10, colour);	
 	window.fillRectangle(60 + 75, 60 + 80, 30, 10, colour);	
 	window.fillRectangle(60 + 85, 60 + 70, 10, 30, colour);
