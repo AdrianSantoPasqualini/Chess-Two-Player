@@ -14,8 +14,8 @@ void Piece::updatePiece(int r, int c) {
 	movesMade++;
 }
 
-void Piece::decrementMoves() {
-	movesMade--;
+void Piece::decrementMoves(int d) {
+	movesMade -= d;
 }
 
 bool Piece::getIsWhite() {
@@ -165,10 +165,6 @@ King::King(int row, int col, bool isWhite, string id, int movesMade, int castle,
 bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
 	pair<int,int> currCoor = getCoor();
 	string msg;
-	if (moveIntoAttack) {
-		msg = "King is under check or cannot move onto a square that is under attack.";
-		throw msg;
-	}
 	if (blocked) {
 		msg = "King is blocked or will be under check.";
 		throw msg;
@@ -177,14 +173,20 @@ bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 		return true;
 	} else if (!pieceOnSq) {
 		if ((r == 0 || r == 7) && c == 6) {
-			if (getMovesMade() == 0) {
+			if (moveIntoAttack) {
+				msg = "King is under check or cannot move onto a square that is under attack.";
+				throw msg;
+			} else if (getMovesMade() == 0) {
 				changeCastle(1);
 			} else {
 				msg = "King cannot castle, king has already moved.";
 				throw msg;
 			}
 		} else if ((r == 0 || r == 7) && c == 2) {
-			if (getMovesMade() == 0) {
+			if (moveIntoAttack) {
+				msg = "King is under check or cannot move onto a square that is under attack.";
+				throw msg;
+			} else if (getMovesMade() == 0) {
 				changeCastle(2);
 			} else {
 				msg = "King cannot castle, king has already moved.";

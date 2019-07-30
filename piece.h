@@ -20,7 +20,7 @@ class Piece {
 	public:
 		pair<int,int> getCoor();
 		void updatePiece(int r, int c);
-		void decrementMoves();
+		void decrementMoves(int d);
 		bool getIsWhite();
 		string getId();
 		int getMovesMade();

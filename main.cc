@@ -29,6 +29,7 @@ int main() {
 				board.init();
 				board.drawBoard();
 				board.drawScore();
+				board.drawTurn();
 				board.setPlayer("white", p1);
 				board.setPlayer("black", p2);
 				matchOngoing = true;
@@ -71,13 +72,14 @@ int main() {
 		} else if (cmd == "move" && matchOngoing) {
 			board.makePlayerMove();
 			board.drawScore();
+			board.drawTurn();
 			cout << board;
 		} else if (cmd == "setup" && !matchOngoing) {
 			board.setup();
 		}
 	} 
 	cout << "Final Score:" << endl;
-	cout << "White: " << board.getWhiteScore() << endl;
-	cout << "Black: " << board.getBlackScore() << endl;
+	cout << "White: " << board.getScore().first << endl;
+	cout << "Black: " << board.getScore().second << endl;
 }
 

@@ -27,6 +27,7 @@ class Board {
 	bool whitesTurn;
 	int whiteScore;
 	int blackScore;
+	shared_ptr<Board> currBoard{this};
 	int moves; 
 
 	// private methods
@@ -39,13 +40,14 @@ class Board {
 		void drawMenu();
 		void drawBoard();
 		void drawScore();
+		void drawTurn();
+		void drawSetupMenu();
 		void setPlayer(string colour, string type);
 		void init();
 		void setup();
 		int whoWon();
 		void incScore(int w, int b);
-		int getWhiteScore();
-		int getBlackScore();
+		pair<int,int> getScore();
 		bool isWhitesTurn();
 		pair<int,int> getAttacks(int r, int c);
 		void makePlayerMove();

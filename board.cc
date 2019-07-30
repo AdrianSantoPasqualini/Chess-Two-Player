@@ -169,10 +169,19 @@ void Board::drawScore() {
 	window.fillRectangle(0, 0, 600, 60, 0);
 	string wScore = "White's Score: " + to_string(whiteScore);
 	string bScore = "Black's Score: " + to_string(blackScore);
-	string turn = whitesTurn ? "White's Turn" : "Black's Turn";
 	window.drawString(10, 10, wScore, 1);
 	window.drawString(500, 10, bScore, 1);
+}
+
+void Board::drawTurn() {
+	window.fillRectangle(0, 30, 600, 30, 0);
+	string turn = whitesTurn ? "White's Turn" : "Black's Turn";
 	window.drawString(250, 50, turn, 1);
+}
+
+void Board::drawSetupMenu() {
+	window.fillRectangle(0, 0, 600, 60, 0);
+	window.drawString(250, 30, "SETUP MODE", 1);
 }
 
 
@@ -243,12 +252,8 @@ bool Board::isWhitesTurn() {
 	return whitesTurn;
 }
 
-int Board::getWhiteScore() {
-	return whiteScore;
-}
-
-int Board::getBlackScore() {
-	return blackScore;
+pair<int,int> Board::getScore() {
+	return make_pair(whiteScore, blackScore);
 }
 
 void Board::makePlayerMove() {
@@ -479,14 +484,12 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							if (player2->isInCheck()) {
 								curPiece->updatePiece(curR, curC);
 								updateTurn(newR, newC, curR, curC, curPiece);
-								curPiece->decrementMoves();
-								curPiece->decrementMoves();
+								curPiece->decrementMoves(2);
 								moves -= 2;
 								// Update twice to reset turn
 								updateTurn(row, newC, row, newC, attackedPiece);
 								updateTurn(row, newC, row, newC, attackedPiece);
-								attackedPiece->decrementMoves();
-								attackedPiece->decrementMoves();
+								attackedPiece->decrementMoves(2);
 								player1->addPiece(attackedPiece);
 								moves -= 2;
 								cout << "Invalid, king is under check after this move." << endl;
@@ -497,14 +500,12 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 							if (player1->isInCheck()) {
 								curPiece->updatePiece(curR, curC);
 								updateTurn(newR, newC, curR, curC, curPiece);
-								curPiece->decrementMoves();
-								curPiece->decrementMoves();
+								curPiece->decrementMoves(2);
 								moves -= 2;
 								// Update twice to reset turn
 								updateTurn(row, newC, row, newC, attackedPiece);
 								updateTurn(row, newC, row, newC, attackedPiece);
-								attackedPiece->decrementMoves();
-								attackedPiece->decrementMoves();
+								attackedPiece->decrementMoves(2);
 								player2->addPiece(attackedPiece);
 								moves -= 2;
 								cout << "Invalid, king is under check after this move." << endl;
@@ -601,15 +602,13 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								player2->addPiece(curPiece);
 								// Move pieces back
 								updateTurn(newR, newC, curR, curC, curPiece);
-								curPiece->decrementMoves();
-								curPiece->decrementMoves();
+								curPiece->decrementMoves(2);
 								moves -= 2;
 								if (capturedPiece != nullptr) {
 									// Update twice to reset turn
 									updateTurn(newR, newC, newR, newC, capturedPiece);
 									updateTurn(newR, newC, newR, newC, capturedPiece);
-									capturedPiece->decrementMoves();
-									capturedPiece->decrementMoves();
+									capturedPiece->decrementMoves(2);
 									player1->addPiece(capturedPiece);
 									moves -= 2;
 								}
@@ -633,15 +632,13 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 								player1->addPiece(curPiece);
 								// Move pieces back
 								updateTurn(newR, newC, curR, curC, curPiece);
-								curPiece->decrementMoves();
-								curPiece->decrementMoves();
+								curPiece->decrementMoves(2);
 								moves -= 2;
 								if (capturedPiece != nullptr) {
 									// Update twice to reset turn
 									updateTurn(newR, newC, newR, newC, capturedPiece);
 									updateTurn(newR, newC, newR, newC, capturedPiece);
-									capturedPiece->decrementMoves();
-									capturedPiece->decrementMoves();
+									capturedPiece->decrementMoves(2);
 									player2->addPiece(capturedPiece);
 									moves -= 2;
 								}
@@ -798,15 +795,13 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 					curPiece->updatePiece(curR, curC);
 					// Move pieces back
 					updateTurn(newR, newC, curR, curC, curPiece);
-					curPiece->decrementMoves();
-					curPiece->decrementMoves();
+					curPiece->decrementMoves(2);
 					moves -= 2;
 					if (capturedPiece != nullptr) {
 						// Update twice to reset turn
 						updateTurn(newR, newC, newR, newC, capturedPiece);
 						updateTurn(newR, newC, newR, newC, capturedPiece);
-						capturedPiece->decrementMoves();
-						capturedPiece->decrementMoves();
+						capturedPiece->decrementMoves(2);
 						player1->addPiece(capturedPiece);
 						moves -= 2;
 					}
@@ -817,17 +812,15 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 						legal = false;
 					}
 					curPiece->updatePiece(curR, curC);
-					// Move piece back
+					// Move pieces back
 					updateTurn(newR, newC, curR, curC, curPiece);
-					curPiece->decrementMoves();
-					curPiece->decrementMoves();
+					curPiece->decrementMoves(2);
 					moves -= 2;
 					if (capturedPiece != nullptr) {
 						// Update twice to reset turn
 						updateTurn(newR, newC, newR, newC, capturedPiece);
 						updateTurn(newR, newC, newR, newC, capturedPiece);
-						capturedPiece->decrementMoves();
-						capturedPiece->decrementMoves();
+						capturedPiece->decrementMoves(2);
 						player2->addPiece(capturedPiece);
 						moves -= 2;
 					}
@@ -864,10 +857,9 @@ void Board::printDefault() {
 
 void Board::setup() {
 	drawBoard();
+	drawSetupMenu();
 	printDefault();
 	vector<char> validPieces = {'K', 'Q', 'B', 'R', 'N', 'P', 'k', 'q', 'b', 'r', 'n', 'p'};
-	window.fillRectangle(0, 0, 600, 60, 0);
-	window.drawString(250, 30, "SETUP MODE", 1);
 	bool done = false;
 		while (!done) {
 		try {
@@ -1012,10 +1004,25 @@ void Board::setup() {
 				} else {
 					cout << "Options are white or black." << endl;
 				}
+			} else if (cmd == "clear") {
+				for (int i = 0; i < 8; i++) {
+					for (int j = 0; j < 8; j++) {
+						defSquares[i][j].setPiece(nullptr);
+					}
+				}
+				drawBoard();
+				whiteCounts = {0, 0, 0, 0, 0, 0};
+				blackCounts = {0, 0, 0, 0, 0, 0};
+				drawSetupMenu();
+				printDefault();
 			} else if (cmd == "done") {
+				init();
+				setPlayer("white", "human");
+				setPlayer("black", "human");
 				if (whiteCounts[0] == 0 || blackCounts[0] == 0) {
 					cout << "Both kings must be on the board." << endl;
-				// add checks to make sure neither player is in check	
+				} else if (player1->isInCheck() || player2->isInCheck()) {
+					cout << "Kings cannot be in check." << endl;	
 				} else {
 					done = true;
 				}
