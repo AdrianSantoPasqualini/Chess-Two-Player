@@ -64,7 +64,7 @@ bool Pawn::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 	if (currCoor.first - r == dir * 1 && currCoor.second - c == 0) {
 		return true;
 	} else if ((movesMade == 0) && (currCoor.first - r == dir * 2 && currCoor.second - c == 0)) {
-		changeEnPassant(moves); // change 1 to # of total moves
+		changeEnPassant(moves);
 		return true;
 	} else if ((currCoor.first - r == dir * 1 && abs(currCoor.second - c) == 1) && pieceOnSq) {
 		return true;
@@ -83,6 +83,10 @@ Knight::Knight(int row, int col, bool isWhite, string id, int movesMade, int cas
 bool Knight::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
 	pair<int,int> currCoor = getCoor();
 	string msg = "";
+	if (blocked) {
+		msg = "Knight is blocked.";
+		throw msg;
+	}
 	if ((abs(currCoor.first - r) == 2 && abs(currCoor.second - c) == 1) ||
 	    (abs(currCoor.first - r) == 1 && abs(currCoor.second - c) == 2)) {
 		return true;

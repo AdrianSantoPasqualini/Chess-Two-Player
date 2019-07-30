@@ -46,12 +46,30 @@ int main() {
 				board.incScore(1, 0);
 				cout << "White wins!" << endl;
 			} 
-			matchOngoing = false;
+			cout << "Would you like to play another round? (y/n)" << endl;
+			string response;
+			cin >> response;
+			bool continuing;
+			while(true) {
+				if (response == "y" || response == "yes" || response == "Y" || response == "Yes") {
+					board.init();
+					board.drawBoard();
+					board.drawScore();
+					cout << board;
+					continuing = true;
+					break;
+				} else if (response == "n" || response == "no" || response == "N" || response == "No") {
+					continuing = false;
+					break;
+				} else {
+					cin >> response;
+				}
+			}
+			if (!continuing) {
+				break;
+			}
 		} else if (cmd == "move" && matchOngoing) {
-			board.makeMove();
-			//string c1, c2;
-			//cin >> c1 >> c2;
-			//board.movePiece('8' - c1[1], c1[0] - 'a', '8' - c2[1], c2[0] - 'a');
+			board.makePlayerMove();
 			board.drawScore();
 			cout << board;
 		} else if (cmd == "setup" && !matchOngoing) {

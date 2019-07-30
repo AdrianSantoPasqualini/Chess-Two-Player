@@ -251,7 +251,7 @@ int Board::getBlackScore() {
 	return blackScore;
 }
 
-void Board::makeMove() {
+void Board::makePlayerMove() {
 	if (isWhitesTurn()) {
 		player1->makeMove();
 	} else {
@@ -294,18 +294,17 @@ void Board::init() {
 void Board::setPlayer(string colour, string type) {
 	if (colour == "white") {
 		if (type == "human") {
-			player1 = make_unique<Human>(true);
+			player1 = make_shared<Human>(true);
 		} else if (type == "computer1") {
-			player1 = make_unique<Level1>(true);
+			player1 = make_shared<Level1>(true);
 		} else if (type == "computer2") {
-			player1 = make_unique<Level2>(true);
+			player1 = make_shared<Level2>(true);
 		} else if (type == "computer3") {
-			player1 = make_unique<Level3>(true);
+			player1 = make_shared<Level3>(true);
 		} else if (type == "computer4") {
-			player1 = make_unique<Level4>(true);
+			player1 = make_shared<Level4>(true);
 		}
-		shared_ptr<Board> currBoard{this};
-		player1->attachBoard(currBoard);
+		player1->attachBoard(this);
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if (squares[i][j].getInfo().piece != nullptr) {
@@ -318,18 +317,17 @@ void Board::setPlayer(string colour, string type) {
 		}
 	} else if (colour == "black") {
 		if (type == "human") {
-			player2 = make_unique<Human>(false);
+			player2 = make_shared<Human>(false);
 		} else if (type == "computer1") {
-			player2 = make_unique<Level1>(false);
+			player2 = make_shared<Level1>(false);
 		} else if (type == "computer2") {
-			player2 = make_unique<Level2>(false);
+			player2 = make_shared<Level2>(false);
 		} else if (type == "computer3") {
-			player2 = make_unique<Level3>(false);
+			player2 = make_shared<Level3>(false);
 		} else if (type == "computer4") {
-			player2 = make_unique<Level4>(false);
+			player2 = make_shared<Level4>(false);
 		}	
-		shared_ptr<Board> currBoard{this};
-		player2->attachBoard(currBoard);
+		player2->attachBoard(this);
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 8; j++) {
 				if (squares[i][j].getInfo().piece != nullptr) {
@@ -414,7 +412,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 				}
 				// Move piece
 				try {
-					bool legal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
+					curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
 					curPiece->updatePiece(newR, newC);
 					shared_ptr<Piece> castledRook = nullptr;
 					// Kingside castling
@@ -711,190 +709,137 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 	bool blocked = false;
 	bool moveIntoAttack = false;
 	bool curWhite = curPiece->getIsWhite();
-	// Check new square
-	Info newInfo = squares[newR][newC].getInfo();
-	if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
-		moveIntoAttack = true;
-	}
-	if (newInfo.piece != nullptr) {
-		if (newInfo.piece->getIsWhite() != curWhite) {	
-			pieceOnSq = true;
-		} else {
-			blocked = true;
-		}				
-	}
-	// Check path to new square
-	int inc1 = 0;
-	int inc2 = 0;
-	if (curR == newR) {
-		inc1 = (newC - curC) / (abs(newC - curC));
-		for (int j = curC + inc1; j != newC; j += inc1) {
-			newInfo = squares[curR][j].getInfo();
-			if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
-				moveIntoAttack = true;
-			}
-			if (newInfo.piece != nullptr) {
-				blocked = true;
-				break;
-			}
+	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
+		// Check new square
+		Info newInfo = squares[newR][newC].getInfo();
+		if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
+			moveIntoAttack = true;
 		}
-	} else if (curC == newC) {
-		inc1 = (newR - curR) / (abs(newR - curR));
-		for (int i = curR + inc1; i != newR; i += inc1) {
-			newInfo = squares[i][curC].getInfo();
-			if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
-				moveIntoAttack = true;
-			}
-			if (newInfo.piece != nullptr) {
+		if (newInfo.piece != nullptr) {
+			if (newInfo.piece->getIsWhite() != curWhite) {	
+				pieceOnSq = true;
+			} else {
 				blocked = true;
-				break;
-			}
+			}				
 		}
-	} else if ((abs(curR - newR) == abs(curC - newC)) && (abs(curR - newR) > 0)) {
-		inc1 = (newR - curR) / (abs(newR - curR));
-		inc2 = (newC - curC) / (abs(newC - curC));
-		for (int i = curR + inc1, j = curC + inc2; i != newR && j != newC; i += inc1, j += inc2) {
-			newInfo = squares[i][j].getInfo();
-			if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
-				moveIntoAttack = true;
-			}   
-			if (newInfo.piece != nullptr) {
-				blocked = true;
-				break;
-			}
-		}
-	}
-	// Check if square is under attack (for king)
-	newInfo = squares[curR][curC].getInfo();
-	if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
-		moveIntoAttack = true;
-	}
-	bool legal = false;
-	// Move piece
-	try {
-		legal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
-		shared_ptr<Piece> castledRook = nullptr;
-		// Castle
-		if (curPiece->getCastle() == 1) {
-			castledRook = squares[curR][curC + 3].getInfo().piece;
-			if (castledRook->getMovesMade() == 0) {
-				legal = true;
-			}
-		} else if (curPiece->getCastle() == 2) {
-			castledRook = squares[curR][curC - 4].getInfo().piece;
-			if (castledRook->getMovesMade() == 0) {
-				legal = true;
-			}
-		} else {
-			// Pawn promotion
-			char promotion = '0';
-			if ((curPiece->getId()[0] == 'P' && newR == 0) || (curPiece->getId()[0] == 'p' && newR == 7)) {
-				cin >> promotion;
-				if (whitesTurn) {
-					State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
-					squares[curR][curC].setState(rState);
-					squares[curR][curC].notifyObservers();
-					player1->removePiece(curPiece->getId());
-					if (promotion == 'Q') {
-						curPiece = make_shared<Queen>(newR, newC, true, "Q2" + curPiece->getId(), curPiece->getMovesMade());
-					} else if (promotion == 'N') {
-						curPiece = make_shared<Knight>(newR, newC, true, "N3" + curPiece->getId(), curPiece->getMovesMade());
-					} else if (promotion == 'R') {
-						curPiece = make_shared<Rook>(newR, newC, true, "R3" + curPiece->getId(), curPiece->getMovesMade());
-					} else if (promotion == 'B') {
-						curPiece = make_shared<Bishop>(newR, newC, true, "B3" + curPiece->getId(), curPiece->getMovesMade());
-					}
-					player1->addPiece(curPiece);
-					State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
-					squares[curR][curC].setState(nState);
-					squares[curR][curC].notifyObservers();
-				} else {
-					State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
-					squares[curR][curC].setState(rState);
-					squares[curR][curC].notifyObservers();
-					player2->removePiece(curPiece->getId());
-					if (promotion == 'q') {
-						curPiece = make_shared<Queen>(newR, newC, false, "q2", curPiece->getMovesMade());
-					} else if (promotion == 'n') {
-						curPiece = make_shared<Knight>(newR, newC, false, "n3", curPiece->getMovesMade());
-					} else if (promotion == 'r') {
-						curPiece = make_shared<Rook>(newR, newC, false, "r3", curPiece->getMovesMade());
-					} else if (promotion == 'b') {
-						curPiece = make_shared<Bishop>(newR, newC, false, "b3", curPiece->getMovesMade());
-					}
-					player2->addPiece(curPiece);
-					State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
-					squares[curR][curC].setState(nState);
-					squares[curR][curC].notifyObservers();
+		// Check path to new square
+		int inc1 = 0;
+		int inc2 = 0;
+		if (curR == newR) {
+			inc1 = (newC - curC) / (abs(newC - curC));
+			for (int j = curC + inc1; j != newC; j += inc1) {
+				newInfo = squares[curR][j].getInfo();
+				if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
+					moveIntoAttack = true;
+				}
+				if (newInfo.piece != nullptr) {
+					blocked = true;
+					break;
 				}
 			}
-			shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
-			updateTurn(curR, curC, newR, newC, curPiece);
-			// Detect check
-			if (whitesTurn) {
-				if (!player2->isInCheck()) {
+		} else if (curC == newC) {
+			inc1 = (newR - curR) / (abs(newR - curR));
+			for (int i = curR + inc1; i != newR; i += inc1) {
+				newInfo = squares[i][curC].getInfo();
+				if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
+					moveIntoAttack = true;
+				}
+				if (newInfo.piece != nullptr) {
+					blocked = true;
+					break;
+				}
+			}
+		} else if ((abs(curR - newR) == abs(curC - newC)) && (abs(curR - newR) > 0)) {
+			inc1 = (newR - curR) / (abs(newR - curR));
+			inc2 = (newC - curC) / (abs(newC - curC));
+			for (int i = curR + inc1, j = curC + inc2; i != newR && j != newC; i += inc1, j += inc2) {
+				newInfo = squares[i][j].getInfo();
+				if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
+					moveIntoAttack = true;
+				}   
+				if (newInfo.piece != nullptr) {
+					blocked = true;
+					break;
+				}
+			}
+		}
+		// Check if square is under attack (for king)
+		newInfo = squares[curR][curC].getInfo();
+		if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
+			moveIntoAttack = true;
+		}
+		bool legal = false;
+		// Move piece
+		try {
+			legal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
+			shared_ptr<Piece> castledRook = nullptr;
+			// Castle
+			if (curPiece->getCastle() == 1) {
+				castledRook = squares[curR][curC + 3].getInfo().piece;
+				if (castledRook->getMovesMade() == 0) {
 					legal = true;
 				}
-				player2->removePiece(curPiece->getId());
-				curPiece->updatePiece(curR, curC);
-				if (promotion != '0') {
-					State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
-					squares[newR][newC].setState(rState);
-					squares[newR][newC].notifyObservers();
-					curPiece = make_shared<Pawn>(curR, curC, false, curPiece->getId().substr(2, 2), curPiece->getMovesMade());
-					State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
-					squares[newR][newC].setState(nState);
-					squares[newR][newC].notifyObservers();
-				}
-				player2->addPiece(curPiece);
-				// Move pieces back
-				updateTurn(newR, newC, curR, curC, curPiece);
-				curPiece->decrementMoves();
-				curPiece->decrementMoves();
-				moves -= 2;
-				if (capturedPiece != nullptr) {
-					// Update twice to reset turn
-					updateTurn(newR, newC, newR, newC, capturedPiece);
-					updateTurn(newR, newC, newR, newC, capturedPiece);
-					capturedPiece->decrementMoves();
-					capturedPiece->decrementMoves();
-					player1->addPiece(capturedPiece);
-					moves -= 2;
+			} else if (curPiece->getCastle() == 2) {
+				castledRook = squares[curR][curC - 4].getInfo().piece;
+				if (castledRook->getMovesMade() == 0) {
+					legal = true;
 				}
 			} else {
-				if (!player1->isInCheck()) {
-					legal = true;
-				}
-				player1->removePiece(curPiece->getId());
-				curPiece->updatePiece(curR, curC);
-				if (promotion != '0') {
-					State rState{StateType::PieceRemoved, Direction::N, false, curPiece, false};
-					squares[newR][newC].setState(rState);
-					squares[newR][newC].notifyObservers();
-					curPiece = make_shared<Pawn>(curR, curC, true, curPiece->getId().substr(2, 2), curPiece->getMovesMade());
-					State nState{StateType::PieceAdded, Direction::N, true, curPiece, false};
-					squares[newR][newC].setState(nState);
-					squares[newR][newC].notifyObservers();
-				}
-				player1->addPiece(curPiece);
-				// Move piece back
-				updateTurn(newR, newC, curR, curC, curPiece);
-				curPiece->decrementMoves();
-				curPiece->decrementMoves();
-				moves -= 2;
-				if (capturedPiece != nullptr) {
-					// Update twice to reset turn
-					updateTurn(newR, newC, newR, newC, capturedPiece);
-					updateTurn(newR, newC, newR, newC, capturedPiece);
-					capturedPiece->decrementMoves();
-					capturedPiece->decrementMoves();
-					player2->addPiece(capturedPiece);
+				
+				shared_ptr<Piece> capturedPiece = squares[newR][newC].getInfo().piece;
+				updateTurn(curR, curC, newR, newC, curPiece);
+				// Detect check
+				if (whitesTurn) {
+					if (!player2->isInCheck()) {
+						legal = true;
+					} else {
+						legal = false;
+					}
+					curPiece->updatePiece(curR, curC);
+					// Move pieces back
+					updateTurn(newR, newC, curR, curC, curPiece);
+					curPiece->decrementMoves();
+					curPiece->decrementMoves();
 					moves -= 2;
+					if (capturedPiece != nullptr) {
+						// Update twice to reset turn
+						updateTurn(newR, newC, newR, newC, capturedPiece);
+						updateTurn(newR, newC, newR, newC, capturedPiece);
+						capturedPiece->decrementMoves();
+						capturedPiece->decrementMoves();
+						player1->addPiece(capturedPiece);
+						moves -= 2;
+					}
+				} else {
+					if (!player1->isInCheck()) {
+						legal = true;
+					} else {
+						legal = false;
+					}
+					curPiece->updatePiece(curR, curC);
+					// Move piece back
+					updateTurn(newR, newC, curR, curC, curPiece);
+					curPiece->decrementMoves();
+					curPiece->decrementMoves();
+					moves -= 2;
+					if (capturedPiece != nullptr) {
+						// Update twice to reset turn
+						updateTurn(newR, newC, newR, newC, capturedPiece);
+						updateTurn(newR, newC, newR, newC, capturedPiece);
+						capturedPiece->decrementMoves();
+						capturedPiece->decrementMoves();
+						player2->addPiece(capturedPiece);
+						moves -= 2;
+					}
 				}
 			}
+		} catch (string msg) {
+			return legal;
 		}
-	} catch (string msg) {}
-	return legal;
+		return legal;
+	} else {
+		return false;
+	}
 }
 
 void Board::printDefault() {
