@@ -91,9 +91,9 @@ string Board::whoWon() {
 		}
 		squares.clear();
 	} else {
+			
 		return "noone";
 	}
-	return "noone";
 }
 
 
