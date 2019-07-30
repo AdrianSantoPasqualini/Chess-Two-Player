@@ -355,6 +355,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 			bool pieceOnSq = false;
 			bool blocked = false;
 			bool moveIntoAttack = false;
+			bool checked = false;
 			bool curWhite = curPiece->getIsWhite();
 			if ((whitesTurn && curWhite) || (!whitesTurn && !curWhite)) {
 				// Check new square
@@ -413,11 +414,11 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 				// Check if square is under attack (for king)
 				newInfo = squares[curR][curC].getInfo();
 				if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
-					moveIntoAttack = true;
+					checked = true;
 				}
 				// Move piece
 				try {
-					curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
+					curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
 					curPiece->updatePiece(newR, newC);
 					shared_ptr<Piece> castledRook = nullptr;
 					// Kingside castling
@@ -706,6 +707,7 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 	bool pieceOnSq = false;
 	bool blocked = false;
 	bool moveIntoAttack = false;
+	bool checked = false;
 	bool curWhite = curPiece->getIsWhite();
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
 		// Check new square
@@ -764,12 +766,12 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		// Check if square is under attack (for king)
 		newInfo = squares[curR][curC].getInfo();
 		if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
-			moveIntoAttack = true;
+			checked = true;
 		}
 		bool legal = false;
 		// Move piece
 		try {
-			legal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
+			legal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
 			shared_ptr<Piece> castledRook = nullptr;
 			// Castle
 			if (curPiece->getCastle() == 1) {
