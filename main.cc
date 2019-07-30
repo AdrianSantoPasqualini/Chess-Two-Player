@@ -26,9 +26,9 @@ int main() {
 			it1 = find(players.begin(), players.end(), p1);
 			it2 = find(players.begin(), players.end(), p2);
 			if (it1 != players.end() && it2 != players.end()) {
-				board.init();
 				board.setPlayer("white", p1);
 				board.setPlayer("black", p2);
+				board.init();
 				board.drawBoard();
 				board.drawScore();
 				board.drawTurn();
@@ -65,6 +65,7 @@ int main() {
 					board.generatePlayerMoves(true);	
 					board.generatePlayerMoves(false);
 					//matchOngoing = true;
+					cout << board;
 					break;
 				} else if (response == "n" || response == "no" || response == "N" || response == "No") {
 					continuing = false;
@@ -114,6 +115,7 @@ int main() {
 						board.generatePlayerMoves(true);	
 						board.generatePlayerMoves(false);
 						//matchOngoing = true;
+						cout << board;
 						break;
 					} else if (response == "n" || response == "no" || response == "N" || response == "No") {
 						continuing = false;

@@ -202,6 +202,7 @@ void Board::drawScore() {
 	string wScore = "White's Score: " + to_string(whiteScore).substr(0,3);
 	string bScore = "Black's Score: " + to_string(blackScore).substr(0,3);
 	window.drawString(10, 10, wScore, 1);
+	//window.drawString(500, 10, bScore, 1);
 	window.drawString(485, 10, bScore, 1);
 }
 
@@ -337,6 +338,29 @@ void Board::init() {
 			}
 		}
 	}
+	player1->clearPieces();
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (squares[i][j].getInfo().piece != nullptr) {
+				string id = squares[i][j].getInfo().piece->getId();
+				if (id[0] == 'K' || id[0] == 'B' || id[0] == 'R' || id[0] == 'Q' || id[0] == 'N' || id[0] == 'P') {
+					player1->addPiece(squares[i][j].getInfo().piece); 
+				}
+			}
+		}
+	}
+	player2->clearPieces();
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 8; j++) {
+			if (squares[i][j].getInfo().piece != nullptr) {
+				string id = squares[i][j].getInfo().piece->getId();
+				if (id[0] == 'k' || id[0] == 'b' || id[0] == 'r' || id[0] == 'q' || id[0] == 'n' || id[0] == 'p') {
+					player2->addPiece(squares[i][j].getInfo().piece); 
+				}
+			}
+		}
+	}
+
 }
 
 void Board::setPlayer(string colour, string type) {
@@ -353,16 +377,6 @@ void Board::setPlayer(string colour, string type) {
 			player1 = make_shared<Level4>(true);
 		}
 		player1->attachBoard(this);
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (squares[i][j].getInfo().piece != nullptr) {
-					string id = squares[i][j].getInfo().piece->getId();
-					if (id[0] == 'K' || id[0] == 'B' || id[0] == 'R' || id[0] == 'Q' || id[0] == 'N' || id[0] == 'P') {
-						player1->addPiece(squares[i][j].getInfo().piece); 
-					}
-				}
-			}
-		}
 	} else if (colour == "black") {
 		if (type == "human") {
 			player2 = make_shared<Human>(false);
@@ -376,16 +390,6 @@ void Board::setPlayer(string colour, string type) {
 			player2 = make_shared<Level4>(false);
 		}	
 		player2->attachBoard(this);
-		for (int i = 0; i < 8; i++) {
-			for (int j = 0; j < 8; j++) {
-				if (squares[i][j].getInfo().piece != nullptr) {
-					string id = squares[i][j].getInfo().piece->getId();
-					if (id[0] == 'k' || id[0] == 'b' || id[0] == 'r' || id[0] == 'q' || id[0] == 'n' || id[0] == 'p') {
-						player2->addPiece(squares[i][j].getInfo().piece); 
-					}
-				}
-			}
-		}
 	}
 }
 
@@ -1095,9 +1099,9 @@ void Board::setup() {
 				drawSetupMenu();
 				printDefault();
 			} else if (cmd == "done") {
-				init();
 				setPlayer("white", "human");
 				setPlayer("black", "human");
+				init();
 				if (whiteCounts[0] == 0 || blackCounts[0] == 0) {
 					cout << "Both kings must be on the board." << endl;
 				} else if (player1->isInCheck() || player2->isInCheck()) {
