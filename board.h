@@ -47,7 +47,7 @@ class Board {
 		void setup();
 		string whoWon();
 		void incScore(double w, double b);
-		pair<int,int> getScore();
+		pair<double,double> getScore();
 		bool isWhitesTurn();
 		pair<int,int> getAttacks(int r, int c);
 		void makePlayerMove();

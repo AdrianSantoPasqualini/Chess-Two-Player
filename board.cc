@@ -314,7 +314,7 @@ bool Board::isWhitesTurn() {
 	return whitesTurn;
 }
 
-pair<int,int> Board::getScore() {
+pair<double,double> Board::getScore() {
 	return make_pair(whiteScore, blackScore);
 }
 
