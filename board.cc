@@ -364,7 +364,6 @@ void Board::setPlayer(string colour, string type) {
 				}
 			}
 		}
-		player1->generateLegalMoves();
 	} else if (colour == "black") {
 		if (type == "human") {
 			player2 = make_shared<Human>(false);
@@ -388,14 +387,12 @@ void Board::setPlayer(string colour, string type) {
 				}
 			}
 		}
-		player2->generateLegalMoves();
 	}
 }
 
 void Board::movePiece(int curR, int curC, int newR, int newC) {
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
 		shared_ptr<Piece> curPiece = squares[curR][curC].getInfo().piece;
-		cout << curPiece->movesMade << endl;
 		Info newInfo;
 		/////////////////// Get rid of new;
 		if (curPiece != nullptr) {

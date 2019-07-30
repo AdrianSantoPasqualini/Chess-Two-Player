@@ -32,6 +32,8 @@ int main() {
 				board.drawBoard();
 				board.drawScore();
 				board.drawTurn();
+				board.generatePlayerMoves(true);	
+				board.generatePlayerMoves(false);
 				matchOngoing = true;
 			} else {
 				cout << "Invalid players." << endl;

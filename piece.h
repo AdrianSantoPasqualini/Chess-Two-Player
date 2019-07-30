@@ -14,11 +14,10 @@ class Piece {
 	int col;
 	bool isWhite;
 	string id;
-	
+	int movesMade;
 	int castle;
 	int enPassant;
 	public:
-		int movesMade;
 		pair<int,int> getCoor();
 		void updatePiece(int r, int c);
 		void decrementMoves(int d);
