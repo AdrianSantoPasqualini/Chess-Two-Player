@@ -22,8 +22,8 @@ class Board {
 	bool defWhitesTurn;
 	vector<vector<Square>> squares;
 	Xwindow window;
-	unique_ptr<Player> player1;
-	unique_ptr<Player> player2;
+	shared_ptr<Player> player1;
+	shared_ptr<Player> player2;
 	bool whitesTurn;
 	int whiteScore;
 	int blackScore;
@@ -50,7 +50,7 @@ class Board {
 		pair<int,int> getScore();
 		bool isWhitesTurn();
 		pair<int,int> getAttacks(int r, int c);
-		void makeMove();
+		void makePlayerMove();
 		void movePiece(int curR, int curC, int newR, int newC);
 		bool isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC);
 		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece);

@@ -36,7 +36,7 @@ bool Player::isInCheck() const {
 	return check;
 }
 
-void Player::attachBoard(shared_ptr<Board> currBoard) {
+void Player::attachBoard(Board * currBoard) {
 	board = currBoard;
 }
 
@@ -52,9 +52,10 @@ void Player::removePiece(string id) {
 
 void Player::generateLegalMoves() {
 	legalMoves.clear();
-	for (auto p:pieces) {
-		string id = p.first;
-		shared_ptr<Piece> piece = p.second;
+	map<string, shared_ptr<Piece>>::iterator it = pieces.begin();
+	while(it != pieces.end()) {
+		string id = it->first;
+		shared_ptr<Piece> piece = it->second;
 		int curR = piece->getCoor().first;
 		int curC = piece->getCoor().second;
 		if (id[0] == 'R' || id[0] == 'r') {
@@ -219,6 +220,7 @@ void Player::generateLegalMoves() {
 				}
 			}
 		}
+		it++;
 	}
 }
 
@@ -236,6 +238,7 @@ void Human::makeMove() {
 Level1::Level1(bool isWhite): Player{isWhite} {}
 
 void Level1::makeMove() {
+	generateLegalMoves();
 	srand(time(NULL));	
 	int r = rand() % legalMoves.size();
 	pair<int, int> oldCoords = legalMoves[r].piece->getCoor();

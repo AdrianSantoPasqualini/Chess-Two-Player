@@ -17,44 +17,50 @@ class Player {
 	bool isWhite;
 	int score;
 	protected:
-		shared_ptr<Board> board;
+		Board *board;
 		vector<Move> legalMoves;
 	public:
-		Player(bool isWhite); 
+		Player(bool isWhite);
+		virtual ~Player() {};
 		virtual void makeMove() = 0;
 		bool isInCheck() const;
 		void addPiece(shared_ptr<Piece>);
 		void removePiece(string id);
-		void attachBoard(shared_ptr<Board>);
+		void attachBoard(Board * board);
 		void generateLegalMoves();
 };
 
 class Human final: public Player {
 	public:
+		~Human() {}
 		Human(bool isWhite);
 		void makeMove() override;
 };
 
 class Level1 final: public Player {
         public:
+		~Level1() {}
 		Level1(bool isWhite);
                 void makeMove() override;
 };
 
 class Level2 final: public Player {
         public:
+		~Level2() {}
 		Level2(bool isWhite);
                 void makeMove() override;
 };
 
 class Level3 final: public Player {
         public:
+		~Level3() {}
 		Level3(bool isWhite);
                 void makeMove() override;
 };
 
 class Level4 final: public Player {
         public:
+		~Level4() {}
 		Level4(bool isWhite);
                 void makeMove() override;
 };
