@@ -16,6 +16,9 @@ void Piece::updatePiece(int r, int c) {
 
 void Piece::decrementMoves(int d) {
 	movesMade -= d;
+	if (movesMade < 0) {
+		movesMade = 0;
+	}
 }
 
 bool Piece::getIsWhite() {
@@ -171,6 +174,10 @@ bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 	}
 	if (blocked) {
 		msg = "King is blocked or will be under check.";
+		throw msg;
+	}
+	if (moveIntoAttack) {
+		msg = "King is under check or cannot move onto a square that is under attack.";
 		throw msg;
 	}
 	if ((currCoor.first - r) * (currCoor.first - r) + (currCoor.second - c) * (currCoor.second - c) <= 2) {

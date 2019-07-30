@@ -21,6 +21,10 @@ int Player::howManyLegalMoves() {
 	return legalMoves.size();
 }
 
+void Player::clearPieces() {
+	pieces.clear();
+}
+
 bool Player::isInCheck() const {
 	bool check = false;
 	pair<int, int> coor;
@@ -227,6 +231,13 @@ void Player::generateLegalMoves() {
 		}
 		it++;
 	}
+	if (legalMoves.size() < 5) {
+		for (int i = 0; i < legalMoves.size(); i++) {
+			cout << "Legal Moves: " << endl;
+			cout << legalMoves[i].piece->getId() << endl;
+			cout << legalMoves[i].nCoords.first << " " << legalMoves[i].nCoords.second << endl;
+		}
+	}
 }
 
 
@@ -234,11 +245,11 @@ void Player::generateLegalMoves() {
 Human::Human(bool isWhite): Player{isWhite} {}
 
 void Human::makeMove() {
+	//	generateLegalMoves();
 	string oldCoord;
 	string newCoord;
 	cin >> oldCoord >> newCoord;
 	board->movePiece('8' - oldCoord[1], oldCoord[0] - 'a', '8' - newCoord[1], newCoord[0] - 'a');
-//	generateLegalMoves();
 }
 
 Level1::Level1(bool isWhite): Player{isWhite} {}
