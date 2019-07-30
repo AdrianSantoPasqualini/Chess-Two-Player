@@ -833,6 +833,24 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 			checked = true;
 		}
 		move.isLegal = false;
+
+		//Obtain the attacks on the center before moves.
+		int center1Attacks;
+		int center2Attacks;
+		int center3Attacks;
+		int center4Attacks;
+		if (curWhite) {
+			center1Attacks = squares[3][3].getInfo().wTotAttacks;
+			center2Attacks = squares[3][4].getInfo().wTotAttacks;
+			center3Attacks = squares[4][3].getInfo().wTotAttacks;
+			center4Attacks = squares[4][4].getInfo().wTotAttacks;
+		} else {
+			center1Attacks = squares[3][3].getInfo().bTotAttacks;
+			center2Attacks = squares[3][4].getInfo().bTotAttacks;
+			center3Attacks = squares[4][3].getInfo().bTotAttacks;
+			center4Attacks = squares[4][4].getInfo().bTotAttacks;
+		}
+		int centerTotalAttacks = center1Attacks + center2Attacks + center3Attacks + center4Attacks;
 		// Move piece
 		try {
 			move.isLegal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack, checked);
@@ -859,6 +877,29 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 					move.toCheck = true;
 				} else {
 					move.toCheck = false;
+				}
+				// Detect if the move controls the centre
+				int center1AttacksNew;
+				int center2AttacksNew;
+				int center3AttacksNew;
+				int center4AttacksNew;
+				if (curWhite) {
+					center1AttacksNew = squares[3][3].getInfo().wTotAttacks;
+					center2AttacksNew = squares[3][4].getInfo().wTotAttacks;
+					center3AttacksNew = squares[4][3].getInfo().wTotAttacks;
+					center4AttacksNew = squares[4][4].getInfo().wTotAttacks;
+				} else {
+					center1AttacksNew = squares[3][3].getInfo().bTotAttacks;
+					center2AttacksNew = squares[3][4].getInfo().bTotAttacks;
+					center3AttacksNew = squares[4][3].getInfo().bTotAttacks;
+					center4AttacksNew = squares[4][4].getInfo().bTotAttacks;
+				}
+				int centerTotalAttacksNew = center1AttacksNew + center2AttacksNew + center3AttacksNew + center4AttacksNew;
+				if ((center1Attacks < center1AttacksNew || center2Attacks < center2AttacksNew || center3Attacks < center3AttacksNew 
+						|| center4Attacks < center4AttacksNew) && (centerTotalAttacksNew > centerTotalAttacks) && (moves < 25)) {
+					move.controlCenter = true;
+				} else {
+					move.controlCenter = false;
 				}
 				// Detect check
 				if (whitesTurn) {

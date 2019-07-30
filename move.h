@@ -13,5 +13,6 @@ struct Move {
 	bool toCheck;
 	bool toCapture;
 	bool toAvoid;
+	bool controlCenter;
 };
 #endif
