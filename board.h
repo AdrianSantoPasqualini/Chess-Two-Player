@@ -8,6 +8,7 @@
 #include <algorithm> // for find
 #include "square.h"
 #include "window.h"
+#include "move.h"
 ////////////////////////////////
 // try forward declarations first. Only if they dont work, include the .h file
 ///////////////////////////////
@@ -52,7 +53,7 @@ class Board {
 		pair<int,int> getAttacks(int r, int c);
 		void makePlayerMove();
 		void movePiece(int curR, int curC, int newR, int newC);
-		bool isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC);
+		Move isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC);
 		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece);
 		friend ostream & operator<<(ostream &out, const Board &b); 
 };

@@ -104,7 +104,7 @@ void Player::generateLegalMoves() {
 					legalMoves.emplace_back(move);
 				}
 				move = board->isLegalMove(piece, curR - i, curC + i);
-				bool legalSE = board.isLegal;
+				bool legalSE = move.isLegal;
 				if (legalSE) {
 					legalMoves.emplace_back(move);
 				}
