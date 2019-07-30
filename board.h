@@ -54,7 +54,7 @@ class Board {
 		void generatePlayerMoves(bool white);
 		void movePiece(int curR, int curC, int newR, int newC);
 		Move isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC);
-		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece);
+		void updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece, bool updateDraw);
 		friend ostream & operator<<(ostream &out, const Board &b); 
 };
 
