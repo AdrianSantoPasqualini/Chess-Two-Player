@@ -9,6 +9,7 @@ class Piece;
 struct Move {
 	pair<int, int> nCoords;
 	shared_ptr<Piece> piece;
+	bool isLegal;
 	bool toCheck;
 	bool toCapture;
 	bool toAvoid;

@@ -52,7 +52,7 @@ void Piece::changeEnPassant(int p) {
 Pawn::Pawn(int row, int col, bool isWhite, string id, int movesMade, int castle, int enPassant): 
 	Piece{row, col, isWhite, id, movesMade, castle, enPassant} {}
 
-bool Pawn::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
+bool Pawn::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack, bool checked) {
 	pair<int,int> currCoor = getCoor();
         int movesMade = getMovesMade();
 	string msg = "";
@@ -83,7 +83,7 @@ bool Pawn::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 Knight::Knight(int row, int col, bool isWhite, string id, int movesMade, int castle, int enPassant):
         Piece{row, col, isWhite, id, movesMade, castle, enPassant} {}
 
-bool Knight::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
+bool Knight::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack, bool checked) {
 	pair<int,int> currCoor = getCoor();
 	string msg = "";
 	if (blocked) {
@@ -103,7 +103,7 @@ bool Knight::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool mo
 Bishop::Bishop(int row, int col, bool isWhite, string id, int movesMade, int castle, int enPassant):
         Piece{row, col, isWhite, id, movesMade, castle, enPassant} {}
 
-bool Bishop::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
+bool Bishop::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack, bool checked) {
 	pair<int,int> currCoor = getCoor();
 	string msg = "";
         if (blocked) {
@@ -123,7 +123,7 @@ bool Bishop::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool mo
 Rook::Rook(int row, int col, bool isWhite, string id, int movesMade, int castle, int enPassant):
         Piece{row, col, isWhite, id, movesMade, castle, enPassant} {}
 
-bool Rook::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
+bool Rook::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack, bool checked) {
 	pair<int,int> currCoor = getCoor();
 	string msg = "";
         if (blocked) {
@@ -143,7 +143,7 @@ bool Rook::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 Queen::Queen(int row, int col, bool isWhite, string id, int movesMade, int castle, int enPassant):
         Piece{row, col, isWhite, id, movesMade, castle, enPassant} {}
 
-bool Queen::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
+bool Queen::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack, bool checked) {
 	pair<int,int> currCoor = getCoor();
 	string msg = "";
         if (blocked) {
@@ -165,9 +165,13 @@ bool Queen::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool mov
 King::King(int row, int col, bool isWhite, string id, int movesMade, int castle, int enPassant):
         Piece{row, col, isWhite, id, movesMade, castle, enPassant} {}
 
-bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack) {
+bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool moveIntoAttack, bool checked) {
 	pair<int,int> currCoor = getCoor();
 	string msg;
+	if (moveIntoAttack) {
+		msg = "King cannot move onto a square that is under attack.";
+		throw msg;
+	}
 	if (blocked) {
 		msg = "King is blocked or will be under check.";
 		throw msg;
@@ -180,8 +184,8 @@ bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 		return true;
 	} else if (!pieceOnSq) {
 		if ((r == 0 || r == 7) && c == 6) {
-			if (moveIntoAttack) {
-				msg = "King is under check or cannot move onto a square that is under attack.";
+			if (checked) {
+				msg = "King is under check.";
 				throw msg;
 			} else if (getMovesMade() == 0) {
 				changeCastle(1);
@@ -190,8 +194,8 @@ bool King::move(int r, int c, int moves, bool pieceOnSq, bool blocked, bool move
 				throw msg;
 			}
 		} else if ((r == 0 || r == 7) && c == 2) {
-			if (moveIntoAttack) {
-				msg = "King is under check or cannot move onto a square that is under attack.";
+			if (checked) {
+				msg = "King is under check.";
 				throw msg;
 			} else if (getMovesMade() == 0) {
 				changeCastle(2);
