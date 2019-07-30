@@ -260,6 +260,7 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
 		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
 	} 
+	window.drawString(c*60 + 90, r*60 + 90, to_string(piece->getMovesMade()), 7);
 }
 
 void Board::undrawPiece(int r, int c) {
@@ -947,6 +948,7 @@ void Board::printDefault() {
 }
 
 void Board::setup() {
+	cin.exceptions(ios::failbit|ios::eofbit);
 	drawBoard();
 	drawSetupMenu();
 	printDefault();
@@ -1124,6 +1126,8 @@ void Board::setup() {
 			}	
 		} catch (string e) {
 			cout << e << endl;
+		} catch (ios::failure &) {
+			return;
 		} catch (...) { 
 			cin.clear();
 			cin.ignore();
