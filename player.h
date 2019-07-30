@@ -14,10 +14,11 @@ class Board;
 
 class Player {
 	map<string, shared_ptr<Piece>> pieces;
-	bool isWhite;
 	int score;
 	protected:
+		bool isWhite;
 		Board *board;
+		vector<char> promotions;
 		vector<Move> legalMoves;
 	public:
 		Player(bool isWhite);

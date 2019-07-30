@@ -394,7 +394,7 @@ void Board::setPlayer(string colour, string type) {
 	}
 }
 
-void Board::movePiece(int curR, int curC, int newR, int newC) {
+void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
 		shared_ptr<Piece> curPiece = squares[curR][curC].getInfo().piece;
 		Info newInfo;
@@ -564,7 +564,11 @@ void Board::movePiece(int curR, int curC, int newR, int newC) {
 						// Pawn promotion
 						char promotion = '0';
 						if ((curPiece->getId()[0] == 'P' && newR == 0) || (curPiece->getId()[0] == 'p' && newR == 7)) {
-							cin >> promotion;
+							if (promoteTo == 'Z') {
+								cin >> promotion;
+							} else {
+								promotion = promoteTo;
+							}
 							if (whitesTurn) {
 								while (promotion != 'Q' && promotion != 'N' && promotion != 'R' && promotion != 'B') {
 									cout << "Enter a valid promotion piece." << endl;
@@ -773,9 +777,11 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		}
 		// Check if move is avoiding capture
 		Info curInfo = squares[curR][curC].getInfo();
-		if (curWhite && curInfo.bAttacked && !moveIntoAttack) {
+		if (moveIntoAttack) {
+			move.toAvoid = false;
+		} else if (curWhite && curInfo.bAttacked) {
 			move.toAvoid = true;
-		} else if (!curWhite && curInfo.wAttacked && !moveIntoAttack) {
+		} else if (!curWhite && curInfo.wAttacked) {
 			move.toAvoid = true;
 		} else {
 			move.toAvoid = false;
@@ -926,6 +932,7 @@ void Board::printDefault() {
 }
 
 void Board::setup() {
+	cin.exceptions(ios::failbit|ios::eofbit);
 	drawBoard();
 	drawSetupMenu();
 	printDefault();
@@ -1103,6 +1110,8 @@ void Board::setup() {
 			}	
 		} catch (string e) {
 			cout << e << endl;
+		} catch (ios::failure &) {
+			return;
 		} catch (...) { 
 			cin.clear();
 			cin.ignore();

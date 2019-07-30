@@ -15,6 +15,7 @@ using namespace std;
 Player::Player(bool isWhite): isWhite {isWhite} {
 	score = 0;	
 	legalMoves = {};
+	promotions = {'q', 'r', 'b', 'n', 'Q', 'R', 'B', 'N'};
 }
 
 int Player::howManyLegalMoves() {
@@ -246,82 +247,132 @@ void Player::generateLegalMoves() {
 Human::Human(bool isWhite): Player{isWhite} {}
 
 void Human::makeMove() {
-	//	generateLegalMoves();
 	string oldCoord;
 	string newCoord;
 	cin >> oldCoord >> newCoord;
-	board->movePiece('8' - oldCoord[1], oldCoord[0] - 'a', '8' - newCoord[1], newCoord[0] - 'a');
+	board->movePiece('8' - oldCoord[1], oldCoord[0] - 'a', '8' - newCoord[1], newCoord[0] - 'a', 'Z');
 }
 
 Level1::Level1(bool isWhite): Player{isWhite} {}
 
 void Level1::makeMove() {
-//	generateLegalMoves();
 	srand(time(NULL));	
 	int r = rand() % legalMoves.size();
+	int p = rand() % 3;
+	char promote;
+	if (isWhite) {
+		promote = promotions[p + 4];
+	} else {
+		promote = promotions[p];
+	}
 	pair<int, int> oldCoords = legalMoves[r].piece->getCoor();
 	pair<int, int> newCoords = legalMoves[r].nCoords;
-	board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second);
+	board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second, promote);
 }
 
 Level2::Level2(bool isWhite): Player{isWhite} {}
 
 void Level2::makeMove() {
-//	generateLegalMoves();
 	int prefMoves = 0;
+	int bestMoves = 0;
 	srand(time(NULL));	
 	for (unsigned int i = 0; i < legalMoves.size(); i++) {
 		if (legalMoves[i].toCapture || legalMoves[i].toCheck) {
 			prefMoves++;
 		}
+		if (legalMoves[i].toCapture && legalMoves[i].toCheck) {
+			bestMoves++;
+		}
+	}	
+	int p = rand() % 3;
+	char promote;
+	if (isWhite) {
+		promote = promotions[p + 4];
+	} else {
+		promote = promotions[p];
 	}
 	if (prefMoves == 0) {
 		int r = rand() % legalMoves.size();
 		pair<int, int> oldCoords = legalMoves[r].piece->getCoor();
 		pair<int, int> newCoords = legalMoves[r].nCoords;
-		board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second);
-
-	} else {
+		board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second, promote);
+	} else if (bestMoves == 0) {
 		int r = rand() % prefMoves;
 		for (unsigned int i = 0; i < legalMoves.size(); i++) {
 			if (legalMoves[i].toCapture || legalMoves[i].toCheck) {
 				if (r == 0) {
 					pair<int, int> oldCoords = legalMoves[i].piece->getCoor();
 					pair<int, int> newCoords = legalMoves[i].nCoords;
-					board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second);
+					board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second, promote);
 					return;
 				} 
 				r--;
 			}
 		}
+	} else {
+		int r = rand() % bestMoves;
+		for (unsigned int i = 0; i < legalMoves.size(); i++) {
+			if (legalMoves[i].toCapture && legalMoves[i].toCheck) {
+				if (r == 0) {
+					pair<int, int> oldCoords = legalMoves[i].piece->getCoor();
+					pair<int, int> newCoords = legalMoves[i].nCoords;
+					board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second, promote);
+					return;
+				} 
+				r--;
+			}
+		}
+
 	}
 }
 
 Level3::Level3(bool isWhite): Player{isWhite} {}
 
 void Level3::makeMove() {
-//	generateLegalMoves();
 	int prefMoves = 0;
+	int bestMoves = 0;
 	srand(time(NULL));	
 	for (unsigned int i = 0; i < legalMoves.size(); i++) {
-		if (legalMoves[i].toAvoid || legalMoves[i].toCapture || legalMoves[i].toCheck) {
+		if (legalMoves[i].toCapture || legalMoves[i].toCheck) {
 			prefMoves++;
+		} 
+		if (legalMoves[i].toAvoid && ( legalMoves[i].toCapture || legalMoves[i].toCheck)) {
+			bestMoves++;
 		}
+	}
+	int p = rand() % 3;
+	char promote;
+	if (isWhite) {
+		promote = promotions[p + 4];
+	} else {
+		promote = promotions[p];
 	}
 	if (prefMoves == 0) {
 		int r = rand() % legalMoves.size();
 		pair<int, int> oldCoords = legalMoves[r].piece->getCoor();
 		pair<int, int> newCoords = legalMoves[r].nCoords;
-		board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second);
-
-	} else {
+		board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second, promote);
+	} else if (bestMoves == 0) {
 		int r = rand() % prefMoves;
 		for (unsigned int i = 0; i < legalMoves.size(); i++) {
-			if (legalMoves[i].toAvoid || legalMoves[i].toCapture || legalMoves[i].toCheck) {
+			if (legalMoves[i].toCapture || legalMoves[i].toCheck) {
 				if (r == 0) {
 					pair<int, int> oldCoords = legalMoves[i].piece->getCoor();
 					pair<int, int> newCoords = legalMoves[i].nCoords;
-					board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second);
+					board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second, promote);
+					return;
+				} 
+				r--;
+			}
+		}
+	} else {
+		int r = rand() % bestMoves;
+		for (unsigned int i = 0; i < legalMoves.size(); i++) {
+			if (legalMoves[i].toAvoid && (legalMoves[i].toCapture || legalMoves[i].toCheck)) {
+				if (r == 0) {
+					pair<int, int> oldCoords = legalMoves[i].piece->getCoor();
+					pair<int, int> newCoords = legalMoves[i].nCoords;
+					board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second, promote);
 					return;
 				} 
 				r--;
