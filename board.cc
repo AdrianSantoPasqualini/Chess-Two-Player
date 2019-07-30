@@ -707,6 +707,9 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 	bool blocked = false;
 	bool moveIntoAttack = false;
 	bool curWhite = curPiece->getIsWhite();
+	Move move{pair<int, int>(newR, newC), curPiece};
+
+	
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
 		// Check new square
 		Info newInfo = squares[newR][newC].getInfo();
@@ -766,21 +769,22 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 		if ((curWhite && newInfo.bAttacked) || (!curWhite && newInfo.wAttacked)) {
 			moveIntoAttack = true;
 		}
-		bool legal = false;
+		move.isLegal = false;
+		
 		// Move piece
 		try {
-			legal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
+			move.isLegal = curPiece->move(newR, newC, moves, pieceOnSq, blocked, moveIntoAttack);
 			shared_ptr<Piece> castledRook = nullptr;
 			// Castle
 			if (curPiece->getCastle() == 1) {
 				castledRook = squares[curR][curC + 3].getInfo().piece;
 				if (castledRook->getMovesMade() == 0) {
-					legal = true;
+					move.isLegal = true;
 				}
 			} else if (curPiece->getCastle() == 2) {
 				castledRook = squares[curR][curC - 4].getInfo().piece;
 				if (castledRook->getMovesMade() == 0) {
-					legal = true;
+					move.isLegal = true;
 				}
 			} else {
 				
@@ -789,9 +793,9 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				// Detect check
 				if (whitesTurn) {
 					if (!player2->isInCheck()) {
-						legal = true;
+						move.isLegal = true;
 					} else {
-						legal = false;
+						move.isLegal = false;
 					}
 					curPiece->updatePiece(curR, curC);
 					// Move pieces back
@@ -808,9 +812,9 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 					}
 				} else {
 					if (!player1->isInCheck()) {
-						legal = true;
+						move.isLegal = true;
 					} else {
-						legal = false;
+						move.isLegal = false;
 					}
 					curPiece->updatePiece(curR, curC);
 					// Move pieces back
@@ -828,11 +832,12 @@ bool Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 				}
 			}
 		} catch (string msg) {
-			return legal;
+			return move;
 		}
-		return legal;
+		return move;
 	} else {
-		return false;
+		move.isLegal = false;
+		return move;
 	}
 }
 
