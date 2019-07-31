@@ -40,7 +40,6 @@ int main() {
 			}
 			if (matchOngoing) {
 				cout << board;
-				//bool stalemate = (board.whoWon() == "stalemate");
 			}
 		} else if (cmd == "resign" && matchOngoing) {
 			if (board.isWhitesTurn()){
@@ -58,14 +57,11 @@ int main() {
 				if (response == "y" || response == "yes" || response == "Y" || response == "Yes") {
 					continuing = true;
 					board.init();
-					//board.setPlayer("white", p1);
-					//board.setPlayer("black", p2);
 					board.drawBoard();
 					board.drawScore();
 					board.drawTurn();
 					board.generatePlayerMoves(true);	
 					board.generatePlayerMoves(false);
-					//matchOngoing = true;
 					cout << board;
 					break;
 				} else if (response == "n" || response == "no" || response == "N" || response == "No") {
@@ -108,14 +104,11 @@ int main() {
 					if (response == "y" || response == "yes" || response == "Y" || response == "Yes") {
 						continuing = true;
 						board.init();
-						//board.setPlayer("white", p1);
-						//board.setPlayer("black", p2);
 						board.drawBoard();
 						board.drawScore();
 						board.drawTurn();
 						board.generatePlayerMoves(true);	
 						board.generatePlayerMoves(false);
-						//matchOngoing = true;
 						cout << board;
 						break;
 					} else if (response == "n" || response == "no" || response == "N" || response == "No") {

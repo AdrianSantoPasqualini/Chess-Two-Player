@@ -7,10 +7,6 @@
 
 using namespace std;
 
-///////////////////////// HOW TO RANDOM ////////////////////////////
-// srand(time(0)); // Sets the random seed based on the current time.
-// r = (rand() % x); // Generates random number from 0 to x.
-////////////////////////////////////////////////////////////////////
 
 Player::Player(bool isWhite): isWhite {isWhite} {
 	score = 0;	
@@ -421,7 +417,7 @@ void Level4::makeMove() {
 		pair<int, int> oldCoords = legalMoves[r].piece->getCoor();
 		pair<int, int> newCoords = legalMoves[r].nCoords;
 		board->movePiece(oldCoords.first, oldCoords.second, newCoords.first, newCoords.second, promote);
-	} else if (bestMoves == 0 & prefMoves == 0) {
+	} else if (bestMoves == 0 && prefMoves == 0) {
 		int r = rand() % decentMoves;
 		for (unsigned int i = 0; i < legalMoves.size(); i++) {
 			if (legalMoves[i].controlCenter) {

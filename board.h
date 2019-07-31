@@ -5,13 +5,10 @@
 #include <iostream>
 #include <string>
 #include <memory>
-#include <algorithm> // for find
+#include <algorithm> 
 #include "square.h"
 #include "window.h"
 #include "move.h"
-////////////////////////////////
-// try forward declarations first. Only if they dont work, include the .h file
-///////////////////////////////
 using namespace std;
 
 class Player;

@@ -8,6 +8,7 @@ using namespace std;
 
 Board::Board(vector<vector<Square>> squares): squares{squares} {}
 
+
 Board::Board() {
 	moves = 0;
 	whiteScore = 0;
@@ -65,6 +66,7 @@ Board::Board() {
 	}
 }
 
+
 void Board::generatePlayerMoves(bool white) {
 	if (white) {
 		player1->generateLegalMoves();
@@ -72,6 +74,7 @@ void Board::generatePlayerMoves(bool white) {
 		player2->generateLegalMoves();
 	}
 }
+
 
 string Board::whoWon() {
 	int wLegalMoves = player1->howManyLegalMoves();
@@ -144,39 +147,9 @@ void Board::drawMenu() {
 	window.drawString(150, 230, "<game> <white-player> <black-player> to start a game!", 1); 
 	window.drawString(170, 250, "players can be one of: human computer1 computer2", 1);
 	window.drawString(320, 270, "computer3 computer4", 1);
-	window.drawString(150, 300, "<setup> to set up the board!", 1); 
-	
-	/*		
-	window.fillRectangle(60 + 75, 60 + 100, 30, 10, colour);	
-	window.fillRectangle(60 + 75, 60 + 80, 30, 10, colour);	
-	window.fillRectangle(60 + 85, 60 + 70, 10, 30, colour);
-
-	window.fillCircle(c*60 + 89, r*60 + 78, 10, colour);
-	window.fillPolygon(c * 60 + 62, r * 60 + 91, 3, 25,0, colour);
-	window.fillPolygon(c * 60 + 68, r * 60 + 111, 3, 41,1, colour);
-	window.fillPolygon(c * 60 + 90, r * 60 + 91, 3, 25,0, colour);
-
-	window.fillCircle(c*60 + 90, r*60 + 68, 10, colour);
-	window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);
-	window.fillRectangle(c*60 + 80, r*60 + 85, 20, 20, colour);
-	window.fillPolygon(c*60 + 78, r*60 + 87, 3, 25,1, colour);
-
-	window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
-	window.fillRectangle(c*60 + 80, r*60 + 80, 20, 20, colour);	
-	window.fillRectangle(c*60 + 78, r*60 + 75, 6, 10, colour);	
-	window.fillRectangle(c*60 + 88, r*60 + 75, 6, 10, colour);	
-	window.fillRectangle(c*60 + 97, r*60 + 75, 6, 10, colour);	
-
-	window.fillRectangle(c*60 + 75, r*60 + 100, 30, 10, colour);	
-	window.fillRectangle(c*60 + 82, r*60 + 80, 15, 20, colour);	
-	window.fillPolygon(c*60 + 80, r*60 + 72, 4, 12, -1, colour);
-	window.fillPolygon(c*60 + 88, r*60 + 68, 4, 12, -1, colour);
-	window.fillPolygon(c*60 + 80, r*60 + 82, 3, 20, 1, colour);
-
-	window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
-	window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
-	*/	
+	window.drawString(150, 300, "<setup> to set up the board!", 1); 	
 }
+
 
 void Board::drawBoard() {
 	window.fillRectangle(0, 0, 600, 600, 0);
@@ -198,7 +171,6 @@ void Board::drawBoard() {
 	window.drawString(30, 390, "3", 1);
 	window.drawString(30, 450, "2", 1);
 	window.drawString(30, 510, "1", 1);
-
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (i%2 == 0) {
@@ -221,14 +193,15 @@ void Board::drawBoard() {
 	}
 }
 
+
 void Board::drawScore() {
 	window.fillRectangle(0, 0, 600, 60, 0);
 	string wScore = "White's Score: " + to_string(whiteScore).substr(0,3);
 	string bScore = "Black's Score: " + to_string(blackScore).substr(0,3);
 	window.drawString(10, 10, wScore, 1);
-	//window.drawString(500, 10, bScore, 1);
 	window.drawString(485, 10, bScore, 1);
 }
+
 
 void Board::drawTurn() {
 	window.fillRectangle(0, 30, 600, 30, 0);
@@ -240,6 +213,7 @@ void Board::drawTurn() {
 		window.drawString(350, 50, "-- Black is in Check!", 2);
 	}
 }
+
 
 void Board::drawSetupMenu() {
 	window.fillRectangle(0, 0, 600, 60, 0);
@@ -279,13 +253,12 @@ void Board::drawPiece(shared_ptr<Piece> piece) {
 		window.fillPolygon(c*60 + 80, r*60 + 72, 4, 12, -1, colour);
 		window.fillPolygon(c*60 + 88, r*60 + 68, 4, 12, -1, colour);
 		window.fillPolygon(c*60 + 80, r*60 + 82, 3, 20, 1, colour);
-
 	} else if (id == 'P') {
 		window.fillCircle(c*60 + 87, r*60 + 77, 15, colour);	
 		window.fillPolygon(c * 60 + 87, r * 60 + 77, 3, 30, -1, colour);
 	} 
-	//window.drawString(c*60 + 90, r*60 + 90, to_string(piece->getMovesMade()), 7);
 }
+
 
 void Board::undrawPiece(int r, int c) {
 	int wColour = 3;
@@ -305,18 +278,22 @@ void Board::undrawPiece(int r, int c) {
 	}
 }
 
+
 void Board::incScore(double w, double b) {
 	whiteScore += w;
 	blackScore += b;
 }
 
+
 bool Board::isWhitesTurn() {
 	return whitesTurn;
 }
 
+
 pair<double,double> Board::getScore() {
 	return make_pair(whiteScore, blackScore);
 }
+
 
 void Board::makePlayerMove() {
 	if (isWhitesTurn()) {
@@ -326,9 +303,11 @@ void Board::makePlayerMove() {
 	}
 }
 
+
 pair<int,int> Board::getAttacks(int r, int c) {
 	return make_pair(squares[r][c].getInfo().wTotAttacks, squares[r][c].getInfo().bTotAttacks);
 }
+
 
 void Board::init() {
 	whitesTurn = defWhitesTurn;
@@ -347,16 +326,9 @@ void Board::init() {
 			}
 		}
 	}
-//	player1->clearPieces();
-//	player2->clearPieces();
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 8; j++) {
 			if (squares[i][j].getInfo().piece != nullptr) {
-//				if (squares[i][j].getInfo().piece->getIsWhite()) {
-//					player1->addPiece(squares[i][j].getInfo().piece);
-//				} else {
-//					player2->addPiece(squares[i][j].getInfo().piece);
-//				}
 				State nState{StateType::PieceAdded, Direction::N, true, squares[i][j].getInfo().piece, false};
 				squares[i][j].setState(nState);
 				squares[i][j].notifyObservers();
@@ -385,8 +357,8 @@ void Board::init() {
 			}
 		}
 	}
-
 }
+
 
 void Board::setPlayer(string colour, string type) {
 	if (colour == "white") {
@@ -418,11 +390,11 @@ void Board::setPlayer(string colour, string type) {
 	}
 }
 
+
 void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 	if (curR >= 0 && curR < 8 && curC >= 0 && curC < 8 && newR >= 0 && newR < 8 && newC >= 0 && newC < 8 && !(curR == newR && curC == newC)) {
 		shared_ptr<Piece> curPiece = squares[curR][curC].getInfo().piece;
 		Info newInfo;
-		/////////////////// Get rid of new;
 		if (curPiece != nullptr) {
 			bool pieceOnSq = false;
 			bool blocked = false;
@@ -739,6 +711,7 @@ void Board::movePiece(int curR, int curC, int newR, int newC, char promoteTo) {
 	}
 }
 
+
 void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece> piece, bool updateDraw) {	
 	// Remove piece from current square
 	squares[curR][curC].setPiece(nullptr);	
@@ -776,6 +749,7 @@ void Board::updateTurn(int curR, int curC, int newR, int newC, shared_ptr<Piece>
 		whitesTurn = true;
 	}
 }
+
 
 Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 	int curR = curPiece->getCoor().first;
@@ -860,7 +834,6 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 			checked = true;
 		}
 		move.isLegal = false;
-
 		//Obtain the attacks on the center before moves.
 		int center1Attacks;
 		int center2Attacks;
@@ -980,6 +953,7 @@ Move Board::isLegalMove(shared_ptr<Piece> curPiece, int newR, int newC) {
 	}
 }
 
+
 void Board::printDefault() {
 	for (int i = 0; i < 8; ++i) {
 		cout << 8 - i << " ";
@@ -999,6 +973,7 @@ void Board::printDefault() {
 	}
 	cout << endl <<  "  abcdefgh" << endl;
 }
+
 
 void Board::setup() {
 	drawBoard();
@@ -1229,25 +1204,13 @@ void Board::setup() {
 	window.fillRectangle(0, 0, 600, 60, 0);
 }
 
+
 ostream & operator<<(ostream &out, const Board &b) {
 	out << endl;
 	for (int i = 0; i < 8; ++i) {
 		out << 8 - i << " ";
 		for (int j = 0; j < 8; ++j) {
-			
-			
 			Info info = b.squares[i][j].getInfo();
-		/*	
-			if (info.bTotAttacks > 0) {
-				cout << info.bTotAttacks << " ";
-			
-			//else if (info.wAttacked || info.bAttacked) {
-			//	cout << info.bTotAttacks;
-			} else {
-				cout << "  ";
-			}
-			*/
-
 			shared_ptr<Piece> piece = (b.squares[i][j]).getInfo().piece;
 			if (piece == nullptr) {
 				if ((i + j) % 2 == 0) {

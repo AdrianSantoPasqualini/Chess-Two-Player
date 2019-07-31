@@ -6,35 +6,9 @@ using namespace std;
 
 Square::Square(int r, int c, shared_ptr<Piece> currPiece): currPiece{currPiece}, r{r}, c{c} {}
 
-Square::Square(const Square & other): r{other.r}, c{other.c}  {
-	//cout << "Copy ctor" << endl;
-	shared_ptr<Piece> piece = other.getInfo().piece;
-	if (piece == nullptr) {
-		currPiece = nullptr;	
-	} else {
-		char id = toupper(piece->getId().at(0));
-		if (id == 'K') {
-			currPiece = make_shared<King>(r, c, piece->getIsWhite(), piece->getId());
-		} else if (id == 'Q') {
-			currPiece = make_shared<Queen>(r, c, piece->getIsWhite(), piece->getId());
-		} else if (id == 'B') {
-			currPiece = make_shared<Bishop>(r, c, piece->getIsWhite(), piece->getId());
-		} else if (id == 'R') {
-			currPiece = make_shared<Rook>(r, c, piece->getIsWhite(), piece->getId());
-		} else if (id == 'N') {
-			currPiece = make_shared<Knight>(r, c, piece->getIsWhite(), piece->getId());
-		} else if (id == 'P') {
-			currPiece = make_shared<Pawn>(r, c, piece->getIsWhite(), piece->getId());
-		}
-	}
-}
 
-/*
-Square & Square::operator=(const Square & other) {
-	cout << "Copy assign" << endl;
+Square::Square(const Square & other): r{other.r}, c{other.c}  {
 	shared_ptr<Piece> piece = other.getInfo().piece;
-	r = other.r;
-	c = other.c;
 	if (piece == nullptr) {
 		currPiece = nullptr;	
 	} else {
@@ -54,12 +28,12 @@ Square & Square::operator=(const Square & other) {
 		}
 	}
 }
-*/
 
 
 void Square::setPiece(shared_ptr<Piece> piece) {
 	currPiece = piece;
 }
+
 
 Info Square::getInfo() const {
 	pair<int, int> coords{r, c};
@@ -68,6 +42,7 @@ Info Square::getInfo() const {
 	Info nInfo{coords, currPiece, wAttacks.size() != 0, bAttacks.size() != 0, wTotAttacks, bTotAttacks};
 	return nInfo;
 }
+
 
 void Square::removeAttacker(bool white, string id) {
 	if (white) {
@@ -86,6 +61,7 @@ void Square::removeAttacker(bool white, string id) {
 		}
 	}
 }
+
 
 void Square::addAttacker(bool white, shared_ptr<Piece> piece) {
 	if (white) {
@@ -113,6 +89,7 @@ void Square::addAttacker(bool white, shared_ptr<Piece> piece) {
 	}
 }
 
+
 void Square::toggleAttacker(bool attacked, shared_ptr<Piece> piece) {
 	if (attacked) {
 		addAttacker(piece->getIsWhite(), piece);
@@ -121,8 +98,8 @@ void Square::toggleAttacker(bool attacked, shared_ptr<Piece> piece) {
 	}
 }
 
+
 void Square::notify(Subject & whoFrom) {
-//	cout << "Notified" << endl;
 	State recState = whoFrom.getState();
 	pair<int,int> recCoords = whoFrom.getInfo().coords;
 	State currState = getState();
@@ -169,7 +146,6 @@ void Square::notify(Subject & whoFrom) {
 		pawnAttacked = (direction == Direction::SE || direction == Direction::SW);
 	}
 	if (recState.type == StateType::PieceAdded) {
-		//cout << "Piece Added" << endl;
 		if (getInfo().piece == nullptr) {
 			if (recState.piece->getId()[0] == 'r' || recState.piece->getId()[0] == 'R') {
 				if (vertical || horizontal) {
@@ -266,7 +242,6 @@ void Square::notify(Subject & whoFrom) {
 			}
 		}
 	} else if (recState.type == StateType::PieceRemoved) {
-		//cout << "Piece Removed" << endl;
 		if (recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') {
 			State nState{StateType::Relay, direction, false, recState.piece, true};
 			setState(nState);
@@ -356,8 +331,6 @@ void Square::notify(Subject & whoFrom) {
 		}
 	} else if (recState.type == StateType::Reply) {
 		if (direction == recState.direction) {
-			//cout << "Reply" << endl;
-			//////////////////////////////This section needs work.
 			if ((recState.piece->getId()[0] == 'n' || recState.piece->getId()[0] == 'N') && recState.knightMovement) {
 				toggleAttacker(recState.attacked, recState.piece);
 			} else {

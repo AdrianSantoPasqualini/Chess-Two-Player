@@ -1,7 +1,6 @@
 #ifndef PIECE_H
 #define PIECE_H
 
-// Relevant forward declarations and includes
 #include <string>
 #include <utility> //for pair
 #include <stdlib.h> //for abs 
