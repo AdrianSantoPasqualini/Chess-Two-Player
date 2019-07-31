@@ -112,8 +112,10 @@ string Board::whoWon() {
 						bB++;
 					}
 					if (wN == 2 || bN == 2 || wB == 2 || bB == 2) {
+						cout << "not stalemate" << endl;
 						return "noone";
 					} else if ((wN == 1 && wB == 1) || (bN == 1 && bB == 1)) {
+						cout << "not stalemate" << endl;
 						return "noone";
 					}
 				}
